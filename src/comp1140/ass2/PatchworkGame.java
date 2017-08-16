@@ -26,7 +26,7 @@ public class PatchworkGame {
      */
     static boolean isPatchPlacementWellFormed(String placement) {
         // FIXME Task 3: determine whether a patch placement is well-formed
-        // 1234
+        // 12345
         return false;
     }
 
