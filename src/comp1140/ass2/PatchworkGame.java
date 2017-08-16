@@ -1,5 +1,8 @@
 package comp1140.ass2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Represents the state of a Patchwork game in progress.
  */
@@ -47,6 +50,12 @@ public class PatchworkGame {
      */
     static boolean isPlacementWellFormed(String placement) {
         // FIXME Task 4: determine whether a placement is well-formed
+        String filtered = "";
+        for (char t: placement.toCharArray()){
+            if (t != '.'){
+                filtered += t;
+            }
+        }
         return false;
     }
 
