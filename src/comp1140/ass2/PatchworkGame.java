@@ -25,8 +25,14 @@ public class PatchworkGame {
      * @return True if the tile placement is well-formed
      */
     static boolean isPatchPlacementWellFormed(String placement) {
-        // FIXME Task 3: determine whether a patch placement is well-formed
-        return false;
+        if(placement.equals(".")) return true;
+        if(placement.length() != 4) return false;
+        char[] c = placement.toCharArray();
+        if(c[0] < 'A' || (c[0] > 'Z' && c[0] < 'a') || c[0] > 'z') return false;
+        if(c[1] < 'A' || c[1] >'I') return false;
+        if(c[2] < 'A' || c[2] >'I') return false;
+        if(c[3] < 'A' || c[3] >'H') return false;
+        return true;
     }
 
     /**
