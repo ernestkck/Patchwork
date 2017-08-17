@@ -50,13 +50,42 @@ public class PatchworkGame {
      */
     static boolean isPlacementWellFormed(String placement) {
         // FIXME Task 4: determine whether a placement is well-formed
+        if (placement == "" || placement == null){
+            return false;
+        }
         String filtered = "";
         for (char t: placement.toCharArray()){
             if (t != '.'){
                 filtered += t;
             }
         }
-        return false;
+        if (filtered.length() % 4 == 0){
+            String patch = "";
+            String placements = "";
+            for (int i = 0; i < filtered.length(); i++){
+                patch += filtered.charAt(i);
+                if ((i + 1) % 4 == 0){
+                    for (char chr : placements.toCharArray()){
+                        if (chr == patch.charAt(0) && chr != 'h'){
+                            return false;
+                        }
+
+                    }
+
+                    if (!isPatchPlacementWellFormed(patch)){
+                        return false;
+                    }
+
+                    placements += patch.charAt(0);
+                    patch = "";
+                }
+
+            }
+        }
+        else{
+            return false;
+        }
+        return true;
     }
 
     /**
