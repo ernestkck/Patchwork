@@ -45,15 +45,21 @@ public class Viewer extends Application {
         int currentY = 100;
         int currentX = 50;
         Image image;
-        int i = 0;
+        int turn = 0;
+        char[] placementArray = placement.toCharArray();
         ArrayList<ImageView> patchList = new ArrayList<ImageView>();
-        for (char t: placement.toCharArray()){
-            image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + t + ".png"));
-            currentY += image.getHeight();
-            patchList.add(new ImageView(image));
-            patchList.get(i).setX(currentX);
-            patchList.get(i).setY(VIEWER_HEIGHT-currentY);
-            i++;
+        for (int i = 0; i < placementArray.length; i++){
+            if (placementArray[i] != ' '){
+                image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + placementArray[i] + ".png"));
+                currentX = 11 + (turn % 2) * 461 + (placementArray[i+1]-65)*50 + ((placementArray[i+3]-65) % 2) * ((int) (image.getHeight()*0.25));
+                currentY = VIEWER_HEIGHT - 200 - (placementArray[i+2]-65)*50 + ((placementArray[i+3]-64) % 2) * ((int) (image.getWidth()*0.5));
+                patchList.add(new ImageView(image));
+                patchList.get(patchList.size()-1).setX(currentX);
+                patchList.get(patchList.size()-1).setY(currentY);
+                patchList.get(patchList.size()-1).setRotate(((placementArray[i+3]-65) % 4)*90);
+                i += 3;
+            }
+            turn++;
         }
         root.getChildren().addAll(patchList);
     }
