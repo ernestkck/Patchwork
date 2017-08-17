@@ -8,8 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 
 /**
@@ -36,6 +40,22 @@ public class Viewer extends Application {
      */
     void makePlacement(String placement) {
         // FIXME Task 5: implement the simple placement viewer
+        root.getChildren().clear();
+        root.getChildren().add(controls);
+        int currentY = 100;
+        int currentX = 50;
+        Image image;
+        int i = 0;
+        ArrayList<ImageView> patchList = new ArrayList<ImageView>();
+        for (char t: placement.toCharArray()){
+            image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + t + ".png"));
+            currentY += image.getHeight();
+            patchList.add(new ImageView(image));
+            patchList.get(i).setX(currentX);
+            patchList.get(i).setY(VIEWER_HEIGHT-currentY);
+            i++;
+        }
+        root.getChildren().addAll(patchList);
     }
 
     /**
