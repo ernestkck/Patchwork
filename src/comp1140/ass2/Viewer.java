@@ -46,22 +46,68 @@ public class Viewer extends Application {
         int currentX = 50;
         Image image;
         int turn = 0;
+        int timeA = 0;
+        int timeB = 0;
         char[] placementArray = placement.toCharArray();
         ArrayList<ImageView> patchList = new ArrayList<ImageView>();
         for (int i = 0; i < placementArray.length; i++){
             if (placementArray[i] != ' '){
-                image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + placementArray[i] + ".png"));
-                currentX = 11 + (turn % 2) * 461 + (placementArray[i+1]-65)*50 + ((placementArray[i+3]-65) % 2) * ((int) (image.getHeight()*0.25));
-                currentY = VIEWER_HEIGHT - 200 - (placementArray[i+2]-65)*50 + ((placementArray[i+3]-64) % 2) * ((int) (image.getWidth()*0.5));
+                if (Character.isUpperCase(placementArray[i])){
+                    image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + placementArray[i] + ".png"));
+                }
+                else {
+                    image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + placementArray[i] + "_.png"));
+                }
+                currentX = 11 + turn * 461 + (placementArray[i+1]-65)*50 + rotateOffset((placementArray[i+3]-65)*90, image.getHeight(), image.getWidth(), 'X');
+                currentY = 100 + (placementArray[i+2]-65)*50 - rotateOffset((placementArray[i+3]-65)*90, image.getHeight(), image.getWidth(), 'Y');
                 patchList.add(new ImageView(image));
                 patchList.get(patchList.size()-1).setX(currentX);
                 patchList.get(patchList.size()-1).setY(currentY);
                 patchList.get(patchList.size()-1).setRotate(((placementArray[i+3]-65) % 4)*90);
                 i += 3;
+                if (turn == 0){
+                    timeA += patch.Patch.valueOf("" + placementArray[i]).getTimeCost();
+                }
+                else {
+                    timeB += patch.Patch.valueOf("" + placementArray[i]).getTimeCost();
+                }
             }
-            turn++;
+            else {
+                if (turn == 0){
+                    timeA = timeB+1;
+                }
+                else {
+                    timeB = timeA+1;
+                }
+            }
+            if (timeA > timeB){
+                turn = 1;
+            }
+            else if (timeB > timeA){
+                turn = 0;
+            }
+
         }
         root.getChildren().addAll(patchList);
+    }
+    private int rotateOffset(int angle, double height, double width, char axis){
+        if (axis == 'X'){
+            switch (angle/90){
+                case 1:
+                case 3: return ((int) (height-width)/2);
+                case 2: return ((int) (height-width));
+                default: return 0;
+            }
+        }
+        else {
+            switch (angle/90){
+                case 1: if (height > width) {
+                            return ((int) (height-width)/2);
+                        }
+                case 3: return ((int) (width-height)/2);
+                default: return 0;
+            }
+        }
     }
 
     /**
