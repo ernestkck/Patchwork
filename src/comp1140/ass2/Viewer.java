@@ -58,12 +58,12 @@ public class Viewer extends Application {
                 else {
                     image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + placementArray[i] + "_.png"));
                 }
-                currentX = 11 + turn * 461 + (placementArray[i+1]-65)*50 + rotateOffset((placementArray[i+3]-65)*90, image.getHeight(), image.getWidth(), 'X');
-                currentY = 100 + (placementArray[i+2]-65)*50 - rotateOffset((placementArray[i+3]-65)*90, image.getHeight(), image.getWidth(), 'Y');
+                currentX = 11 + turn * 461 + (placementArray[i+1]-65)*50 + rotateOffset(((placementArray[i+3]-65) % 4)*90, image.getHeight(), image.getWidth(), 'X');
+                currentY = 100 + (placementArray[i+2]-65)*50 - rotateOffset(((placementArray[i+3]-65) % 4)*90, image.getHeight(), image.getWidth(), 'Y');
                 patchList.add(new ImageView(image));
                 patchList.get(patchList.size()-1).setX(currentX);
                 patchList.get(patchList.size()-1).setY(currentY);
-                patchList.get(patchList.size()-1).setRotate(((placementArray[i+3]-65) % 4)*90);
+                patchList.get(patchList.size()-1).setRotate(((placementArray[i+3]-65) % 4)*90 + ((placementArray[i+3]-65) / 4)*180);
                 i += 3;
                 if (turn == 0){
                     timeA += patch.Patch.valueOf("" + placementArray[i]).getTimeCost();
