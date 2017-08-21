@@ -11,7 +11,7 @@ public class Player {
         this.timeSquare = timeSquare;
         this.buttonsOwned = buttonsOwned;
         this.buttonIncome = buttonIncome;
-        grid = new boolean[8][8];
+        grid = new boolean[9][9];
     }
 
     public int getTimeSquare(){
