@@ -51,15 +51,10 @@ public class PatchworkGame {
      */
     static boolean isPlacementWellFormed(String placement) {
 
-        if (placement == "" || placement == null){
-            return false;
-        }
-        String filtered = "";
-        for (char t: placement.toCharArray()){
-            if (t != '.'){
-                filtered += t;
-            }
-        }
+        if (isEmpty(placement)) return false;
+
+        String filtered = placement.replace(".","");
+
         if (filtered.length() % 4 == 0){
             String patch = "";
             String placements = "";
@@ -89,6 +84,10 @@ public class PatchworkGame {
         return true;
     }
 
+    static boolean isEmpty(String s){
+        if(s != null && s.length() != 0) return false;
+        return true;
+    }
     /**
      * Determine whether a placement is valid.  To be valid, the placement must be well-formed
      * and each tile placement must follow the game's placement rules.
@@ -99,6 +98,7 @@ public class PatchworkGame {
      */
     static boolean isPlacementValid(String patchCircle, String placement) {
         // FIXME Task 6: determine whether a placement is valid
+        if(isEmpty(patchCircle) || isEmpty(placement)) return false;
         return true;
     }
 
