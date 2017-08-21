@@ -39,7 +39,6 @@ public class Viewer extends Application {
      * @param placement A valid placement string
      */
     void makePlacement(String placement) {
-        // FIXME Task 5: implement the simple placement viewer
         root.getChildren().clear();
         root.getChildren().add(controls);
         int currentY = 100;

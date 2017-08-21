@@ -32,7 +32,7 @@ public class PatchworkGame {
         if(placement.equals(".")) return true;
         if(placement.length() != 4) return false;
         char[] c = placement.toCharArray();
-        if(c[0] < 'A' || (c[0] > 'Z' && c[0] < 'a') || c[0] > 'z') return false;
+        if(c[0] < 'A' || (c[0] > 'Z' && c[0] < 'a') || c[0] > 'h') return false;
         if(c[1] < 'A' || c[1] >'I') return false;
         if(c[2] < 'A' || c[2] >'I') return false;
         if(c[3] < 'A' || c[3] >'H') return false;
@@ -50,7 +50,7 @@ public class PatchworkGame {
      * @return true if the placement is well-formed
      */
     static boolean isPlacementWellFormed(String placement) {
-        // FIXME Task 4: determine whether a placement is well-formed
+
         if (placement == "" || placement == null){
             return false;
         }
