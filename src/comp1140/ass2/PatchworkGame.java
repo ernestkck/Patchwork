@@ -8,12 +8,10 @@ import java.util.Arrays;
  */
 public class PatchworkGame {
 
-    
     public PatchworkGame(String patchCircleString) {
     }
 
     public PatchworkGame() {
-
     }
 
     /**
@@ -58,21 +56,26 @@ public class PatchworkGame {
         if (filtered.length() % 4 == 0){
             String patch = "";
             String placements = "";
+            //int hCount = 0;
             for (int i = 0; i < filtered.length(); i++){
                 patch += filtered.charAt(i);
                 if ((i + 1) % 4 == 0){
                     for (char chr : placements.toCharArray()){
-                        if (chr == patch.charAt(0) && chr != 'h'){
+                        if (chr == patch.charAt(0)){
                             return false;
                         }
-
                     }
 
-                    if (!isPatchPlacementWellFormed(patch)){
+                    if (!isPatchPlacementWellFormed(patch)){// || (patch.charAt(0) == 'h' && hCount >= 4)){
                         return false;
                     }
 
-                    placements += patch.charAt(0);
+                    if (patch.charAt(0) != 'h'){
+                        placements += patch.charAt(0);
+                    }
+                    //else{
+                    //    hCount += 1;
+                    //}
                     patch = "";
                 }
 
