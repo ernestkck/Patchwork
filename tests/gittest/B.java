@@ -5,6 +5,6 @@ package gittest;
  */
 public class B {
     public String toString(){
-        return "a String";
+        return "The Best Text";
     }
 }
