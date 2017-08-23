@@ -1,16 +1,18 @@
 package comp1140.ass2;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
+import java.util.ArrayList;
 
 public class Board {
     public final int[] buttonEvent = IntStream.range(5, 54).filter(x -> x % 6 == 5).toArray();
-    public final int[] patchEvent  = IntStream.range(20, 51).filter(x -> x % 6 == 2 && x != 38).toArray();
+    public final ArrayList<Integer> patchEvent = new ArrayList(Arrays.asList(20, 26, 32, 44, 50));
 
     public int[] getButtonEvent(){
         return buttonEvent;
     }
 
-    public int[] getPatchEvent() {
+    public ArrayList<Integer> getPatchEvent() {
         return patchEvent;
     }
 
@@ -29,6 +31,7 @@ public class Board {
         for (int num : patchEvent){
             if (num <= newPos && num > lastPos){
                 out += 1;
+                patchEvent.remove(num);
             }
         }
         return out;

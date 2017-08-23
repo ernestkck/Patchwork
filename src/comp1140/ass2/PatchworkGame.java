@@ -56,7 +56,7 @@ public class PatchworkGame {
         if (filtered.length() % 4 == 0){
             String patch = "";
             String placements = "";
-            //int hCount = 0;
+            int hCount = 0;
             for (int i = 0; i < filtered.length(); i++){
                 patch += filtered.charAt(i);
                 if ((i + 1) % 4 == 0){
@@ -66,16 +66,16 @@ public class PatchworkGame {
                         }
                     }
 
-                    if (!isPatchPlacementWellFormed(patch)){// || (patch.charAt(0) == 'h' && hCount >= 4)){
+                    if (!isPatchPlacementWellFormed(patch) || (patch.charAt(0) == 'h' && hCount >= 5)){
                         return false;
                     }
 
                     if (patch.charAt(0) != 'h'){
                         placements += patch.charAt(0);
                     }
-                    //else{
-                    //    hCount += 1;
-                    //}
+                    else{
+                        hCount += 1;
+                    }
                     patch = "";
                 }
 
