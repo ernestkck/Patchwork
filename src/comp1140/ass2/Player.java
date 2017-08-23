@@ -41,7 +41,7 @@ public class Player {
     public void updateButtonIncome(int income){
         buttonIncome += income;
     }
-    public void buyPatch(patch.Patch newPatch){
+    public void buyPatch(Patch newPatch){
         updateButtonsOwned(-newPatch.getButtonCost());
         updateTimeSquare(newPatch.getTimeCost());
         updateButtonIncome(newPatch.getButtonIncome());

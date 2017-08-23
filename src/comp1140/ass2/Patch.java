@@ -3,8 +3,7 @@ package comp1140.ass2;
 /**
  * Created by jack1 on 18/08/2017.
  */
-public class patch {
-    public enum Patch {
+public enum Patch {
         A(2, 1, 0),
         B(1, 3, 0),
         C(3, 1, 0),
@@ -63,7 +62,5 @@ public class patch {
         public int getButtonIncome(){
             return buttonIncome;
         }
-
-    }
 
 }
