@@ -92,19 +92,19 @@ public class Viewer extends Application {
     }
     private int rotateOffset(int angle, double height, double width, char axis){
         if (axis == 'X'){
-            switch (angle/90){
-                case 1:
-                case 3: return ((int) (height-width)/2);
-                case 2: return ((int) (height-width));
+            switch ((angle/90)%2){
+                case 1:  return ((int) (height-width)/2);
                 default: return 0;
             }
         }
         else {
-            switch (angle/90){
+            switch ((angle/90)%2){ //TODO: for some cases e.g patch G, rotation does not work correctly
                 case 1: if (height > width) {
                             return ((int) (height-width)/2);
                         }
-                case 3: return ((int) (width-height)/2);
+                        else{
+                            return ((int) (width-height)/2);
+                         }
                 default: return 0;
             }
         }
