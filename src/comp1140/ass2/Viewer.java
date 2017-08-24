@@ -66,10 +66,10 @@ public class Viewer extends Application {
                 patchList.get(patchList.size()-1).setRotate(((placementArray[i+3]-65) % 4)*90 + ((placementArray[i+3]-65) / 4)*180);
                 i += 3;
                 if (turn == 0){
-                    timeA += patch.Patch.valueOf("" + placementArray[i]).getTimeCost();
+                    timeA += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
                 else {
-                    timeB += patch.Patch.valueOf("" + placementArray[i]).getTimeCost();
+                    timeB += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
             }
             else {
