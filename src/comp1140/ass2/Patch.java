@@ -161,9 +161,9 @@ public enum Patch {
                 {false, true, true}
         }),
         d(1, 2, 0, new Boolean[][]{
-                {false, false, false},
                 {true, false, true},
-                {true, true, true}
+                {true, true, true},
+                {false, false, false}
         }),
         e(2, 3, 1, new Boolean[][]{
                 {false, true, false, false},

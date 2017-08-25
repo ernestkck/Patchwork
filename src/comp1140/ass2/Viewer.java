@@ -39,8 +39,9 @@ public class Viewer extends Application {
      * @param placement A valid placement string
      */
     void makePlacement(String placement) {
-        placement = placement.replace(".","");
         root.getChildren().clear();
+        ImageView bg = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "grid.png")));
+        root.getChildren().add(bg);
         root.getChildren().add(controls);
         int currentY = 100;
         int currentX = 50;
@@ -51,7 +52,7 @@ public class Viewer extends Application {
         char[] placementArray = placement.toCharArray();
         ArrayList<ImageView> patchList = new ArrayList<ImageView>();
         for (int i = 0; i < placementArray.length; i++){
-            if (placementArray[i] != ' '){
+            if (placementArray[i] != '.'){
                 if (Character.isUpperCase(placementArray[i])){
                     image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + placementArray[i] + ".png"));
                 }
@@ -98,13 +99,8 @@ public class Viewer extends Application {
             }
         }
         else {
-            switch ((angle/90)%2){ //TODO: for some cases e.g patch G, rotation does not work correctly
-                case 1: if (height > width) {
-                            return ((int) (height-width)/2);
-                        }
-                        else{
-                            return ((int) (width-height)/2);
-                         }
+            switch ((angle/90)%2){
+                case 1:  return ((int) (height-width)/2);
                 default: return 0;
             }
         }
