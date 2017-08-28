@@ -33,14 +33,14 @@ public enum Patch {
         }),
         G(1, 4, 1, new boolean[][]{
                 {false, false, true, false, false},
-                {true, true, true, true, true},
+                {true,  true, true, true, true},
                 {false, false, true, false, false}
         }),
         H(0, 3, 1, new boolean[][]{
-                {false, true, false, false},
-                {true, true, true, false},
-                {false, true, false, false},
-                {false, true, false, false}
+                {false, true, false},
+                {true, true, true},
+                {false, true, false},
+                {false, true, false}
         }),
         I(6, 5, 2, new boolean[][]{
                 {true, true},
@@ -141,14 +141,13 @@ public enum Patch {
         a(4, 2, 1, new boolean[][]{
                 {true, false},
                 {true, false},
-                {true, false},
                 {true, true}
         }),
         b(7, 2, 2, new boolean[][]{
-                {false, true, false, false},
-                {false, true, false, false},
-                {false, true, false, false},
-                {true, true, true, false}
+                {false, true, false},
+                {false, true, false},
+                {false, true, false},
+                {true, true, true}
         }),
         c(10, 4, 3, new boolean[][]{
                 {true, false, false},
@@ -157,8 +156,7 @@ public enum Patch {
         }),
         d(1, 2, 0, new boolean[][]{
                 {true, false, true},
-                {true, true, true},
-                {false, false, false}
+                {true, true, true}
         }),
         e(2, 3, 1, new boolean[][]{
                 {false, true},

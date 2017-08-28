@@ -102,7 +102,8 @@ public class PatchworkGame {
     static boolean isPlacementValid(String patchCircle, String placement) {
         // FIXME Task 6: determine whether a placement is valid
         if(isEmpty(patchCircle) || isEmpty(placement)) return false;
-        char[] patchArray = patchCircle.toCharArray();
+        if (!isPlacementWellFormed(placement)) return false;
+        /*char[] patchArray = patchCircle.toCharArray();
         char[] placementArray = placement.toCharArray();
         Boolean turn = false;
         int timeA = 0;
@@ -194,9 +195,9 @@ public class PatchworkGame {
                 }
             }
         }
-        catch (Exception ArrayIndexOutOfBoundsExcpetion){
+        catch (Exception ArrayIndexOutOfBoundsException){
             return false;
-        }
+        }*/
         return true;
     }
 
