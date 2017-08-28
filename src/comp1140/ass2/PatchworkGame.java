@@ -103,15 +103,15 @@ public class PatchworkGame {
         // FIXME Task 6: determine whether a placement is valid
         if(isEmpty(patchCircle) || isEmpty(placement)) return false;
         if (!isPlacementWellFormed(placement)) return false;
-        /*char[] patchArray = patchCircle.toCharArray();
+        char[] patchArray = patchCircle.toCharArray();
         char[] placementArray = placement.toCharArray();
-        Boolean turn = false;
+        boolean turn = false;
+        boolean previousTurn = false;
         int timeA = 0;
         int timeB = 0;
         boolean[][] gridA = new boolean[9][9];
         boolean[][] gridB = new boolean[9][9];
         boolean[][] locationGrid;
-        ArrayList<Character> patchUsed = new ArrayList<>();
         for (int i = 0; i< placementArray.length; i++){
             if (placementArray[i] == '.'){
                 if (turn){
@@ -122,7 +122,6 @@ public class PatchworkGame {
                 }
             }
             else {
-                patchUsed.add(placementArray[i]);
                 if (turn){
                     timeB += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
@@ -130,18 +129,20 @@ public class PatchworkGame {
                     timeA += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
                 locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
-                if (placementArray[i+3]-65 > 1 && placementArray[i+3]-65 < 6) {
-                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
-                    for (int a = 0; a < locationGrid.length; a++){
-                        tempGrid[a] = locationGrid[locationGrid.length-a];
+                if ((placementArray[i+3]-65)%2==1){
+                    boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
+                    for (int row = 0; row < locationGrid.length; row++){
+                        for (int col = 0; col < locationGrid[0].length; col++){
+                            tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
+                        }
                     }
                     locationGrid = tempGrid;
                 }
-                if ((placementArray[i+3]-65)%2==1){
+                if ((placementArray[i+3]-65) / 4 == 1) {
                     boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
                     for (int a = 0; a < locationGrid.length; a++){
                         for (int b = 0; b < locationGrid[0].length; b++){
-                            tempGrid[b][locationGrid.length-a-1] = locationGrid[a][b];
+                            tempGrid[a][b] = locationGrid[a][locationGrid[0].length-b-1];
                         }
                     }
                     locationGrid = tempGrid;
@@ -173,31 +174,6 @@ public class PatchworkGame {
                 turn = false;
             }
         }
-        char[] newPatch = patchCircle.toCharArray();
-        if (patchUsed.contains(newPatch[0])) return false;
-        locationGrid = Patch.valueOf("" + newPatch[0]).getLocationGrid();
-        try {
-            if (turn) {
-                for (int a = 0; a < locationGrid.length; a++) {
-                    for (int b = 0; b < locationGrid[0].length; b++) {
-                        if (locationGrid[a][b]) {
-                            if (gridB[a + newPatch[2] - 65][b + newPatch[1] - 65] && locationGrid[a][b]) return false;
-                        }
-                    }
-                }
-            } else {
-                for (int a = 0; a < locationGrid.length; a++) {
-                    for (int b = 0; b < locationGrid[0].length; b++) {
-                        if (locationGrid[a][b]) {
-                            if (gridA[a + newPatch[2] - 65][b + newPatch[1] - 65] && locationGrid[a][b]) return false;
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception ArrayIndexOutOfBoundsException){
-            return false;
-        }*/
         return true;
     }
 
