@@ -101,8 +101,14 @@ public class PatchworkGame {
      */
     static boolean isPlacementValid(String patchCircle, String placement) {
         // FIXME Task 6: determine whether a placement is valid
-        if(isEmpty(patchCircle) || isEmpty(placement)) return false;
-        if (!isPlacementWellFormed(placement)) return false;
+        if(isEmpty(patchCircle) || isEmpty(placement)) {
+            System.out.println("isEmpty");
+            return false;
+        }
+        if (!isPlacementWellFormed(placement)) {
+            System.out.println("not well formed");
+            return false;
+        }
         char[] patchArray = patchCircle.toCharArray();
         char[] placementArray = placement.toCharArray();
         boolean turn = false;
@@ -115,10 +121,10 @@ public class PatchworkGame {
         for (int i = 0; i< placementArray.length; i++){
             if (placementArray[i] == '.'){
                 if (turn){
-                    timeB ++;
+                    timeB = timeA+1;
                 }
                 else{
-                    timeA ++;
+                    timeA = timeB+1;
                 }
             }
             else {
@@ -139,7 +145,7 @@ public class PatchworkGame {
                     locationGrid = tempGrid;
                 }
                 if ((placementArray[i+3]-65) / 4 == 1) {
-                    boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
+                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
                     for (int a = 0; a < locationGrid.length; a++){
                         for (int b = 0; b < locationGrid[0].length; b++){
                             tempGrid[a][b] = locationGrid[a][locationGrid[0].length-b-1];
@@ -147,10 +153,24 @@ public class PatchworkGame {
                     }
                     locationGrid = tempGrid;
                 }
+                if (((placementArray[i+3]-65) / 2) % 2 == 1) {
+                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                    for (int a = 0; a < locationGrid.length; a++){
+                        for (int b = 0; b < locationGrid[0].length; b++){
+                            tempGrid[a][b] = locationGrid[locationGrid.length-1-a][locationGrid[0].length-1-b];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if (placementArray[i] == 'h') turn = previousTurn;
                 if (turn) {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
+                                if (gridB[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                    System.out.println("Grid B overlap");
+                                    return false;
+                                }
                                 gridB[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
                             }
                         }
@@ -160,6 +180,10 @@ public class PatchworkGame {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
+                                if (gridA[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                    System.out.println("Grid A overlap");
+                                    return false;
+                                }
                                 gridA[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
                             }
                         }
@@ -167,6 +191,7 @@ public class PatchworkGame {
                 }
                 i+=3;
             }
+            previousTurn = turn;
             if (timeA > timeB){
                 turn = true;
             }

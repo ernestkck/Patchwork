@@ -53,12 +53,13 @@ public enum Patch {
                 {false, true}
         }),
         K(2, 2, 0, new boolean[][]{
-                {true, false},
+                {false, true},
                 {true, true},
-                {true, true}
+                {false, true}
         }),
         L(1, 5, 1, new boolean[][]{
                 {true, true},
+                {false, true},
                 {false, true},
                 {true, true}
         }),
@@ -69,7 +70,7 @@ public enum Patch {
                 {true}
         }),
         N(7, 1, 1, new boolean[][]{
-                {true, true, true, true}
+                {true, true, true, true, true}
         }),
         O(3, 4, 1, new boolean[][]{
                 {true, false},
