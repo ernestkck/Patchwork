@@ -101,27 +101,33 @@ public class PatchworkGame {
      */
     static boolean isPlacementValid(String patchCircle, String placement) {
         // FIXME Task 6: determine whether a placement is valid
-        if(isEmpty(patchCircle) || isEmpty(placement)) return false;
+        if(isEmpty(patchCircle) || isEmpty(placement)) {
+            System.out.println("isEmpty");
+            return false;
+        }
+        if (!isPlacementWellFormed(placement)) {
+            System.out.println("not well formed");
+            return false;
+        }
         char[] patchArray = patchCircle.toCharArray();
         char[] placementArray = placement.toCharArray();
-        Boolean turn = false;
+        boolean turn = false;
+        boolean previousTurn = false;
         int timeA = 0;
         int timeB = 0;
         boolean[][] gridA = new boolean[9][9];
         boolean[][] gridB = new boolean[9][9];
         boolean[][] locationGrid;
-        ArrayList<Character> patchUsed = new ArrayList<>();
         for (int i = 0; i< placementArray.length; i++){
             if (placementArray[i] == '.'){
                 if (turn){
-                    timeB ++;
+                    timeB = timeA+1;
                 }
                 else{
-                    timeA ++;
+                    timeA = timeB+1;
                 }
             }
             else {
-                patchUsed.add(placementArray[i]);
                 if (turn){
                     timeB += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
@@ -129,26 +135,42 @@ public class PatchworkGame {
                     timeA += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
                 locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
-                if (placementArray[i+3]-65 > 1 && placementArray[i+3]-65 < 6) {
-                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
-                    for (int a = 0; a < locationGrid.length; a++){
-                        tempGrid[a] = locationGrid[locationGrid.length-a];
-                    }
-                    locationGrid = tempGrid;
-                }
                 if ((placementArray[i+3]-65)%2==1){
                     boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
-                    for (int a = 0; a < locationGrid.length; a++){
-                        for (int b = 0; b < locationGrid[0].length; b++){
-                            tempGrid[b][locationGrid.length-a-1] = locationGrid[a][b];
+                    for (int row = 0; row < locationGrid.length; row++){
+                        for (int col = 0; col < locationGrid[0].length; col++){
+                            tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
                         }
                     }
                     locationGrid = tempGrid;
                 }
+                if ((placementArray[i+3]-65) / 4 == 1) {
+                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                    for (int a = 0; a < locationGrid.length; a++){
+                        for (int b = 0; b < locationGrid[0].length; b++){
+                            tempGrid[a][b] = locationGrid[a][locationGrid[0].length-b-1];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if (((placementArray[i+3]-65) / 2) % 2 == 1) {
+                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                    for (int a = 0; a < locationGrid.length; a++){
+                        for (int b = 0; b < locationGrid[0].length; b++){
+                            tempGrid[a][b] = locationGrid[locationGrid.length-1-a][locationGrid[0].length-1-b];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if (placementArray[i] == 'h') turn = previousTurn;
                 if (turn) {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
+                                if (gridB[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                    System.out.println("Grid B overlap");
+                                    return false;
+                                }
                                 gridB[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
                             }
                         }
@@ -158,6 +180,10 @@ public class PatchworkGame {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
+                                if (gridA[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                    System.out.println("Grid A overlap");
+                                    return false;
+                                }
                                 gridA[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
                             }
                         }
@@ -165,37 +191,13 @@ public class PatchworkGame {
                 }
                 i+=3;
             }
+            previousTurn = turn;
             if (timeA > timeB){
                 turn = true;
             }
             else if (timeB > timeA){
                 turn = false;
             }
-        }
-        char[] newPatch = patchCircle.toCharArray();
-        if (patchUsed.contains(newPatch[0])) return false;
-        locationGrid = Patch.valueOf("" + newPatch[0]).getLocationGrid();
-        try {
-            if (turn) {
-                for (int a = 0; a < locationGrid.length; a++) {
-                    for (int b = 0; b < locationGrid[0].length; b++) {
-                        if (locationGrid[a][b]) {
-                            if (gridB[a + newPatch[2] - 65][b + newPatch[1] - 65] && locationGrid[a][b]) return false;
-                        }
-                    }
-                }
-            } else {
-                for (int a = 0; a < locationGrid.length; a++) {
-                    for (int b = 0; b < locationGrid[0].length; b++) {
-                        if (locationGrid[a][b]) {
-                            if (gridA[a + newPatch[2] - 65][b + newPatch[1] - 65] && locationGrid[a][b]) return false;
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception ArrayIndexOutOfBoundsExcpetion){
-            return false;
         }
         return true;
     }
