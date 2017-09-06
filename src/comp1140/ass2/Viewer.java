@@ -150,7 +150,7 @@ public class Viewer extends Application {
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
 
         makeControls();
-
+        makePlacement("");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
