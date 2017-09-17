@@ -135,20 +135,20 @@ public class PatchworkGame {
                     timeA += Patch.valueOf("" + placementArray[i]).getTimeCost();
                 }
                 locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
-                if ((placementArray[i+3]-65)%2==1){
-                    boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
-                    for (int row = 0; row < locationGrid.length; row++){
-                        for (int col = 0; col < locationGrid[0].length; col++){
-                            tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
-                        }
-                    }
-                    locationGrid = tempGrid;
-                }
                 if ((placementArray[i+3]-65) / 4 == 1) {
                     boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
                     for (int a = 0; a < locationGrid.length; a++){
                         for (int b = 0; b < locationGrid[0].length; b++){
                             tempGrid[a][b] = locationGrid[a][locationGrid[0].length-b-1];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if ((placementArray[i+3]-65)%2==1){
+                    boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
+                    for (int row = 0; row < locationGrid.length; row++){
+                        for (int col = 0; col < locationGrid[0].length; col++){
+                            tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
                         }
                     }
                     locationGrid = tempGrid;
