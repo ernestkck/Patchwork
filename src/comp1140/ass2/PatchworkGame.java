@@ -212,8 +212,10 @@ public class PatchworkGame {
      * @return the score for the requested player, given the placement
      */
     static int getScoreForPlacement(String patchCircle, String placement, boolean firstPlayer) {
-        // FIXME Task 7: determine the score for a player given a placement
-        return 0;
+        if (firstPlayer){
+            return Game.playerA.getButtonsOwned();
+        }
+        return Game.playerB.getButtonsOwned();
     }
 
 }
