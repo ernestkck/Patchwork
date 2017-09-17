@@ -16,24 +16,24 @@ public class Board {
         return patchEvent;
     }
 
-    public int triggeredButtonEvent(int lastPos, int newPos){
+    public boolean triggeredButtonEvent(int lastPos, int newPos){
         int out = 0;
         for (int num : buttonEvent){
             if (num <= newPos && num > lastPos){
-                out += 1;
+                return true;
             }
         }
-        return out;
+        return false;
     }
 
-    public int triggeredPatchEvent(int lastPos, int newPos){
+    public boolean triggeredPatchEvent(int lastPos, int newPos){
         int out = 0;
         for (int num : patchEvent){
             if (num <= newPos && num > lastPos){
-                out += 1;
                 patchEvent.remove(num);
+                return true;
             }
         }
-        return out;
+        return false;
     }
 }

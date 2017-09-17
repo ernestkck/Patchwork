@@ -52,4 +52,5 @@ public class Player {
     public boolean updateGrid(String patchString){
         return false;
     }
+    public boolean[][] getGrid(){ return grid; }
 }

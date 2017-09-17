@@ -100,7 +100,6 @@ public class PatchworkGame {
      * @return true if the placement is valid
      */
     static boolean isPlacementValid(String patchCircle, String placement) {
-        // FIXME Task 6: determine whether a placement is valid
         if(isEmpty(patchCircle) || isEmpty(placement)) {
             System.out.println("isEmpty");
             return false;
@@ -111,28 +110,26 @@ public class PatchworkGame {
         }
         char[] patchArray = patchCircle.toCharArray();
         char[] placementArray = placement.toCharArray();
+        Player playerA = new Player(0,0,0);
+        Player playerB = new Player(0,0,0);
         boolean turn = false;
         boolean previousTurn = false;
-        int timeA = 0;
-        int timeB = 0;
-        boolean[][] gridA = new boolean[9][9];
-        boolean[][] gridB = new boolean[9][9];
         boolean[][] locationGrid;
         for (int i = 0; i< placementArray.length; i++){
             if (placementArray[i] == '.'){
                 if (turn){
-                    timeB = timeA+1;
+                    playerB.setTimeSquare(playerA.getTimeSquare()+1);
                 }
                 else{
-                    timeA = timeB+1;
+                    playerA.setTimeSquare(playerB.getTimeSquare()+1);
                 }
             }
             else {
                 if (turn){
-                    timeB += Patch.valueOf("" + placementArray[i]).getTimeCost();
+                    playerB.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
                 }
                 else{
-                    timeA += Patch.valueOf("" + placementArray[i]).getTimeCost();
+                    playerA.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
                 }
                 locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
                 if ((placementArray[i+3]-65) / 4 == 1) {
@@ -167,11 +164,11 @@ public class PatchworkGame {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
-                                if (gridB[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                if (playerB.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
                                     System.out.println("Grid B overlap");
                                     return false;
                                 }
-                                gridB[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
+                                playerB.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
                             }
                         }
                     }
@@ -180,11 +177,11 @@ public class PatchworkGame {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
-                                if (gridA[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                if (playerA.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
                                     System.out.println("Grid A overlap");
                                     return false;
                                 }
-                                gridA[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
+                                playerA.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
                             }
                         }
                     }
@@ -192,10 +189,10 @@ public class PatchworkGame {
                 i+=3;
             }
             previousTurn = turn;
-            if (timeA > timeB){
+            if (playerA.getTimeSquare() > playerB.getTimeSquare()){
                 turn = true;
             }
-            else if (timeB > timeA){
+            else if (playerB.getTimeSquare() > playerA.getTimeSquare()){
                 turn = false;
             }
         }
@@ -212,10 +209,125 @@ public class PatchworkGame {
      * @return the score for the requested player, given the placement
      */
     static int getScoreForPlacement(String patchCircle, String placement, boolean firstPlayer) {
-        if (firstPlayer){
-            return Game.playerA.getButtonsOwned();
+        char[] placementArray = placement.toCharArray();
+        Player playerA = new Player(0,5,0);
+        Player playerB = new Player(0,5,0);
+        boolean turn = false;
+        boolean previousTurn = false;
+        int previousTime;
+        boolean[][] locationGrid;
+        Board events = new Board();
+        System.out.println(Arrays.toString(events.buttonEvent));
+        for (int i = 0; i< placementArray.length; i++){
+            if (placementArray[i] == '.'){
+                if (turn){
+                    previousTime = playerB.getTimeSquare();
+                    playerB.setTimeSquare(playerA.getTimeSquare()+1);
+                    playerB.updateButtonsOwned(playerB.getTimeSquare()-previousTime);
+                }
+                else{
+                    previousTime = playerA.getTimeSquare();
+                    playerA.setTimeSquare(playerB.getTimeSquare()+1);
+                    playerA.updateButtonsOwned(playerB.getTimeSquare()-previousTime);
+                }
+            }
+            else {
+                if (turn){
+                    previousTime = playerA.getTimeSquare();
+                    playerB.buyPatch(Patch.valueOf("" + placementArray[i]));
+                    if (events.triggeredButtonEvent(previousTime, playerB.getTimeSquare())){
+                            playerB.collectIncome();
+                            System.out.println("player b collected " + playerB.getButtonIncome() + " after going from " + previousTime + " to " + playerB.getTimeSquare());
+                    }
+                    System.out.println(playerB.getButtonsOwned());
+                }
+                else{
+                    previousTime = playerB.getTimeSquare();
+                    playerA.buyPatch(Patch.valueOf("" + placementArray[i]));
+                    if (events.triggeredButtonEvent(previousTime, playerA.getTimeSquare())){
+                        playerA.collectIncome();
+                        System.out.println("player a collected " + playerA.getButtonIncome()+ " after going from " + previousTime + " to " + playerA.getTimeSquare());
+                    }
+                    System.out.println(playerA.getButtonsOwned());
+                }
+                locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
+                if ((placementArray[i+3]-65) / 4 == 1) {
+                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                    for (int a = 0; a < locationGrid.length; a++){
+                        for (int b = 0; b < locationGrid[0].length; b++){
+                            tempGrid[a][b] = locationGrid[a][locationGrid[0].length-b-1];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if ((placementArray[i+3]-65)%2==1){
+                    boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
+                    for (int row = 0; row < locationGrid.length; row++){
+                        for (int col = 0; col < locationGrid[0].length; col++){
+                            tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if (((placementArray[i+3]-65) / 2) % 2 == 1) {
+                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                    for (int a = 0; a < locationGrid.length; a++){
+                        for (int b = 0; b < locationGrid[0].length; b++){
+                            tempGrid[a][b] = locationGrid[locationGrid.length-1-a][locationGrid[0].length-1-b];
+                        }
+                    }
+                    locationGrid = tempGrid;
+                }
+                if (placementArray[i] == 'h') turn = previousTurn;
+                if (turn) {
+                    for (int a = 0; a < locationGrid.length; a++) {
+                        for (int b = 0; b < locationGrid[0].length; b++) {
+                            if (locationGrid[a][b]){
+                                playerB.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (int a = 0; a < locationGrid.length; a++) {
+                        for (int b = 0; b < locationGrid[0].length; b++) {
+                            if (locationGrid[a][b]){
+                                playerA.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
+                            }
+                        }
+                    }
+                }
+                i+=3;
+            }
+            previousTurn = turn;
+            if (playerA.getTimeSquare() > playerB.getTimeSquare()){
+                turn = true;
+            }
+            else if (playerB.getTimeSquare() > playerA.getTimeSquare()){
+                turn = false;
+            }
         }
-        return Game.playerB.getButtonsOwned();
+        int blankSpace = 0;
+        if (firstPlayer){
+            for (boolean[] row: playerA.getGrid()){
+                for (boolean column: row){
+                    if (!column){
+                        blankSpace += 2;
+                    }
+                }
+            }
+            System.out.println(playerA.getButtonsOwned() - blankSpace);
+            return playerA.getButtonsOwned() - blankSpace;
+        }
+        for (boolean[] row: playerB.getGrid()){
+            for (boolean column: row){
+                if (!column){
+                    blankSpace += 2;
+                }
+            }
+        }
+        System.out.println(playerB.getButtonsOwned() - blankSpace);
+        return playerB.getButtonsOwned() - blankSpace;
     }
 
 }
