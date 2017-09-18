@@ -213,17 +213,8 @@ public class PatchworkGame {
         //    System.out.println("Fail");
         //    return 0;
         //}
-        int player1Buttons   = 5;
-        int player1ButIncome = 0;
-        int player1Time      = 0;
-        int player1OldTime   = 0;
-        int player1Spaces    = 81;
-
-        int player2Buttons   = 5;
-        int player2ButIncome = 0;
-        int player2Time      = 0;
-        int player2OldTime   = 0;
-        int player2Spaces    = 81;
+        Player player1 = new Player (0, 5, 0);
+        Player player2 = new Player (0, 5, 0);
 
         boolean player1Turn = true;
         boolean player1OldTurn = true;
@@ -231,32 +222,19 @@ public class PatchworkGame {
         int arraypos = 0;
 
         while (arraypos < placementArray.length){
-            /*System.out.println(arraypos);
-            System.out.println(placementArray[arraypos]);
-            if(player1Turn){
-                System.out.println("It is player 1's turn");
-            }
-            else{
-                System.out.println("It is player 2's turn");
-            }
-            System.out.println(String.format("Player 1: spaces used: %1$d, time: %2$d", 81-player1Spaces, player1Time));
-            System.out.println(String.format("Button: %1$d, Income: %2$d", player1Buttons, player1ButIncome));
-            System.out.println(String.format("Player 2: spaces used: %1$d, time: %2$d", 81-player2Spaces, player2Time));
-            System.out.println(String.format("Button: %1$d, Income: %2$d", player2Buttons, player2ButIncome));*/
+
+            int player1TimeSquare = player1.getTimeSquare();
+            int player2TimeSquare = player2.getTimeSquare();
             if (placementArray[arraypos] == '.'){
                 if (player1Turn){
-                    player1Buttons += Math.min(53, player2Time+1) - player1Time;
-                    player1Time     = Math.min(53, player2Time+1);
-                    for (int i = 0; i < Board.triggeredButtonEvent(player1OldTime, player1Time); i++){
-                        player1Buttons += player1ButIncome;
-                    }
+                    player1.buttonsOwned += Math.min(53, player2TimeSquare+1) - player1TimeSquare;
+                    player1.timeSquare = Math.min(53, player2TimeSquare+1);
+                    player1.buttonsOwned += Board.triggeredButtonEvent(player1TimeSquare, player1.getTimeSquare()) * player1.getButtonIncome();
                 }
                 else{
-                    player2Buttons += Math.min(53, player1Time+1) - player2Time;
-                    player2Time     = Math.min(53, player1Time+1);
-                    for (int i = 0; i < Board.triggeredButtonEvent(player2OldTime, player2Time); i++){
-                        player2Buttons += player2ButIncome;
-                    }
+                    player2.buttonsOwned += Math.min(53, player1TimeSquare+1) - player2TimeSquare;
+                    player2.timeSquare = Math.min(53, player1TimeSquare+1);
+                    player2.buttonsOwned += Board.triggeredButtonEvent(player2TimeSquare, player2.getTimeSquare()) * player2.getButtonIncome();
                 }
                 player1OldTurn = player1Turn;
                 player1Turn = !player1Turn;
@@ -275,44 +253,37 @@ public class PatchworkGame {
                 }
 
                 if ((player1Turn && placementArray[arraypos] != 'h') || (player1OldTurn && placementArray[arraypos] == 'h')){
-                    player1Buttons   -= patch.getButtonCost();
-                    player1ButIncome += patch.getButtonIncome();
-                    player1Time      += patch.getTimeCost();
-                    for (int i = 0; i < Board.triggeredButtonEvent(player1OldTime, player1Time); i++){
-                        player1Buttons += player1ButIncome;
-                    }
-                    player1Spaces    -= spaces;
-                    if (player1Time > player2Time){
+                    player1.buttonsOwned -= patch.getButtonCost();
+                    player1.buttonIncome += patch.getButtonIncome();
+                    player1.timeSquare += patch.getTimeCost();
+                    player1.buttonsOwned += Board.triggeredButtonEvent(player1TimeSquare, player1.getTimeSquare()) * player1.getButtonIncome();
+                    player1.spaces -= spaces;
+                    if (player1.getTimeSquare() > player2.getTimeSquare()){
                         player1OldTurn = player1Turn;
                         player1Turn = false;
                     }
                 }
                 else{
-                    player2Buttons   -= patch.getButtonCost();
-                    player2ButIncome += patch.getButtonIncome();
-                    player2Time      += patch.getTimeCost();
-                    for (int i = 0; i < Board.triggeredButtonEvent(player2OldTime, player2Time); i++){
-                        player2Buttons += player2ButIncome;
-                    }
-                    player2Spaces    -= spaces;
-                    if (player2Time > player1Time){
+                    player2.buttonsOwned -= patch.getButtonCost();
+                    player2.buttonIncome += patch.getButtonIncome();
+                    player2.timeSquare += patch.getTimeCost();
+                    player2.buttonsOwned += Board.triggeredButtonEvent(player2TimeSquare, player2.getTimeSquare()) * player2.getButtonIncome();
+                    player2.spaces -= spaces;
+                    if (player2.getTimeSquare() > player1.getTimeSquare()){
                         player1OldTurn = player1Turn;
                         player1Turn = true;
                     }
                 }
                 arraypos += 4;
             }
-            //System.out.println("-------------------------");
-            player1OldTime = player1Time;
-            player2OldTime = player2Time;
         }
-        System.out.println(String.format("Player 1's Score is %1$d, and time is %2$d", player1Buttons - 2 * player1Spaces, player1Time));
+        /*System.out.println(String.format("Player 1's Score is %1$d, and time is %2$d", player1Buttons - 2 * player1Spaces, player1Time));
         System.out.println(String.format("Player 2's Score is %1$d, and time is %2$d", player2Buttons - 2 * player2Spaces, player2Time));
-        System.out.println("-------------------------");
+        System.out.println("-------------------------");*/
         if (firstPlayer){
-            return player1Buttons - 2 * player1Spaces;
+            return player1.getButtonsOwned() - 2 * player1.getSpaces();
         }
-        return player2Buttons - 2 * player2Spaces;
+        return player2.getButtonsOwned() - 2 * player2.getSpaces();
         /*
         if (firstPlayer){
             return Game.playerA.getButtonsOwned();

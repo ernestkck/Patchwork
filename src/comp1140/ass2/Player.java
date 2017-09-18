@@ -5,12 +5,14 @@ public class Player {
     int timeSquare;
     int buttonsOwned;
     int buttonIncome;
+    int spaces;
     boolean[][] grid;
 
     public Player(int timeSquare, int buttonsOwned, int buttonIncome){
         this.timeSquare = timeSquare;
         this.buttonsOwned = buttonsOwned;
         this.buttonIncome = buttonIncome;
+        this.spaces = 81;
         grid = new boolean[9][9];
     }
 
@@ -23,6 +25,9 @@ public class Player {
     public int getButtonIncome(){
         return buttonIncome;
     }
+    public int getSpaces(){
+        return spaces;
+    }
     public void setButtonsOwned(int buttons){
         buttonsOwned = buttons;
     }
@@ -32,6 +37,9 @@ public class Player {
     public void setButtonIncome(int income){
         buttonIncome = income;
     }
+    public void setSpaces(int newspaces) {
+        spaces = newspaces;
+    }
     public void updateButtonsOwned(int buttons){
         buttonsOwned += buttons;
     }
@@ -40,6 +48,9 @@ public class Player {
     }
     public void updateButtonIncome(int income){
         buttonIncome += income;
+    }
+    public void updateSpaces(int change) {
+        spaces -= change;
     }
     public void buyPatch(Patch newPatch){
         updateButtonsOwned(-newPatch.getButtonCost());
