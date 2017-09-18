@@ -231,7 +231,7 @@ public class PatchworkGame {
         int arraypos = 0;
 
         while (arraypos < placementArray.length){
-            System.out.println(arraypos);
+            /*System.out.println(arraypos);
             System.out.println(placementArray[arraypos]);
             if(player1Turn){
                 System.out.println("It is player 1's turn");
@@ -239,21 +239,21 @@ public class PatchworkGame {
             else{
                 System.out.println("It is player 2's turn");
             }
-            System.out.println(String.format("Player 1's Score is %1$d, and time is %2$d", player1Buttons - 2 * player1Spaces, player1Time));
+            System.out.println(String.format("Player 1: spaces used: %1$d, time: %2$d", 81-player1Spaces, player1Time));
             System.out.println(String.format("Button: %1$d, Income: %2$d", player1Buttons, player1ButIncome));
-            System.out.println(String.format("Player 2's Score is %1$d, and time is %2$d", player2Buttons - 2 * player2Spaces, player2Time));
-            System.out.println(String.format("Button: %1$d, Income: %2$d", player2Buttons, player2ButIncome));
+            System.out.println(String.format("Player 2: spaces used: %1$d, time: %2$d", 81-player2Spaces, player2Time));
+            System.out.println(String.format("Button: %1$d, Income: %2$d", player2Buttons, player2ButIncome));*/
             if (placementArray[arraypos] == '.'){
                 if (player1Turn){
-                    player1Buttons += player2Time + 1 - player1Time;
-                    player1Time     = player2Time + 1;
+                    player1Buttons += Math.min(53, player2Time+1) - player1Time;
+                    player1Time     = Math.min(53, player2Time+1);
                     for (int i = 0; i < Board.triggeredButtonEvent(player1OldTime, player1Time); i++){
                         player1Buttons += player1ButIncome;
                     }
                 }
                 else{
-                    player2Buttons += player1Time + 1 - player2Time;
-                    player2Time     = player1Time + 1;
+                    player2Buttons += Math.min(53, player1Time+1) - player2Time;
+                    player2Time     = Math.min(53, player1Time+1);
                     for (int i = 0; i < Board.triggeredButtonEvent(player2OldTime, player2Time); i++){
                         player2Buttons += player2ButIncome;
                     }
@@ -302,7 +302,7 @@ public class PatchworkGame {
                 }
                 arraypos += 4;
             }
-            System.out.println("-------------------------");
+            //System.out.println("-------------------------");
             player1OldTime = player1Time;
             player2OldTime = player2Time;
         }
