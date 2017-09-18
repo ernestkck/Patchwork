@@ -2,9 +2,12 @@ package comp1140.ass2;
 
 import javafx.application.Application;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -88,8 +91,12 @@ public class Game extends Application{ //this class contains the main method tha
             }
 
         }
+        ArrayList<DraggableNode> db = new ArrayList<>();
+        for (int i = 0; i < patchList.size(); i++){
+            db.add(new DraggableNode(patchList.get(i)));
+        }
         root.getChildren().addAll(bg, tb);
-        root.getChildren().addAll(patchList);
+        root.getChildren().addAll(db);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -98,4 +105,7 @@ public class Game extends Application{ //this class contains the main method tha
         //TODO: Implement code that checks
         if (false)  player.updateButtonIncome(7);
     }
+
+
+
 }
