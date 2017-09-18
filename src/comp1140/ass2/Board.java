@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 import java.util.ArrayList;
 
 public class Board {
-    public final int[] buttonEvent = IntStream.range(5, 54).filter(x -> x % 6 == 5).toArray();
+    static final int[] buttonEvent = IntStream.range(5, 54).filter(x -> x % 6 == 5).toArray();
     public final ArrayList<Integer> patchEvent = new ArrayList(Arrays.asList(20, 26, 32, 44, 50));
 
     public int[] getButtonEvent(){
@@ -16,7 +16,7 @@ public class Board {
         return patchEvent;
     }
 
-    public int triggeredButtonEvent(int lastPos, int newPos){
+    static int triggeredButtonEvent(int lastPos, int newPos){
         int out = 0;
         for (int num : buttonEvent){
             if (num <= newPos && num > lastPos){
