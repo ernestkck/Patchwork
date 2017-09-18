@@ -28,6 +28,9 @@ public class Player {
     public int getSpaces(){
         return spaces;
     }
+    public int getScore(){
+        return buttonsOwned - 2 * spaces;
+    }
     public void setButtonsOwned(int buttons){
         buttonsOwned = buttons;
     }
