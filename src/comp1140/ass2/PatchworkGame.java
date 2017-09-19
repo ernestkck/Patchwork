@@ -1,7 +1,5 @@
 package comp1140.ass2;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -249,6 +247,7 @@ public class PatchworkGame {
             }
             else{
                 Patch patch = Patch.valueOf("" + placementArray[arraypos]);
+
                 int spaces = 0;
                 for (boolean[] rows : patch.getLocationGrid()){
                     for (boolean square : rows){
@@ -257,6 +256,7 @@ public class PatchworkGame {
                         }
                     }
                 }
+
                 if ((player1Turn && placementArray[arraypos] != 'h') || (player1OldTurn && placementArray[arraypos] == 'h')){
                     player1.updateButtonsOwned(-patch.getButtonCost());
                     player1.updateButtonIncome(patch.getButtonIncome());
