@@ -18,8 +18,10 @@ public class Game extends Application{ //this class contains the main method tha
     static Player playerB = new Player(0,5,0);
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-
+    private static final String PATCH_CIRCLE = "STUVWXYZabcdefgABCDEFGHIJKLMNOPQR";
+    private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
+    public ArrayList<guiPatch> patchList = new ArrayList();
 
     private final Group root = new Group();
 
@@ -27,6 +29,73 @@ public class Game extends Application{ //this class contains the main method tha
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Patchwork Viewer");
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
+        makeBoard();
+        makePatchCircle();
+        setDraggable();
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public void isSevenSquare(Player player){
+        //TODO: Implement code that checks
+        if (false)  player.updateButtonIncome(7);
+    }
+    public void makePatchCircle(){
+        double width = 0;
+        double height = 0;
+        double currentX = 10;
+        double currentY = 10;
+        double prevWidth = 0;
+        double prevHeight = 0;
+        int stage = 0;
+        for (char t: PATCH_CIRCLE.toCharArray()){
+            patchList.add(new guiPatch(t));
+            width = patchList.get(patchList.size()-1).getWidth();
+            height = patchList.get(patchList.size()-1).getHeight();
+            if (patchList.size() == 1) {
+                patchList.get(patchList.size()-1).setX(10);
+                patchList.get(patchList.size()-1).setY(10);
+                stage = 1;
+            }
+            else if (currentX+prevWidth+width+10 < 933 && stage == 1){
+                currentX += prevWidth+10;
+                patchList.get(patchList.size()-1).setX(currentX);
+                patchList.get(patchList.size()-1).setY(10);
+            }
+            else if (stage == 1){
+                stage = 2;
+                currentY += prevHeight+10;
+                patchList.get(patchList.size()-1).setX(933-width-10);
+                patchList.get(patchList.size()-1).setY(currentY);
+            }
+            else if (currentY+prevHeight+height+10 < 700 && stage == 2){
+                currentY += prevHeight+10;
+                patchList.get(patchList.size()-1).setX(933-width-10);
+                patchList.get(patchList.size()-1).setY(currentY);
+            }
+            else if (stage == 2){
+                stage = 3;
+                currentX = patchList.get(patchList.size()-2).getX() - prevWidth-10;
+                patchList.get(patchList.size()-1).setX(currentX);
+                patchList.get(patchList.size()-1).setY(700-height-10);
+            }
+            else if (currentX-width-10 > 0 && stage == 3) {
+                currentX -= width+10;
+                patchList.get(patchList.size()-1).setX(currentX);
+                patchList.get(patchList.size()-1).setY(700-height-10);
+            }
+            else {
+                stage = 4;
+                currentY = patchList.get(patchList.size()-2).getY() - height - 10;
+                patchList.get(patchList.size() - 1).setX(10);
+                patchList.get(patchList.size() - 1).setY(currentY);
+            }
+            prevWidth = patchList.get(patchList.size() - 1).getWidth();
+            prevHeight = patchList.get(patchList.size() - 1).getHeight();
+        }
+        root.getChildren().addAll(patchList);
+    }
+    public void makeBoard(){
         ImageView bg = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "grid.png")));
         ImageView tb = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "timeBoard.png")));
         bg.setPreserveRatio(true);
@@ -37,73 +106,25 @@ public class Game extends Application{ //this class contains the main method tha
         tb.setFitWidth(290 * 0.7);
         tb.setX((933-(290*0.7))/2);
         tb.setY(110);
-        ArrayList<ImageView> patchList = new ArrayList();
-        double width;
-        double prevWidth = 0;
-        double height = 0;
-        Image image;
-        char patch;
-        for (int i = 65; i < 91; i++){
-            patch = (char) i;
-            image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + patch + ".png"));
-            width = image.getWidth();
-            patchList.add(new ImageView(image));
-            patchList.get(patchList.size()-1).setPreserveRatio(true);
-            patchList.get(patchList.size()-1).setFitWidth(width*0.5);
-            if (i == 65) {
-                patchList.get(patchList.size()-1).setX(20);
-                patchList.get(patchList.size()-1).setY(10);
-            }
-            else if (i < 77){
-                patchList.get(patchList.size()-1).setX(20+patchList.get(patchList.size()-2).getX()+prevWidth*0.5);
-                patchList.get(patchList.size()-1).setY(10);
-            }
-            else if (i==77){
-                patchList.get(patchList.size()-1).setX(patchList.get(patchList.size()-2).getX());
-                patchList.get(patchList.size()-1).setY(20+patchList.get(patchList.size()-2).getY()+height*0.5);
-            }
-            else if (i < 83){
-                patchList.get(patchList.size()-1).setX(780);
-                patchList.get(patchList.size()-1).setY(10+patchList.get(patchList.size()-2).getY()+height*0.5);
-            }
-            else {
-                patchList.get(patchList.size()-1).setX(patchList.get(patchList.size()-2).getX()-15-width*0.5);
-                patchList.get(patchList.size()-1).setY(patchList.get(patchList.size()-2).getY());
-            }
-            prevWidth = width;
-            height = image.getHeight();
-        }
-        for (int i = 97; i < 103; i++){
-            patch = (char) i;
-            image = new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + patch + "_.png"));
-            width = image.getWidth();
-            patchList.add(new ImageView(image));
-            patchList.get(patchList.size()-1).setPreserveRatio(true);
-            patchList.get(patchList.size()-1).setFitWidth(width*0.5);
-            height = image.getHeight();
-            if (i==97){
-                patchList.get(patchList.size()-1).setX(patchList.get(patchList.size()-2).getX()-40-width*0.5);
-                patchList.get(patchList.size()-1).setY(patchList.get(patchList.size()-2).getY()+20);
-            }
-            else {
-                patchList.get(patchList.size() - 1).setX(patchList.get(patchList.size() - 2).getX());
-                patchList.get(patchList.size() - 1).setY(patchList.get(patchList.size() - 2).getY()-height*0.5-25);
-            }
-
-        }
-        ArrayList<DraggableNode> db = new ArrayList<>();
-        for (int i = 0; i < patchList.size(); i++){
-            db.add(new DraggableNode(patchList.get(i)));
-        }
         root.getChildren().addAll(bg, tb);
-        root.getChildren().addAll(db);
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
-
-    public void isSevenSquare(Player player){
-        //TODO: Implement code that checks
-        if (false)  player.updateButtonIncome(7);
+    public void setDraggable(){
+        for (int i = 0; i < patchList.size(); i++){
+            patchList.get(i).setDraggable(false);
+        }
+        patchList.get(neutral_token).setDraggable(true);
+        if (neutral_token-1 < 0){
+            patchList.get(patchList.size()-1).setDraggable(true);
+        }
+        else {
+            patchList.get(neutral_token-1).setDraggable(true);
+        }
+        if (neutral_token+1 == patchList.size()){
+            patchList.get(0).setDraggable(true);
+        }
+        else {
+            patchList.get(neutral_token+1).setDraggable(true);
+        }
     }
 
 
