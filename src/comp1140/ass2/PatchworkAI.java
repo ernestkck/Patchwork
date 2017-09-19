@@ -1,5 +1,7 @@
 package comp1140.ass2;
 
+import java.util.Random;
+
 public class PatchworkAI {
     private final PatchworkGame game;
     private final Player player;
@@ -30,7 +32,15 @@ public class PatchworkAI {
     }
 
     public static String generatePatchPlacement(String patchCircle, String placement) {
-        // FIXME Task 10: generate a valid move
-        return null;
+        Random r = new Random();
+        char lastPatch;
+        char[] availablePatches = new char[3];
+
+        for (int i = placement.length() - 1; i >= 0; i--){
+            if (placement.charAt(i) != '.'){
+                lastPatch = placement.charAt(i-3);
+            }
+        }
+        return placement + ".";
     }
 }
