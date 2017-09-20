@@ -55,23 +55,27 @@ public class Game extends Application{ //this class contains the main method tha
             if (patchList.size() == 1) {
                 patchList.get(patchList.size()-1).setX(10);
                 patchList.get(patchList.size()-1).setY(10);
+                patchList.get(patchList.size()-1).anchor();
                 stage = 1;
             }
             else if (currentX+prevWidth+width+10 < 933 && stage == 1){
                 currentX += prevWidth+10;
                 patchList.get(patchList.size()-1).setX(currentX);
                 patchList.get(patchList.size()-1).setY(10);
+                patchList.get(patchList.size()-1).anchor();
             }
             else if (stage == 1){
                 stage = 2;
                 currentY += prevHeight+10;
                 patchList.get(patchList.size()-1).setX(933-width-10);
                 patchList.get(patchList.size()-1).setY(currentY);
+                patchList.get(patchList.size()-1).anchor();
             }
             else if (currentY+prevHeight+height+10 < 700 && stage == 2){
                 currentY += prevHeight+10;
                 patchList.get(patchList.size()-1).setX(933-width-10);
                 patchList.get(patchList.size()-1).setY(currentY);
+                patchList.get(patchList.size()-1).anchor();
             }
             else if (stage == 2){
                 stage = 3;
@@ -89,6 +93,7 @@ public class Game extends Application{ //this class contains the main method tha
                 currentY = patchList.get(patchList.size()-2).getY() - height - 10;
                 patchList.get(patchList.size() - 1).setX(10);
                 patchList.get(patchList.size() - 1).setY(currentY);
+                patchList.get(patchList.size()-1).anchor();
             }
             prevWidth = patchList.get(patchList.size() - 1).getWidth();
             prevHeight = patchList.get(patchList.size() - 1).getHeight();
