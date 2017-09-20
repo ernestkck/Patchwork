@@ -214,82 +214,47 @@ public class PatchworkGame {
             return 0;
         }
         Player player1 = new Player(0, 5, 0);
-        int player1Spaces    = 81;
-
         Player player2 = new Player(0, 5, 0);
-        int player2Spaces    = 81;
 
         boolean player1Turn = true;
         boolean player1OldTurn = true;
-        char[] placementArray = placement.toCharArray();
-        int arraypos = 0;
+        int position = 0;
 
-        while (arraypos < placementArray.length){
-            if (placementArray[arraypos] == '.'){
+        while (position < placement.length()){
+            if (placement.charAt(position) == '.'){
                 if (player1Turn){
-                    player1.updateButtonsOwned(Math.min(player2.getTimeSquare() + 1, 53) - player1.getTimeSquare());
-                    for (int i = 0; i < Board.triggeredButtonEvent(player1.getTimeSquare(), player2.getTimeSquare() + 1); i++){
-                        player1.collectIncome();
-                    }
-                    player1.setTimeSquare(Math.min(player2.getTimeSquare() + 1, 53));
+                    player1.advancePlayer(player2.getTimeSquare() + 1);
                 }
                 else{
-                    player2.updateButtonsOwned(Math.min(player1.getTimeSquare() + 1, 53) - player2.getTimeSquare());
-                    for (int i = 0; i < Board.triggeredButtonEvent(player2.getTimeSquare(), player1.getTimeSquare() + 1); i++){
-                        player2.collectIncome();
-                    }
-                    player2.setTimeSquare(Math.min(player1.getTimeSquare() + 1, 53));
-
+                    player2.advancePlayer(player1.getTimeSquare() + 1);
                 }
                 player1OldTurn = player1Turn;
                 player1Turn = !player1Turn;
-                arraypos++;
+                position++;
             }
             else{
-                Patch patch = Patch.valueOf("" + placementArray[arraypos]);
-
-                int spaces = 0;
-                for (boolean[] rows : patch.getLocationGrid()){
-                    for (boolean square : rows){
-                        if(square){
-                            spaces++;
-                        }
-                    }
-                }
-
-                if ((player1Turn && placementArray[arraypos] != 'h') || (player1OldTurn && placementArray[arraypos] == 'h')){
-                    player1.updateButtonsOwned(-patch.getButtonCost());
-                    player1.updateButtonIncome(patch.getButtonIncome());
-                    for (int i = 0; i < Board.triggeredButtonEvent(player1.getTimeSquare(), player1.getTimeSquare() + patch.getTimeCost()); i++){
-                        player1.collectIncome();
-                    }
-                    player1.updateTimeSquare(patch.getTimeCost());
-                    player1Spaces    -= spaces;
+                String patch = placement.substring(position, position + 4);
+                if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
+                    player1.buyPatch(patch);
                     if (player1.getTimeSquare() > player2.getTimeSquare()){
                         player1OldTurn = player1Turn;
                         player1Turn = false;
                     }
                 }
                 else{
-                    player2.updateButtonsOwned(-patch.getButtonCost());
-                    player2.updateButtonIncome(patch.getButtonIncome());
-                    for (int i = 0; i < Board.triggeredButtonEvent(player2.getTimeSquare(), player2.getTimeSquare() + patch.getTimeCost()); i++){
-                        player2.collectIncome();
-                    }
-                    player2.updateTimeSquare(patch.getTimeCost());
-                    player2Spaces    -= spaces;
+                    player2.buyPatch(patch);
                     if (player2.getTimeSquare() > player1.getTimeSquare()){
                         player1OldTurn = player1Turn;
                         player1Turn = true;
                     }
                 }
-                arraypos += 4;
+                position += 4;
             }
         }
 
         if (firstPlayer){
-            return player1.getButtonsOwned() - 2 * player1Spaces;
+            return player1.getScore();
         }
-        return player2.getButtonsOwned() - 2 * player2Spaces;
+        return player2.getScore();
     }
 }
