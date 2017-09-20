@@ -6,12 +6,11 @@ import java.util.ArrayList;
 
 public class Board {
     private static final int[] buttonEvent = IntStream.range(5, 54).filter(x -> x % 6 == 5).toArray();
-    private final ArrayList<Integer> patchEvent = new ArrayList(Arrays.asList(20, 26, 32, 44, 50));
+    private static final ArrayList<Integer> patchEvent = new ArrayList(Arrays.asList(20, 26, 32, 44, 50));
 
     public int[] getButtonEvent(){
         return buttonEvent;
     }
-
     public ArrayList<Integer> getPatchEvent() {
         return patchEvent;
     }
@@ -26,7 +25,7 @@ public class Board {
         return out;
     }
 
-    public int triggeredPatchEvent(int lastPos, int newPos){
+    static int triggeredPatchEvent(int lastPos, int newPos){
         int out = 0;
         for (int num : patchEvent){
             if (num <= newPos && num > lastPos){

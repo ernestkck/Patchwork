@@ -33,14 +33,14 @@ public class PatchworkAI {
 
     public static String generatePatchPlacement(String patchCircle, String placement) {
         Random r = new Random();
-        char lastPatch;
+        char lastPatch = ' ';
         char[] availablePatches = new char[3];
+        Player player1 = new Player(0, 5, 0);
+        int player1Spaces    = 81;
 
-        for (int i = placement.length() - 1; i >= 0; i--){
-            if (placement.charAt(i) != '.'){
-                lastPatch = placement.charAt(i-3);
-            }
-        }
+        Player player2 = new Player(0, 5, 0);
+        int player2Spaces    = 81;
+
         return placement + ".";
     }
 }
