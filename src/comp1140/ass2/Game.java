@@ -8,6 +8,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -18,10 +21,15 @@ public class Game extends Application{ //this class contains the main method tha
     static Player playerB = new Player(0,5,0);
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-    private static final String PATCH_CIRCLE = "STUVWXYZabcdefgABCDEFGHIJKLMNOPQR";
-    private int neutral_token = 0;
+    private static final String PATCH_CIRCLE = "STUVWXYZabcdeKLMNOPQRfgABCDEFGHIJ";
+    private int neutral_token = 12;
     private static final String URI_BASE = "assets/";
-    public ArrayList<guiPatch> patchList = new ArrayList();
+    private ArrayList<guiPatch> patchList = new ArrayList();
+    private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
+    private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
+    private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
+    private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
+
 
     private final Group root = new Group();
 
@@ -32,6 +40,12 @@ public class Game extends Application{ //this class contains the main method tha
         makeBoard();
         makePatchCircle();
         setDraggable();
+        setButtons();
+        Circle test = new Circle();
+        test.setRadius(2);
+        test.setLayoutX(240+225);
+        test.setLayoutY(325);
+        root.getChildren().add(test);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -131,6 +145,32 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(neutral_token+1).setDraggable(true);
         }
     }
+    private void setButtons(){
+        buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
+        buttonsA.setX(120);
+        buttonsA.setY(200);
+        buttonsA.setFont(new Font(20));
+        buttonsB.setText("Buttons: " + playerB.getButtonsOwned());
+        buttonsB.setX(633);
+        buttonsB.setY(200);
+        buttonsB.setFont(new Font(20));
+        incomeA.setText("Income: " + playerA.getButtonIncome());
+        incomeA.setX(120);
+        incomeA.setY(230);
+        incomeA.setFont(new Font(20));
+        incomeB.setText("Income: " + playerB.getButtonIncome());
+        incomeB.setX(633);
+        incomeB.setY(230);
+        incomeB.setFont(new Font(20));
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB);
+    }
+    public void updateButtons(){
+        buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
+        buttonsB.setText("Buttons: " + playerB.getButtonsOwned());
+        incomeA.setText("Income: " + playerA.getButtonIncome());
+        incomeB.setText("Income: " + playerB.getButtonIncome());
+    }
+
 
 
 

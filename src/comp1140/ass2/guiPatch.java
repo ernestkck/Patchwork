@@ -9,6 +9,8 @@ import javafx.scene.image.ImageView;
 public class guiPatch extends ImageView {
     Patch patch;
     char rotation = 'A';
+    char horizontal;
+    char vertical;
     double anchorX, anchorY;
     double mouseX, mouseY;
 
@@ -66,8 +68,14 @@ public class guiPatch extends ImageView {
         });
 
         setOnMouseReleased(event -> {
-            setLayoutX(anchorX);
-            setLayoutY(anchorY);
+            if (event.getSceneX() > 240 && event.getSceneX() < 465 && event.getSceneY() > 325 && event.getSceneY() < 550){
+                int layout = (int) getLayoutX();
+                //horizontal = 'A' + (layout-240)/25;
+            }
+            else {
+                setLayoutX(anchorX);
+                setLayoutY(anchorY);
+            }
         });
 
 
