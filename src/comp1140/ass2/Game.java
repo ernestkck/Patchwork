@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Game extends Application{ //this class contains the main method that runs the game, it will also be the GUI
 
@@ -29,7 +30,7 @@ public class Game extends Application{ //this class contains the main method tha
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
-
+    private boolean specialTile = false;
 
     private final Group root = new Group();
 
@@ -51,8 +52,43 @@ public class Game extends Application{ //this class contains the main method tha
     }
 
     public void isSevenSquare(Player player){
-        //TODO: Implement code that checks
-        if (false)  player.updateButtonIncome(7);
+        boolean[][] grid = player.getGrid();
+        int[] consec, first, last;
+        int consecRows = 0;
+        consec = new int[9];
+        first = new int[9];
+        last = new int[9];
+        for(int i=0; i<9; i++){
+            first[i] = 9;
+            last[i] = -1;
+            consec[i] = 0;
+            for(int j=0; j<9; j++) {
+                if (grid[i][j]) {
+                    consec[i]++;
+                    first[i] = Math.min(first[i], j);
+                    last[i] = Math.max(first[i], j);
+                } else {
+                    if (consec[i] < 7) {
+                        consec[i] = 0;
+                        first[i] = 9;
+                        last[i] = -1;
+                    }
+                }
+            }
+            if(consec[i]>=7){
+                consecRows++;
+            }
+            if(consec[i]<7){
+                consecRows = 0;
+                if(i>=2) return;
+            }
+        }
+        int max = Arrays.stream(first).max().getAsInt();
+        int min = Arrays.stream(last).min().getAsInt();
+        if(min - max >= 7){
+            player.updateButtonIncome(7);
+            specialTile = true;
+        }
     }
     public void makePatchCircle(){
         double width = 0;
