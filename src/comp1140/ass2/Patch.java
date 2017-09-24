@@ -201,6 +201,17 @@ public enum Patch {
         public int getButtonIncome(){
             return buttonIncome;
         }
+        public int getSpaceCovered(){
+            int out = 0;
+            for (boolean[] row : getLocationGrid()){
+                for (boolean square : row){
+                    if (square){
+                        out ++;
+                    }
+                }
+            }
+            return out;
+        }
 
         public boolean[][] getLocationGrid(){
             return locationGrid;
@@ -215,6 +226,7 @@ public enum Patch {
             }
             return out;
         }
+
         private boolean[][] getFlippedGrid(boolean[][] in){
             boolean[][] out = new boolean[in.length][in[0].length];
             for (int row = 0; row < in.length; row++){

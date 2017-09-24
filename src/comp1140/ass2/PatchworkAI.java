@@ -1,5 +1,6 @@
 package comp1140.ass2;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PatchworkAI {
@@ -32,15 +33,24 @@ public class PatchworkAI {
     }
 
     public static String generatePatchPlacement(String patchCircle, String placement) {
-        Random r = new Random();
-        char lastPatch = ' ';
-        char[] availablePatches = new char[3];
-        Player player1 = new Player(0, 5, 0);
-        int player1Spaces    = 81;
+        Tuple player = Game.playersFromGameState(patchCircle, placement);
+        Player player1 = (Player)player.getLeft();
+        Player player2 = (Player)player.getRight();
+        if (player2.getTimeSquare() > 53){
+            return placement;
+        }
+        int circlePosition = Game.circlePosFromGameState(patchCircle, placement);
+        ArrayList<Character> patches = new ArrayList<>();
+        for (int i = 0; i < patches.size(); i++){
+            Patch patch = Patch.valueOf("" + patchCircle.charAt((circlePosition + i) % patchCircle.length()));
+            if (patch.getButtonCost() <= player2.getButtonsOwned() && player2.getTimeSquare() + patch.getTimeCost() <= 53){
+                patches.add(patch.getChar());
+            }
+        }
+        if (patches.isEmpty() && player2.getTimeSquare() <= 53){
+            return placement + '.';
+        }
 
-        Player player2 = new Player(0, 5, 0);
-        int player2Spaces    = 81;
-
-        return placement + ".";
+        return placement;
     }
 }

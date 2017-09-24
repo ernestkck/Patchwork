@@ -72,6 +72,19 @@ public class Player {
         }
     }
 
+    private int incomeCollections(){
+        int out = 0;
+        for (int event : Board.getButtonEvent()){
+            if (event > getTimeSquare()){
+                out++;
+            }
+        }
+        return out;
+    }
+    public int newPatchValue(char newPatch){
+        Patch patch = Patch.valueOf("" + newPatch);
+        return incomeCollections() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost() + 2 * patch.getSpaceCovered();
+    }
     public void buyPatch(String newPatch){
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
         updateButtonsOwned(-patch.getButtonCost());
@@ -92,6 +105,8 @@ public class Player {
     public void collectIncome(){
         buttonsOwned += getButtonIncome();
     }
+
+
 
 
 }

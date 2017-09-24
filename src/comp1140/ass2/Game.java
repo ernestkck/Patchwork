@@ -171,7 +171,62 @@ public class Game extends Application{ //this class contains the main method tha
         incomeB.setText("Income: " + playerB.getButtonIncome());
     }
 
+    public static Tuple playersFromGameState(String patchCircle, String placement){
+        Player player1 = new Player(0, 5, 0);
+        Player player2 = new Player(0, 5, 0);
 
+        boolean player1Turn = true;
+        boolean player1OldTurn = true;
+        int position = 0;
 
+        while (position < placement.length()){
+            if (placement.charAt(position) == '.'){
+                if (player1Turn){
+                    player1.advancePlayer(player2.getTimeSquare() + 1);
+                }
+                else{
+                    player2.advancePlayer(player1.getTimeSquare() + 1);
+                }
+                player1OldTurn = player1Turn;
+                player1Turn = !player1Turn;
+                position++;
+            }
+            else{
+                String patch = placement.substring(position, position + 4);
+                if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
+                    player1.buyPatch(patch);
+                    if (player1.getTimeSquare() > player2.getTimeSquare()){
+                        player1OldTurn = player1Turn;
+                        player1Turn = false;
+                    }
+                }
+                else{
+                    player2.buyPatch(patch);
+                    if (player2.getTimeSquare() > player1.getTimeSquare()){
+                        player1OldTurn = player1Turn;
+                        player1Turn = true;
+                    }
+                }
+                position += 4;
+            }
+        }
+
+        Tuple out = new Tuple(player1, player2);
+        return out;
+    }
+    public static int circlePosFromGameState(String patchCircle, String placement){
+        int position = 0;
+        char patch = 'A';
+        while (position < placement.length()){
+            if (placement.charAt(position) == '.'){
+                position ++;
+            }
+            else{
+                patch = placement.charAt(position);
+                position += 4;
+            }
+        }
+        return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
+    }
 
 }
