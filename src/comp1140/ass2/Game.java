@@ -52,6 +52,7 @@ public class Game extends Application{ //this class contains the main method tha
     }
 
     public void isSevenSquare(Player player){
+        if(specialTile) return;
         boolean[][] grid = player.getGrid();
         int[] consec, first, last;
         int consecRows = 0;
