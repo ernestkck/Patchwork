@@ -95,7 +95,7 @@ public class Game extends Application{ //this class contains the main method tha
         System.out.println("first.max: "+max);
         System.out.println("last.min: "+min);
         if(min - max + 1 >= 7){
-            player.updateButtonIncome(7);
+            player.updateButtonsOwned(7);
             specialTile = true;
         }
     }

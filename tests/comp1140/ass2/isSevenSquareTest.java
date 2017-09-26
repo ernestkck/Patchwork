@@ -6,6 +6,11 @@ import java.util.Random;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * <p>
+ * Determine whether a 7x7 square of spaces is completely filled
+ * If it is completely filled, the player will receive the special tile and get 7 buttons
+ */
 public class isSevenSquareTest {
 
     @Test(timeout = 10000)
@@ -22,6 +27,7 @@ public class isSevenSquareTest {
                 }
                 Game.isSevenSquare(player);
                 assertTrue("specialTile is not true: " + i + "," + j + " - " + (i+6) + "," + (j+6), Game.specialTile);
+                assertTrue("buttonsOwned is not 7: " + i + "," + j + " - " + (i+6) + "," + (j+6), player.getButtonsOwned() == 7);
             }
         }
     }
