@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
@@ -23,7 +24,10 @@ public class Game extends Application{ //this class contains the main method tha
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
     private static final String PATCH_CIRCLE = "STUVWXYZabcdeKLMNOPQRfgABCDEFGHIJ";
-    private int neutral_token = 12;
+    private static final String[] parts = PATCH_CIRCLE.split("A");
+    private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
+    private static boolean turn = true;
+    private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
     private ArrayList<guiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
@@ -99,55 +103,22 @@ public class Game extends Application{ //this class contains the main method tha
         double prevWidth = 0;
         double prevHeight = 0;
         int stage = 0;
-        for (char t: PATCH_CIRCLE.toCharArray()){
+        for (char t: ADJUSTED_CIRCLE.toCharArray()){
             patchList.add(new guiPatch(t));
             width = patchList.get(patchList.size()-1).getWidth();
             height = patchList.get(patchList.size()-1).getHeight();
             if (patchList.size() == 1) {
-                patchList.get(patchList.size()-1).setX(10);
-                patchList.get(patchList.size()-1).setY(10);
+                patchList.get(patchList.size()-1).setLayoutX(10);
+                patchList.get(patchList.size()-1).setLayoutY(690-height);
                 patchList.get(patchList.size()-1).anchor();
-                stage = 1;
             }
-            else if (currentX+prevWidth+width+10 < 933 && stage == 1){
+            else{
                 currentX += prevWidth+10;
-                patchList.get(patchList.size()-1).setX(currentX);
-                patchList.get(patchList.size()-1).setY(10);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else if (stage == 1){
-                stage = 2;
-                currentY += prevHeight+10;
-                patchList.get(patchList.size()-1).setX(933-width-10);
-                patchList.get(patchList.size()-1).setY(currentY);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else if (currentY+prevHeight+height+10 < 700 && stage == 2){
-                currentY += prevHeight+10;
-                patchList.get(patchList.size()-1).setX(933-width-10);
-                patchList.get(patchList.size()-1).setY(currentY);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else if (stage == 2){
-                stage = 3;
-                currentX = patchList.get(patchList.size()-2).getX() - prevWidth-10;
-                patchList.get(patchList.size()-1).setX(currentX);
-                patchList.get(patchList.size()-1).setY(700-height-10);
-            }
-            else if (currentX-width-10 > 0 && stage == 3) {
-                currentX -= width+10;
-                patchList.get(patchList.size()-1).setX(currentX);
-                patchList.get(patchList.size()-1).setY(700-height-10);
-            }
-            else {
-                stage = 4;
-                currentY = patchList.get(patchList.size()-2).getY() - height - 10;
-                patchList.get(patchList.size() - 1).setX(10);
-                patchList.get(patchList.size() - 1).setY(currentY);
+                patchList.get(patchList.size()-1).setLayoutX(currentX);
+                patchList.get(patchList.size()-1).setLayoutY(690-height);
                 patchList.get(patchList.size()-1).anchor();
             }
             prevWidth = patchList.get(patchList.size() - 1).getWidth();
-            prevHeight = patchList.get(patchList.size() - 1).getHeight();
         }
         root.getChildren().addAll(patchList);
     }
@@ -169,17 +140,17 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(i).setDraggable(false);
         }
         patchList.get(neutral_token).setDraggable(true);
-        if (neutral_token-1 < 0){
-            patchList.get(patchList.size()-1).setDraggable(true);
-        }
-        else {
-            patchList.get(neutral_token-1).setDraggable(true);
-        }
         if (neutral_token+1 == patchList.size()){
+            patchList.get(0).setDraggable(true);
+            patchList.get(1).setDraggable(true);
+        }
+        else if (neutral_token+2 == patchList.size()){
+            patchList.get(neutral_token+1).setDraggable(true);
             patchList.get(0).setDraggable(true);
         }
         else {
             patchList.get(neutral_token+1).setDraggable(true);
+            patchList.get(neutral_token+2).setDraggable(true);
         }
     }
     private void setButtons(){
@@ -199,7 +170,15 @@ public class Game extends Application{ //this class contains the main method tha
         incomeB.setX(633);
         incomeB.setY(230);
         incomeB.setFont(new Font(20));
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB);
+        Button movePatch = new Button("Move Patch");
+        movePatch.setLayoutX(150);
+        movePatch.setLayoutY(250);
+        movePatch.setOnAction(event -> {
+            patchList.remove(neutral_token);
+            updatePatchCircle();
+            setDraggable();
+        });
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -264,6 +243,40 @@ public class Game extends Application{ //this class contains the main method tha
             }
         }
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
+    }
+    public void placePatch(guiPatch patch){
+       patchList.remove(patch);
+       patch.setDisable(true);
+    }
+    public void updatePatchCircle(){
+        double height = 0;
+        double currentX = 10;
+        double prevWidth = 0;
+        int index;
+        for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
+            if (i+neutral_token < patchList.size()) index = i+neutral_token;
+            else index = i+neutral_token-patchList.size();
+            height = patchList.get(index).getHeight();
+            if (i == 0) {
+                patchList.get(index).setLayoutX(10);
+                patchList.get(index).setLayoutY(690-height);
+                patchList.get(index).anchor();
+            }
+            else{
+                currentX += prevWidth+10;
+                patchList.get(index).setLayoutX(currentX);
+                patchList.get(index).setLayoutY(690-height);
+                patchList.get(index).anchor();
+            }
+            prevWidth = patchList.get(index).getWidth();
+        }
+    }
+    public static boolean getTurn(){
+        return turn;
+    }
+    public static void setPosition(char x, char y, guiPatch patch){
+        patch.setX(240);
+        patch.setY(325);
     }
 
 }
