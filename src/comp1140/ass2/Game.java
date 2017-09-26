@@ -35,6 +35,7 @@ public class Game extends Application{ //this class contains the main method tha
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
+    private Text placement = new Text("Placement: ");
     private boolean specialTile = false;
 
     private final Group root = new Group();
@@ -97,25 +98,8 @@ public class Game extends Application{ //this class contains the main method tha
         }
     }
     public void makePatchCircle(){
-        double width = 0;
-        double height = 0;
-        double currentX = 10;
-        double prevWidth = 0;
-        for (char t: ADJUSTED_CIRCLE.toCharArray()){
+        for (char t: ADJUSTED_CIRCLE.toCharArray()) {
             patchList.add(new guiPatch(t));
-            /*height = patchList.get(patchList.size()-1).getHeight();
-            if (patchList.size() == 1) {
-                patchList.get(patchList.size()-1).setLayoutX(10);
-                patchList.get(patchList.size()-1).setLayoutY(690-height);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else{
-                currentX += prevWidth+10;
-                patchList.get(patchList.size()-1).setLayoutX(currentX);
-                patchList.get(patchList.size()-1).setLayoutY(690-height);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            prevWidth = patchList.get(patchList.size() - 1).getWidth();*/
         }
         updatePatchCircle();
         root.getChildren().addAll(patchList);
@@ -187,7 +171,9 @@ public class Game extends Application{ //this class contains the main method tha
         confirm.setOnAction(event -> {
             placePatch(currentPatch);
         });
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch, confirm, changeTurn);
+        placement.setLayoutX(760);
+        placement.setLayoutY(270);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch, confirm, changeTurn, placement);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -259,6 +245,7 @@ public class Game extends Application{ //this class contains the main method tha
         System.out.println(neutral_token);
         patchList.remove(patch);
         patch.setDisable(true);
+        placement.setText("Placement: " + patch.toString());
         updatePatchCircle();
         setDraggable();
     }

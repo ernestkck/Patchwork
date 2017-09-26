@@ -148,6 +148,8 @@ public class guiPatch extends ImageView {
         }
     }
 
-
-
+    @Override
+    public String toString() {
+        return patch.name() + horizontal + vertical + rotation;
+    }
 }
