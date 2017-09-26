@@ -36,7 +36,7 @@ public class Game extends Application{ //this class contains the main method tha
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
     private Text placement = new Text("Placement: ");
-    private boolean specialTile = false;
+    public static boolean specialTile = false;
 
     private final Group root = new Group();
 
@@ -57,7 +57,7 @@ public class Game extends Application{ //this class contains the main method tha
         primaryStage.show();
     }
 
-    public void isSevenSquare(Player player){
+    public static void isSevenSquare(Player player){
         if(specialTile) return;
         boolean[][] grid = player.getGrid();
         int[] consec, first, last;
@@ -73,7 +73,7 @@ public class Game extends Application{ //this class contains the main method tha
                 if (grid[i][j]) {
                     consec[i]++;
                     first[i] = Math.min(first[i], j);
-                    last[i] = Math.max(first[i], j);
+                    last[i] = Math.max(last[i], j);
                 } else {
                     if (consec[i] < 7) {
                         consec[i] = 0;
@@ -85,14 +85,16 @@ public class Game extends Application{ //this class contains the main method tha
             if(consec[i]>=7){
                 consecRows++;
             }
-            if(consec[i]<7){
+            if(consec[i]<7 && consecRows<7){
                 consecRows = 0;
                 if(i>=2) return;
             }
         }
-        int max = Arrays.stream(first).max().getAsInt();
-        int min = Arrays.stream(last).min().getAsInt();
-        if(min - max >= 7){
+        int max = Arrays.stream(first).filter(x -> x<9).max().getAsInt();
+        int min = Arrays.stream(last).filter(x -> x>-1).min().getAsInt();
+        System.out.println("first.max: "+max);
+        System.out.println("last.min: "+min);
+        if(min - max + 1 >= 7){
             player.updateButtonIncome(7);
             specialTile = true;
         }

@@ -5,7 +5,7 @@ public class Player {
     private int timeSquare;
     private int buttonsOwned;
     private int buttonIncome;
-    private boolean[][] grid;
+    public boolean[][] grid;
 
     public Player(int timeSquare, int buttonsOwned, int buttonIncome){
         this.timeSquare = timeSquare;
