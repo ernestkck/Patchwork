@@ -1,6 +1,8 @@
 package comp1140.ass2;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 
 import java.util.Random;
 import static org.junit.Assert.assertFalse;
@@ -13,23 +15,55 @@ import static org.junit.Assert.assertTrue;
  */
 public class isSevenSquareTest {
 
-    @Test(timeout = 10000)
+    @Rule
+    public Timeout globalTimeout = Timeout.millis(1000);
+
+    @Test
     public void testTrue(){
         int i, j, x, y;
         for(i=0; i<=2; i++){
             for(j=0; j<=2; j++) {
-                Player player = new Player(0, 0, 0);
+                Player player1 = new Player(0, 5, 0);
+                Player player2 = new Player(0, 5, 0);
                 Game.specialTile = false;
                 for (x = 0; x < 7; x++) {
                     for (y = 0; y < 7; y++) {
-                        player.grid[x + i][y + j] = true;
+                        player1.grid[x + i][y + j] = true;
+                        player2.grid[x + i][y + j] = true;
                     }
                 }
-                Game.isSevenSquare(player);
+                Game.isSevenSquare(player1);
+                Game.isSevenSquare(player2);
                 assertTrue("specialTile is not true: " + i + "," + j + " - " + (i+6) + "," + (j+6), Game.specialTile);
-                assertTrue("buttonsOwned is not 7: " + i + "," + j + " - " + (i+6) + "," + (j+6), player.getButtonsOwned() == 7);
+                assertTrue("player1's buttonsOwned is not 12: " + i + "," + j + " - " + (i+6) + "," + (j+6), player1.getButtonsOwned() == 12);
+                assertFalse("player2 has 12 buttons", player2.getButtonsOwned() == 12);
             }
         }
+    }
+
+    @Test
+    public void testEmpty(){
+        Player player = new Player(0,5,0);
+        Game.specialTile = false;
+        Game.isSevenSquare(player);
+        assertFalse("specialTile is not false for empty grid", Game.specialTile);
+    }
+
+    @Test
+    public void testFalse(){
+        Random rand = new Random();
+        Player player1 = new Player(0,5,0);
+        Player player2 = new Player(0,5,0);
+        Game.specialTile = false;
+        for(int i=0; i<49;i++){
+            player1.grid[rand.nextInt(7)][rand.nextInt(7)] = true;
+            player2.grid[rand.nextInt(7)][rand.nextInt(7)] = true;
+        }
+        Game.isSevenSquare(player1);
+        Game.isSevenSquare(player2);
+        assertFalse("specialTile is true: ", Game.specialTile);
+        assertFalse("player1 has 12 buttons", player1.getButtonsOwned() == 12);
+        assertFalse("player2 has 12 buttons", player2.getButtonsOwned() == 12);
     }
 
 }
