@@ -245,4 +245,8 @@ public enum Patch {
             }
             return out;
         }
+
+    public char getName() {
+        return name().charAt(0);
+    }
 }

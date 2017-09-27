@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
@@ -22,15 +23,21 @@ public class Game extends Application{ //this class contains the main method tha
     static Player playerB = new Player(0,5,0);
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-    private static final String PATCH_CIRCLE = "STUVWXYZabcdeKLMNOPQRfgABCDEFGHIJ";
-    private int neutral_token = 12;
+    private static String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+    private static final String[] parts = PATCH_CIRCLE.split("A");
+    private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
+    private static boolean turn = true;
+    private static String placementString = "";
+    private static guiPatch currentPatch;
+    private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
     private ArrayList<guiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
-    private boolean specialTile = false;
+    private Text placementText = new Text("Placement: ");
+    public static boolean specialTile = false;
 
     private final Group root = new Group();
 
@@ -51,7 +58,8 @@ public class Game extends Application{ //this class contains the main method tha
         primaryStage.show();
     }
 
-    public void isSevenSquare(Player player){
+    public static void isSevenSquare(Player player){
+        if(specialTile) return;
         boolean[][] grid = player.getGrid();
         int[] consec, first, last;
         int consecRows = 0;
@@ -66,7 +74,7 @@ public class Game extends Application{ //this class contains the main method tha
                 if (grid[i][j]) {
                     consec[i]++;
                     first[i] = Math.min(first[i], j);
-                    last[i] = Math.max(first[i], j);
+                    last[i] = Math.max(last[i], j);
                 } else {
                     if (consec[i] < 7) {
                         consec[i] = 0;
@@ -78,76 +86,25 @@ public class Game extends Application{ //this class contains the main method tha
             if(consec[i]>=7){
                 consecRows++;
             }
-            if(consec[i]<7){
+            if(consec[i]<7 && consecRows<7){
                 consecRows = 0;
                 if(i>=2) return;
             }
         }
-        int max = Arrays.stream(first).max().getAsInt();
-        int min = Arrays.stream(last).min().getAsInt();
-        if(min - max >= 7){
-            player.updateButtonIncome(7);
+        int max = Arrays.stream(first).filter(x -> x<9).max().getAsInt();
+        int min = Arrays.stream(last).filter(x -> x>-1).min().getAsInt();
+        System.out.println("first.max: "+max);
+        System.out.println("last.min: "+min);
+        if(min - max + 1 >= 7){
+            player.updateButtonsOwned(7);
             specialTile = true;
         }
     }
     public void makePatchCircle(){
-        double width = 0;
-        double height = 0;
-        double currentX = 10;
-        double currentY = 10;
-        double prevWidth = 0;
-        double prevHeight = 0;
-        int stage = 0;
-        for (char t: PATCH_CIRCLE.toCharArray()){
+        for (char t: ADJUSTED_CIRCLE.toCharArray()) {
             patchList.add(new guiPatch(t));
-            width = patchList.get(patchList.size()-1).getWidth();
-            height = patchList.get(patchList.size()-1).getHeight();
-            if (patchList.size() == 1) {
-                patchList.get(patchList.size()-1).setX(10);
-                patchList.get(patchList.size()-1).setY(10);
-                patchList.get(patchList.size()-1).anchor();
-                stage = 1;
-            }
-            else if (currentX+prevWidth+width+10 < 933 && stage == 1){
-                currentX += prevWidth+10;
-                patchList.get(patchList.size()-1).setX(currentX);
-                patchList.get(patchList.size()-1).setY(10);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else if (stage == 1){
-                stage = 2;
-                currentY += prevHeight+10;
-                patchList.get(patchList.size()-1).setX(933-width-10);
-                patchList.get(patchList.size()-1).setY(currentY);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else if (currentY+prevHeight+height+10 < 700 && stage == 2){
-                currentY += prevHeight+10;
-                patchList.get(patchList.size()-1).setX(933-width-10);
-                patchList.get(patchList.size()-1).setY(currentY);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            else if (stage == 2){
-                stage = 3;
-                currentX = patchList.get(patchList.size()-2).getX() - prevWidth-10;
-                patchList.get(patchList.size()-1).setX(currentX);
-                patchList.get(patchList.size()-1).setY(700-height-10);
-            }
-            else if (currentX-width-10 > 0 && stage == 3) {
-                currentX -= width+10;
-                patchList.get(patchList.size()-1).setX(currentX);
-                patchList.get(patchList.size()-1).setY(700-height-10);
-            }
-            else {
-                stage = 4;
-                currentY = patchList.get(patchList.size()-2).getY() - height - 10;
-                patchList.get(patchList.size() - 1).setX(10);
-                patchList.get(patchList.size() - 1).setY(currentY);
-                patchList.get(patchList.size()-1).anchor();
-            }
-            prevWidth = patchList.get(patchList.size() - 1).getWidth();
-            prevHeight = patchList.get(patchList.size() - 1).getHeight();
         }
+        updatePatchCircle();
         root.getChildren().addAll(patchList);
     }
     public void makeBoard(){
@@ -168,17 +125,17 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(i).setDraggable(false);
         }
         patchList.get(neutral_token).setDraggable(true);
-        if (neutral_token-1 < 0){
-            patchList.get(patchList.size()-1).setDraggable(true);
-        }
-        else {
-            patchList.get(neutral_token-1).setDraggable(true);
-        }
         if (neutral_token+1 == patchList.size()){
+            patchList.get(0).setDraggable(true);
+            patchList.get(1).setDraggable(true);
+        }
+        else if (neutral_token+2 == patchList.size()){
+            patchList.get(neutral_token+1).setDraggable(true);
             patchList.get(0).setDraggable(true);
         }
         else {
             patchList.get(neutral_token+1).setDraggable(true);
+            patchList.get(neutral_token+2).setDraggable(true);
         }
     }
     private void setButtons(){
@@ -198,7 +155,28 @@ public class Game extends Application{ //this class contains the main method tha
         incomeB.setX(633);
         incomeB.setY(230);
         incomeB.setFont(new Font(20));
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB);
+        Button movePatch = new Button("Move Patch");
+        movePatch.setLayoutX(150);
+        movePatch.setLayoutY(250);
+        movePatch.setOnAction(event -> {
+            updatePatchCircle();
+            setDraggable();
+        });
+        Button changeTurn = new Button("Change Turn");
+        changeTurn.setLayoutX(700);
+        changeTurn.setLayoutY(300);
+        changeTurn.setOnAction(event -> {
+            turn = !turn;
+        });
+        Button confirm = new Button("Confirm");
+        confirm.setLayoutX(700);
+        confirm.setLayoutY(250);
+        confirm.setOnAction(event -> {
+            placePatch(currentPatch);
+        });
+        placementText.setLayoutX(760);
+        placementText.setLayoutY(270);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch, confirm, changeTurn, placementText);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -264,4 +242,60 @@ public class Game extends Application{ //this class contains the main method tha
         }
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
     }
+    public void placePatch(guiPatch patch){
+        neutral_token = patchList.indexOf(patch);
+        patchList.remove(patch);
+        patch.setDisable(true);
+        placementText.setText("Placement: " + patch.toString());
+        updatePatchCircle();
+        setDraggable();
+    }
+    public void updatePatchCircle(){
+        double height = 0;
+        double currentX = 10;
+        double prevWidth = 0;
+        int index;
+        System.out.println(patchList.get(neutral_token).getName());
+        for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
+            index = Math.floorMod(i, patchList.size());
+            height = patchList.get(index).getHeight();
+            currentX += prevWidth+10;
+            patchList.get(index).setLayoutX(currentX);
+            patchList.get(index).setLayoutY(690-height);
+            patchList.get(index).anchor();
+            prevWidth = patchList.get(index).getWidth();
+        }
+    }
+    public static boolean getTurn(){
+        return turn;
+    }
+    public static void setCurrentPatch(guiPatch patch){
+        currentPatch = patch;
+    }
+    public String getPatchCircle(){
+        return PATCH_CIRCLE;
+    }
+    public void loadPlacements(String patchCircle, String placement){
+        PATCH_CIRCLE = patchCircle;
+        placementString = placement;
+        neutral_token = 0;
+        patchList.clear();
+        makePatchCircle();
+        int position = 0;
+        while (position < placementString.length()){
+            if (placementString.charAt(position) == '.'){
+                position ++;
+            }
+            else{
+                for (int i = 0; i < patchList.size(); i++){
+                    if (patchList.get(i).getName() == placementString.charAt(position)) placePatch(patchList.get(i));
+                }
+                position += 4;
+            }
+        }
+    }
+    public int getNeutral_token(){
+        return neutral_token;
+    }
+
 }
