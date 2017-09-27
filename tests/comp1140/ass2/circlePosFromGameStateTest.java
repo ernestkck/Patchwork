@@ -1,13 +1,7 @@
 package comp1140.ass2;
 
-import javafx.stage.Stage;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 
-import java.util.Random;
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**

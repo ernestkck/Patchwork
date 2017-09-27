@@ -86,7 +86,6 @@ public class guiPatch extends ImageView {
                 int layoutV = (int) Math.round((getLayoutY()-325+y)/25);
                 horizontal = Character.toChars('A' + layoutH)[0];
                 vertical = Character.toChars('A' + layoutV)[0];
-                System.out.println("" + horizontal + vertical);
                 setLayoutX(grid + 239 + (horizontal-'A')*25+x);
                 setLayoutY(325 + (vertical-'A')*25-y);
                 setCurrentPatch();
@@ -104,6 +103,10 @@ public class guiPatch extends ImageView {
         anchorX = getLayoutX();
         anchorY = getLayoutY();
     }
+    public void toAnchor(){
+        setLayoutX(anchorX);
+        setLayoutY(anchorY);
+    }
     public void rotate(){
         if (rotation == 'H') {
             rotation = 'A';
@@ -114,7 +117,6 @@ public class guiPatch extends ImageView {
         if (rotation == 'H') setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
         if (rotation == 'D') setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         double rotateDouble = ((rotation-65) % 4)*90;
-        System.out.println(rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
         if (!isOffset && (rotation-65)%2 == 1) {
             setLayoutX(getLayoutX() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
             setLayoutY(getLayoutY() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));

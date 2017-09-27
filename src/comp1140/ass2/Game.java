@@ -7,8 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Dragboard;
-import javafx.scene.layout.StackPane;
+import static javafx.scene.paint.Color.*;
+
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -36,8 +37,15 @@ public class Game extends Application{ //this class contains the main method tha
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
+    private Text turnText = new Text("Player One's Turn");
+    private Player currentPlayer = playerA;
     private Text placementText = new Text("Placement: ");
     public static boolean specialTile = false;
+    private double[][] timeSquareCoords = {
+            {420, 125},
+    };
+    private Circle circleA = new Circle(10);
+    private Circle circleB = new Circle(10);
 
     private final Group root = new Group();
 
@@ -49,11 +57,6 @@ public class Game extends Application{ //this class contains the main method tha
         makePatchCircle();
         setDraggable();
         setButtons();
-        Circle test = new Circle();
-        test.setRadius(2);
-        test.setLayoutX(240+225);
-        test.setLayoutY(325);
-        root.getChildren().add(test);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -167,22 +170,66 @@ public class Game extends Application{ //this class contains the main method tha
         changeTurn.setLayoutY(300);
         changeTurn.setOnAction(event -> {
             turn = !turn;
+            updateButtons();
         });
         Button confirm = new Button("Confirm");
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
-            placePatch(currentPatch);
+            if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
+                placePatch(currentPatch);
+                placementString += currentPatch.toString();
+                currentPlayer.buyPatch(currentPatch.toString());
+                updatePlayer();
+                updateButtons();
+            }
+            else {
+                currentPatch.toAnchor();
+            }
+
         });
-        placementText.setLayoutX(760);
+        Button advance = new Button("Advance");
+        advance.setLayoutX(700);
+        advance.setLayoutY(350);
+        advance.setOnAction(event -> {
+            placementString += '.';
+            if (currentPlayer == playerA){
+                currentPlayer.setTimeSquare(playerB.getTimeSquare()+1);
+            }
+            else {
+                currentPlayer.setTimeSquare(playerA.getTimeSquare()+1);
+            }
+            updatePlayer();
+        });
+        circleA.setFill(Color.BLUE);
+        circleA.setCenterX(3);
+        circleB.setCenterY(3);
+        circleB.setFill(Color.RED);
+        circleA.toFront();
+        circleA.setLayoutX(timeSquareCoords[0][0]);
+        circleA.setLayoutY(timeSquareCoords[0][1]);
+        circleB.setLayoutX(timeSquareCoords[0][0]);
+        circleB.setLayoutY(timeSquareCoords[0][1]);
+        circleA.setStroke(Color.BLACK);
+        circleB.setStroke(Color.BLACK);
+        placementText.setLayoutX(780);
         placementText.setLayoutY(270);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch, confirm, changeTurn, placementText);
+        turnText.setFont(new Font(30));
+        turnText.setX(320);
+        turnText.setY(50);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, changeTurn, placementText, turnText, advance, circleA, circleB);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
         buttonsB.setText("Buttons: " + playerB.getButtonsOwned());
         incomeA.setText("Income: " + playerA.getButtonIncome());
         incomeB.setText("Income: " + playerB.getButtonIncome());
+        if (turn){
+            turnText.setText("Player One's Turn");
+        }
+        else {
+            turnText.setText("Player Two's Turn");
+        }
     }
 
     public static Tuple playersFromGameState(String patchCircle, String placement){
@@ -255,7 +302,6 @@ public class Game extends Application{ //this class contains the main method tha
         double currentX = 10;
         double prevWidth = 0;
         int index;
-        System.out.println(patchList.get(neutral_token).getName());
         for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
             index = Math.floorMod(i, patchList.size());
             height = patchList.get(index).getHeight();
@@ -265,6 +311,17 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(index).anchor();
             prevWidth = patchList.get(index).getWidth();
         }
+    }
+    public void updatePlayer(){
+        if (playerB.getTimeSquare() > playerA.getTimeSquare()){
+            turn = true;
+            currentPlayer = playerA;
+        }
+        else if (playerA.getTimeSquare() > playerB.getTimeSquare()){
+            turn = false;
+            currentPlayer = playerB;
+        }
+        updateButtons();
     }
     public static boolean getTurn(){
         return turn;
