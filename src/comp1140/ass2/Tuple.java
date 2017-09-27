@@ -1,25 +1,25 @@
 package comp1140.ass2;
 
 public class Tuple {
-    private Object left;
-    private Object right;
+    private Object[] args;
 
-    public Tuple(Object left, Object right){
-        this.left = left;
-        this.right = right;
+    public Tuple(Object ... args){
+        this.args = args;
     }
 
-    public Object getLeft() {
-        return left;
+    public Object getObjectAt(int pos){
+        return args[pos];
     }
-    public Object getRight() {
-        return right;
+    public void   setObjectAt(Object newArg, int pos){
+        args[pos] = newArg;
     }
 
-    public void setLeft(Object left){
-        this.left = left;
+    public Object[] getAll(){
+        return args;
     }
-    public void setRight(Object right) {
-        this.right = right;
+    public int length(){
+        return args.length;
     }
+
+
 }

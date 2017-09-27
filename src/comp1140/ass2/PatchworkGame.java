@@ -48,9 +48,9 @@ public class PatchworkGame {
      * @return true if the placement is well-formed
      */
     static boolean isPlacementWellFormed(String placement) {
-
-        if (isEmpty(placement)) return false;
-
+        if (isEmpty(placement)) {
+            return false;
+        }
         String filtered = placement.replace(".","");
 
         if (filtered.length() % 4 == 0){
@@ -99,6 +99,78 @@ public class PatchworkGame {
      * @param placement   A placement string
      * @return true if the placement is valid
      */
+    static boolean placementValid(String patchCircle, String placement){
+        if(isEmpty(patchCircle) || isEmpty(placement) || !isPlacementWellFormed(placement)){
+            return false;
+        }
+
+        Player player1 = new Player(0, 0, 0);
+        Player player2 = new Player(0, 0, 0);
+        boolean player1Turn = true;
+        boolean player1OldTurn = true;
+        int position = 0;
+        boolean[][] grid;
+
+        while (position < placement.length())
+        {
+            if (placement.charAt(position) == '.'){
+                if (player1Turn){
+                    player1.setTimeSquare(player2.getTimeSquare() + 1);
+                }
+                else{
+                    player2.setTimeSquare(player1.getTimeSquare() + 1);
+                }
+                player1OldTurn = player1Turn;
+                player1Turn = !player1Turn;
+                position ++;
+            }
+            else{
+                if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
+                    grid = player1.getGrid();
+                }
+                else{
+                    grid = player2.getGrid();
+                }
+                Patch patch = Patch.valueOf("" + placement.charAt(position));
+                boolean[][] patchGrid = patch.getTransformedGrid(placement.charAt(position + 3));
+
+                if (patchGrid.length    + placement.charAt(position + 2) - 'A' > grid.length
+                ||  patchGrid[0].length + placement.charAt(position + 1) - 'A' > grid[0].length){
+                    return false;
+                }
+
+                for (int row = 0; row < patchGrid.length; row++){
+                    for (int column = 0; column < patchGrid[0].length; column++){
+                        if (patchGrid[row][column]) {
+                            int playerRow = row + placement.charAt(position + 2) - 'A';
+                            int playerCol = column + placement.charAt(position + 1) - 'A';
+
+                            if (grid[playerRow][playerCol]) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
+                    player1.buyPatch(placement.substring(position, position + 4));
+                    if (player1.getTimeSquare() > player2.getTimeSquare()){
+                        player1OldTurn = player1Turn;
+                        player1Turn = false;
+                    }
+                }
+                else{
+                    player2.buyPatch(placement.substring(position, position + 4));
+                    if (player2.getTimeSquare() > player1.getTimeSquare()){
+                        player1OldTurn = player1Turn;
+                        player1Turn = true;
+                    }
+                }
+                position += 4;
+            }
+        }
+        return true;
+    }
+
     static boolean isPlacementValid(String patchCircle, String placement) {
         if(isEmpty(patchCircle) || isEmpty(placement)) {
             System.out.println("isEmpty");
@@ -177,7 +249,7 @@ public class PatchworkGame {
                     for (int a = 0; a < locationGrid.length; a++) {
                         for (int b = 0; b < locationGrid[0].length; b++) {
                             if (locationGrid[a][b]){
-                                if (playerA.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
+                                if (playerA.getGrid()[a+placementArray[i+2]-'A'][b+placementArray[i+1]-'A']) {
                                     System.out.println("Grid A overlap");
                                     return false;
                                 }
@@ -210,8 +282,8 @@ public class PatchworkGame {
      */
     static int getScoreForPlacement(String patchCircle, String placement, boolean firstPlayer) {
         Tuple player = Game.playersFromGameState(patchCircle, placement);
-        Player player1 = (Player)player.getLeft();
-        Player player2 = (Player)player.getRight();
+        Player player1 = (Player)player.getObjectAt(0);
+        Player player2 = (Player)player.getObjectAt(1);
 
         if (firstPlayer){
             return player1.getScore();

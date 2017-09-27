@@ -247,7 +247,7 @@ public class Game extends Application{ //this class contains the main method tha
             }
         }
 
-        Tuple out = new Tuple(player1, player2);
+        Tuple out = new Tuple(player1, player2, player1Turn);
         return out;
     }
     public static int circlePosFromGameState(String patchCircle, String placement){
@@ -264,5 +264,4 @@ public class Game extends Application{ //this class contains the main method tha
         }
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
     }
-
 }

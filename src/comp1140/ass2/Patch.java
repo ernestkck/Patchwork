@@ -201,7 +201,7 @@ public enum Patch {
         public int getButtonIncome(){
             return buttonIncome;
         }
-        public int getSpaceCovered(){
+        public int getSpacesCovered(){
             int out = 0;
             for (boolean[] row : getLocationGrid()){
                 for (boolean square : row){

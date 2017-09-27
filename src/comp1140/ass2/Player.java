@@ -40,6 +40,19 @@ public class Player {
     public boolean[][] getGrid(){
         return grid;
     }
+    public boolean[][] getGridWithPatch(String newPatch){
+        Patch patch = Patch.valueOf("" + newPatch.charAt(0));
+        boolean[][] newGrid = grid;
+        boolean[][] patchGrid = patch.getTransformedGrid(newPatch.charAt(3));
+        for (int row = 0; row < patchGrid.length; row++){
+            for (int col = 0; col < patchGrid[0].length; col++){
+                if (patchGrid[row][col]){
+                    grid[row + newPatch.charAt(2) - 'A'][col + newPatch.charAt(1) - 'A'] = patchGrid[row][col];
+                }
+            }
+        }
+        return newGrid;
+    }
 
     public void setButtonsOwned(int buttons){
         buttonsOwned = buttons;
@@ -61,15 +74,7 @@ public class Player {
         buttonIncome += income;
     }
     public void updateGrid(String newPatch){
-        Patch patch = Patch.valueOf("" + newPatch.charAt(0));
-        boolean[][] newGrid = patch.getTransformedGrid(newPatch.charAt(3));
-        for (int row = 0; row < newGrid.length; row++){
-            for (int col = 0; col < newGrid[0].length; col++){
-                if (newGrid[row][col]){
-                    grid[row + newPatch.charAt(2) - 'A'][col + newPatch.charAt(1) - 'A'] = newGrid[row][col];
-                }
-            }
-        }
+        grid = getGridWithPatch(newPatch);
     }
 
     private int incomeCollections(){
@@ -81,9 +86,13 @@ public class Player {
         }
         return out;
     }
-    public int newPatchValue(char newPatch){
+    public int patchValue(char newPatch){
         Patch patch = Patch.valueOf("" + newPatch);
-        return incomeCollections() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost() + 2 * patch.getSpaceCovered();
+        return incomeCollections() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost() + 2 * patch.getSpacesCovered();
+    }
+    public int patchValue(Patch patch){
+        return incomeCollections() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost()
+                + 2 * patch.getSpacesCovered();
     }
     public void buyPatch(String newPatch){
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
