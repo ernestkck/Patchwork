@@ -23,10 +23,11 @@ public class Game extends Application{ //this class contains the main method tha
     static Player playerB = new Player(0,5,0);
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-    private static final String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+    private static String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
     private static final String[] parts = PATCH_CIRCLE.split("A");
     private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static boolean turn = true;
+    private static String placementString = "";
     private static guiPatch currentPatch;
     private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
@@ -35,7 +36,7 @@ public class Game extends Application{ //this class contains the main method tha
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
-    private Text placement = new Text("Placement: ");
+    private Text placementText = new Text("Placement: ");
     public static boolean specialTile = false;
 
     private final Group root = new Group();
@@ -173,9 +174,9 @@ public class Game extends Application{ //this class contains the main method tha
         confirm.setOnAction(event -> {
             placePatch(currentPatch);
         });
-        placement.setLayoutX(760);
-        placement.setLayoutY(270);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch, confirm, changeTurn, placement);
+        placementText.setLayoutX(760);
+        placementText.setLayoutY(270);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, movePatch, confirm, changeTurn, placementText);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -242,12 +243,10 @@ public class Game extends Application{ //this class contains the main method tha
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
     }
     public void placePatch(guiPatch patch){
-        System.out.println(neutral_token);
         neutral_token = patchList.indexOf(patch);
-        System.out.println(neutral_token);
         patchList.remove(patch);
         patch.setDisable(true);
-        placement.setText("Placement: " + patch.toString());
+        placementText.setText("Placement: " + patch.toString());
         updatePatchCircle();
         setDraggable();
     }
@@ -256,7 +255,7 @@ public class Game extends Application{ //this class contains the main method tha
         double currentX = 10;
         double prevWidth = 0;
         int index;
-        System.out.println(patchList.get(neutral_token).getPatch().name());
+        System.out.println(patchList.get(neutral_token).getName());
         for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
             index = Math.floorMod(i, patchList.size());
             height = patchList.get(index).getHeight();
@@ -272,6 +271,31 @@ public class Game extends Application{ //this class contains the main method tha
     }
     public static void setCurrentPatch(guiPatch patch){
         currentPatch = patch;
+    }
+    public String getPatchCircle(){
+        return PATCH_CIRCLE;
+    }
+    public void loadPlacements(String patchCircle, String placement){
+        PATCH_CIRCLE = patchCircle;
+        placementString = placement;
+        neutral_token = 0;
+        patchList.clear();
+        makePatchCircle();
+        int position = 0;
+        while (position < placementString.length()){
+            if (placementString.charAt(position) == '.'){
+                position ++;
+            }
+            else{
+                for (int i = 0; i < patchList.size(); i++){
+                    if (patchList.get(i).getName() == placementString.charAt(position)) placePatch(patchList.get(i));
+                }
+                position += 4;
+            }
+        }
+    }
+    public int getNeutral_token(){
+        return neutral_token;
     }
 
 }
