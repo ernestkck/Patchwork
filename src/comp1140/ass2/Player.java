@@ -98,18 +98,18 @@ public class Player {
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
         updateButtonsOwned(-patch.getButtonCost());
         updateButtonIncome(patch.getButtonIncome());
-        for (int i = 0; i < Board.triggeredButtonEvent(getTimeSquare(),getTimeSquare() + patch.getTimeCost()); i++){
+        if (Board.triggeredButtonEvent(getTimeSquare(),getTimeSquare() + patch.getTimeCost())){
             collectIncome();
         }
         updateTimeSquare(patch.getTimeCost());
         updateGrid(newPatch);
     }
     public void advancePlayer(int newTime){
-        updateButtonsOwned(Math.min(newTime, 53) - getTimeSquare());
-        for (int i = 0; i < Board.triggeredButtonEvent(getTimeSquare(), newTime); i++){
+        updateButtonsOwned(Math.min(newTime, 54) - getTimeSquare());
+        if (Board.triggeredButtonEvent(getTimeSquare(), newTime)){
             collectIncome();
         }
-        setTimeSquare(Math.min(newTime, 53));
+        setTimeSquare(Math.min(newTime, 54));
     }
     public void collectIncome(){
         buttonsOwned += getButtonIncome();

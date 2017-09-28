@@ -9,10 +9,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import static javafx.scene.paint.Color.*;
 
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -39,10 +41,65 @@ public class Game extends Application{ //this class contains the main method tha
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
     private Text turnText = new Text("Player One's Turn");
     private Player currentPlayer = playerA;
+    private boolean endA = false;
+    private boolean endB = false;
     private Text placementText = new Text("Placement: ");
     public static boolean specialTile = false;
     private double[][] timeSquareCoords = {
             {420, 125},
+            {450, 125},
+            {475, 125},
+            {500, 125},
+            {525, 125},
+            {550, 125},
+            {550, 149.5},
+            {550, 174},
+            {550, 198.5},
+            {550, 223},
+            {550, 247.5},
+            {550, 272},
+            {550, 296.5},
+            {525.5, 296.5},
+            {501, 296.5},
+            {476.5, 296.5},
+            {452, 296.5},
+            {427.5, 296.5},
+            {403, 296.5},
+            {380, 296.5},
+            {380, 247.5},
+            {380, 223},
+            {380, 198.5},
+            {380, 174},
+            {380, 149.5},
+            {403, 149.5},
+            {452, 149.5},
+            {476.5, 149.5},
+            {501, 149.5},
+            {525.5, 149.5},
+            {525.5, 174},
+            {525.5, 198.5},
+            {525.5, 247.5},
+            {525.5, 272},
+            {501, 272},
+            {476.5, 272},
+            {452, 272},
+            {427.5, 272},
+            {403, 272},
+            {403, 247.5},
+            {403, 223},
+            {403, 198.5},
+            {403, 174},
+            {427.5, 174},
+            {476.5, 174},
+            {501, 174},
+            {501, 198.5},
+            {501, 223},
+            {501, 247.5},
+            {476.5, 247.5},
+            {427.5, 247.5},
+            {427.5, 223},
+            {427.5, 198.5},
+            {470, 210},
     };
     private Circle circleA = new Circle(10);
     private Circle circleB = new Circle(10);
@@ -57,6 +114,8 @@ public class Game extends Application{ //this class contains the main method tha
         makePatchCircle();
         setDraggable();
         setButtons();
+        updatePlayer();
+        circleA.toFront();
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -171,17 +230,25 @@ public class Game extends Application{ //this class contains the main method tha
         changeTurn.setOnAction(event -> {
             turn = !turn;
             updateButtons();
+            updatePlayer();
         });
         Button confirm = new Button("Confirm");
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
+            System.out.println(currentPatch.toString());
+            System.out.println(placementString);
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 placePatch(currentPatch);
                 placementString += currentPatch.toString();
-                currentPlayer.buyPatch(currentPatch.toString());
-                updatePlayer();
-                updateButtons();
+                if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost())){
+                    specialPatch(currentPatch.toString());
+                }
+                else {
+                    currentPlayer.buyPatch(currentPatch.toString());
+                    updatePlayer();
+                    updateButtons();
+                }
             }
             else {
                 currentPatch.toAnchor();
@@ -193,23 +260,29 @@ public class Game extends Application{ //this class contains the main method tha
         advance.setLayoutY(350);
         advance.setOnAction(event -> {
             placementString += '.';
+            int oldTime = currentPlayer.getTimeSquare();
             if (currentPlayer == playerA){
-                currentPlayer.setTimeSquare(playerB.getTimeSquare()+1);
+                currentPlayer.advancePlayer(playerB.getTimeSquare()+1);
             }
             else {
-                currentPlayer.setTimeSquare(playerA.getTimeSquare()+1);
+                currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
             }
-            updatePlayer();
+            if (Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
+                specialPatch(".");
+            }
+            else {
+                updatePlayer();
+            }
         });
         circleA.setFill(Color.BLUE);
         circleA.setCenterX(3);
         circleB.setCenterY(3);
         circleB.setFill(Color.RED);
         circleA.toFront();
-        circleA.setLayoutX(timeSquareCoords[0][0]);
-        circleA.setLayoutY(timeSquareCoords[0][1]);
-        circleB.setLayoutX(timeSquareCoords[0][0]);
-        circleB.setLayoutY(timeSquareCoords[0][1]);
+        circleA.setLayoutX(timeSquareCoords[playerA.getTimeSquare()][0]);
+        circleA.setLayoutY(timeSquareCoords[playerA.getTimeSquare()][1]);
+        circleB.setLayoutX(timeSquareCoords[playerB.getTimeSquare()][0]);
+        circleB.setLayoutY(timeSquareCoords[playerB.getTimeSquare()][1]);
         circleA.setStroke(Color.BLACK);
         circleB.setStroke(Color.BLACK);
         placementText.setLayoutX(780);
@@ -230,6 +303,25 @@ public class Game extends Application{ //this class contains the main method tha
         else {
             turnText.setText("Player Two's Turn");
         }
+    }
+
+    public void specialPatch(String patchPlace){
+        for (int i = 0; i < patchList.size(); i++){
+            patchList.get(i).setDraggable(false);
+        }
+        guiPatch hPatch = new guiPatch('h');
+        hPatch.setLayoutX(100);
+        hPatch.setLayoutY(300);
+        hPatch.setDraggable(true);
+        hPatch.anchor();
+        root.getChildren().add(hPatch);
+        boolean tmp = turn;
+        if (patchPlace != ".") {
+            currentPlayer.buyPatch(patchPlace);
+        }
+        updatePlayer();
+        turn = tmp;
+        updateButtons();
     }
 
     public static Tuple playersFromGameState(String patchCircle, String placement){
@@ -290,8 +382,10 @@ public class Game extends Application{ //this class contains the main method tha
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
     }
     public void placePatch(guiPatch patch){
-        neutral_token = patchList.indexOf(patch);
-        patchList.remove(patch);
+        if (patch.getName() != 'h') {
+            neutral_token = patchList.indexOf(patch);
+            patchList.remove(patch);
+        }
         patch.setDisable(true);
         placementText.setText("Placement: " + patch.toString());
         updatePatchCircle();
@@ -313,12 +407,42 @@ public class Game extends Application{ //this class contains the main method tha
         }
     }
     public void updatePlayer(){
+        System.out.println(currentPlayer.getTimeSquare());
+        System.out.println(timeSquareCoords.length);
+        if (currentPlayer == playerA){
+            if (playerA.getTimeSquare() < timeSquareCoords.length) {
+                circleA.setLayoutX(timeSquareCoords[playerA.getTimeSquare()][0]);
+                circleA.setLayoutY(timeSquareCoords[playerA.getTimeSquare()][1]);
+            }
+            else {
+                circleA.setLayoutX(timeSquareCoords[timeSquareCoords.length-1][0]);
+                circleA.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
+                endA = true;
+                System.out.println(endB);
+                if (endB) endGame();
+            }
+        }
+        else {
+            if (playerB.getTimeSquare() < timeSquareCoords.length) {
+                circleB.setLayoutX(timeSquareCoords[playerB.getTimeSquare()][0]);
+                circleB.setLayoutY(timeSquareCoords[playerB.getTimeSquare()][1]);
+            }
+            else {
+                circleB.setLayoutX(timeSquareCoords[timeSquareCoords.length-1][0]);
+                circleB.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
+                endB = true;
+                System.out.println(endA);
+                if (endA) endGame();
+            }
+        }
         if (playerB.getTimeSquare() > playerA.getTimeSquare()){
             turn = true;
+            circleA.toFront();
             currentPlayer = playerA;
         }
         else if (playerA.getTimeSquare() > playerB.getTimeSquare()){
             turn = false;
+            circleB.toFront();
             currentPlayer = playerB;
         }
         updateButtons();
@@ -353,6 +477,29 @@ public class Game extends Application{ //this class contains the main method tha
     }
     public int getNeutral_token(){
         return neutral_token;
+    }
+    private void endGame(){
+        int scoreA = PatchworkGame.getScoreForPlacement(PATCH_CIRCLE, placementString, true);
+        int scoreB = PatchworkGame.getScoreForPlacement(PATCH_CIRCLE, placementString, false);
+        root.getChildren().clear();
+        Text winner;
+        if (scoreA > scoreB){
+            winner = new Text("Player One wins");
+        }
+        else if (scoreB > scoreA){
+            winner = new Text("Player Two wins");
+        }
+        else {
+            winner = new Text("It is a draw");
+        }
+        winner.setFont(new Font(50));
+        winner.setLayoutX(300);
+        winner.setLayoutY(300);
+        Text scores = new Text("Player One's score: " + scoreA + "\nPlayer Two's score: " + scoreB);
+        scores.setFont(new Font(30));
+        scores.setLayoutX(250);
+        scores.setLayoutY(400);
+        root.getChildren().addAll(winner, scores);
     }
 
 }
