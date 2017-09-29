@@ -31,7 +31,7 @@ public class Game extends Application{ //this class contains the main method tha
     private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static boolean turn = true;
     private static String placementString = "";
-    private static guiPatch currentPatch;
+    private static guiPatch currentPatch = new guiPatch('h');
     private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
     private ArrayList<guiPatch> patchList = new ArrayList();
@@ -186,6 +186,9 @@ public class Game extends Application{ //this class contains the main method tha
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
         }
+        if (patchList.size() <= neutral_token){
+            neutral_token--;
+        }
         patchList.get(neutral_token).setDraggable(true);
         if (neutral_token+1 == patchList.size()){
             patchList.get(0).setDraggable(true);
@@ -224,24 +227,17 @@ public class Game extends Application{ //this class contains the main method tha
             updatePatchCircle();
             setDraggable();
         });
-        Button changeTurn = new Button("Change Turn");
-        changeTurn.setLayoutX(700);
-        changeTurn.setLayoutY(300);
-        changeTurn.setOnAction(event -> {
-            turn = !turn;
-            updateButtons();
-            updatePlayer();
-        });
         Button confirm = new Button("Confirm");
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
             System.out.println(currentPatch.toString());
             System.out.println(placementString);
+            boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 placePatch(currentPatch);
                 placementString += currentPatch.toString();
-                if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost())){
+                if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost()) && checkCoords){
                     specialPatch(currentPatch.toString());
                 }
                 else {
@@ -249,6 +245,7 @@ public class Game extends Application{ //this class contains the main method tha
                     updatePlayer();
                     updateButtons();
                 }
+                currentPatch = new guiPatch('h');
             }
             else {
                 currentPatch.toAnchor();
@@ -257,7 +254,7 @@ public class Game extends Application{ //this class contains the main method tha
         });
         Button advance = new Button("Advance");
         advance.setLayoutX(700);
-        advance.setLayoutY(350);
+        advance.setLayoutY(300);
         advance.setOnAction(event -> {
             placementString += '.';
             int oldTime = currentPlayer.getTimeSquare();
@@ -290,7 +287,7 @@ public class Game extends Application{ //this class contains the main method tha
         turnText.setFont(new Font(30));
         turnText.setX(320);
         turnText.setY(50);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, changeTurn, placementText, turnText, advance, circleA, circleB);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
