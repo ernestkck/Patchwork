@@ -1,13 +1,11 @@
 package comp1140.ass2;
 
-import javafx.event.EventHandler;
-import javafx.event.ActionEvent;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class guiPatch extends ImageView {
+public class GuiPatch extends ImageView {
     Patch patch;
     char rotation = 'A';
     char horizontal;
@@ -17,13 +15,13 @@ public class guiPatch extends ImageView {
     boolean turn = Game.getTurn();
     boolean isOffset = false;
 
-    guiPatch(char patch){
+    GuiPatch(char patch){
         this.patch = Patch.valueOf("" + patch);
         if (patch <= 'Z'){
-            setImage(new Image(guiPatch.class.getResourceAsStream("gui/assets/" + patch + ".png")));
+            setImage(new Image(GuiPatch.class.getResourceAsStream("gui/assets/" + patch + ".png")));
         }
         else {
-            setImage(new Image(guiPatch.class.getResourceAsStream("gui/assets/" + patch + "_.png")));
+            setImage(new Image(GuiPatch.class.getResourceAsStream("gui/assets/" + patch + "_.png")));
         }
         setPreserveRatio(true);
         setFitWidth(getWidth());
@@ -68,6 +66,14 @@ public class guiPatch extends ImageView {
             mouseX = event.getSceneX();
             mouseY = event.getSceneY();
             event.consume();
+        });
+
+        setOnMouseEntered(event -> {
+            Game.setInfo(patch);
+        });
+
+        setOnMouseExited(event -> {
+            Game.clearInfo();
         });
 
         setOnMouseReleased(event -> {
@@ -128,6 +134,7 @@ public class guiPatch extends ImageView {
             isOffset = false;
         }
         setRotate(getRotate()+90);
+        System.out.println(rotation);
     }
     public void getTurn(){
         turn = Game.getTurn();

@@ -62,11 +62,13 @@ public class PatchworkGame {
                 if ((i + 1) % 4 == 0){
                     for (char chr : placements.toCharArray()){
                         if (chr == patch.charAt(0)){
+                            System.out.println(1);
                             return false;
                         }
                     }
 
                     if (!isPatchPlacementWellFormed(patch) || (patch.charAt(0) == 'h' && hCount >= 5)){
+                        System.out.println(2);
                         return false;
                     }
 
@@ -82,6 +84,7 @@ public class PatchworkGame {
             }
         }
         else{
+            System.out.println(3);
             return false;
         }
         return true;
@@ -116,86 +119,86 @@ public class PatchworkGame {
         boolean turn = false;
         boolean previousTurn = false;
         boolean[][] locationGrid;
-        for (int i = 0; i< placementArray.length; i++){
-            if (placementArray[i] == '.'){
-                if (turn){
-                    playerB.setTimeSquare(playerA.getTimeSquare()+1);
-                }
-                else{
-                    playerA.setTimeSquare(playerB.getTimeSquare()+1);
-                }
-            }
-            else {
-                if (turn){
-                    playerB.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
-                }
-                else{
-                    playerA.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
-                }
-                locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
-                if ((placementArray[i+3]-65) / 4 == 1) {
-                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
-                    for (int a = 0; a < locationGrid.length; a++){
-                        for (int b = 0; b < locationGrid[0].length; b++){
-                            tempGrid[a][b] = locationGrid[a][locationGrid[0].length-b-1];
-                        }
+        try {
+            for (int i = 0; i < placementArray.length; i++) {
+                if (placementArray[i] == '.') {
+                    if (turn) {
+                        playerB.setTimeSquare(playerA.getTimeSquare() + 1);
+                    } else {
+                        playerA.setTimeSquare(playerB.getTimeSquare() + 1);
                     }
-                    locationGrid = tempGrid;
-                }
-                if ((placementArray[i+3]-65)%2==1){
-                    boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
-                    for (int row = 0; row < locationGrid.length; row++){
-                        for (int col = 0; col < locationGrid[0].length; col++){
-                            tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
-                        }
+                } else {
+                    if (turn) {
+                        playerB.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
+                    } else {
+                        playerA.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
                     }
-                    locationGrid = tempGrid;
-                }
-                if (((placementArray[i+3]-65) / 2) % 2 == 1) {
-                    boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
-                    for (int a = 0; a < locationGrid.length; a++){
-                        for (int b = 0; b < locationGrid[0].length; b++){
-                            tempGrid[a][b] = locationGrid[locationGrid.length-1-a][locationGrid[0].length-1-b];
+                    locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
+                    if ((placementArray[i + 3] - 65) / 4 == 1) {
+                        boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                        for (int a = 0; a < locationGrid.length; a++) {
+                            for (int b = 0; b < locationGrid[0].length; b++) {
+                                tempGrid[a][b] = locationGrid[a][locationGrid[0].length - b - 1];
+                            }
                         }
+                        locationGrid = tempGrid;
                     }
-                    locationGrid = tempGrid;
-                }
-                if (placementArray[i] == 'h') turn = previousTurn;
-                if (turn) {
-                    for (int a = 0; a < locationGrid.length; a++) {
-                        for (int b = 0; b < locationGrid[0].length; b++) {
-                            if (locationGrid[a][b]){
-                                if (playerB.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] && locationGrid[a][b]) {
-                                    System.out.println("Grid B overlap");
-                                    return false;
+                    if ((placementArray[i + 3] - 65) % 2 == 1) {
+                        boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
+                        for (int row = 0; row < locationGrid.length; row++) {
+                            for (int col = 0; col < locationGrid[0].length; col++) {
+                                tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
+                            }
+                        }
+                        locationGrid = tempGrid;
+                    }
+                    if (((placementArray[i + 3] - 65) / 2) % 2 == 1) {
+                        boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
+                        for (int a = 0; a < locationGrid.length; a++) {
+                            for (int b = 0; b < locationGrid[0].length; b++) {
+                                tempGrid[a][b] = locationGrid[locationGrid.length - 1 - a][locationGrid[0].length - 1 - b];
+                            }
+                        }
+                        locationGrid = tempGrid;
+                    }
+                    if (placementArray[i] == 'h') turn = previousTurn;
+                    if (turn) {
+                        for (int a = 0; a < locationGrid.length; a++) {
+                            for (int b = 0; b < locationGrid[0].length; b++) {
+                                if (locationGrid[a][b]) {
+                                    if (playerB.getGrid()[a + placementArray[i + 2] - 65][b + placementArray[i + 1] - 65] && locationGrid[a][b]) {
+                                        System.out.println("Grid B overlap");
+                                        return false;
+                                    }
+                                    playerB.getGrid()[a + placementArray[i + 2] - 65][b + placementArray[i + 1] - 65] = locationGrid[a][b];
                                 }
-                                playerB.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
+                            }
+                        }
+                    } else {
+                        for (int a = 0; a < locationGrid.length; a++) {
+                            for (int b = 0; b < locationGrid[0].length; b++) {
+                                if (locationGrid[a][b]) {
+                                    if (playerA.getGrid()[a + placementArray[i + 2] - 'A'][b + placementArray[i + 1] - 'A']) {
+                                        System.out.println("Grid A overlap");
+                                        return false;
+                                    }
+                                    playerA.getGrid()[a + placementArray[i + 2] - 65][b + placementArray[i + 1] - 65] = locationGrid[a][b];
+                                }
                             }
                         }
                     }
+                    i += 3;
                 }
-                else {
-                    for (int a = 0; a < locationGrid.length; a++) {
-                        for (int b = 0; b < locationGrid[0].length; b++) {
-                            if (locationGrid[a][b]){
-                                if (playerA.getGrid()[a+placementArray[i+2]-'A'][b+placementArray[i+1]-'A']) {
-                                    System.out.println("Grid A overlap");
-                                    return false;
-                                }
-                                playerA.getGrid()[a+placementArray[i+2]-65][b+placementArray[i+1]-65] = locationGrid[a][b];
-                            }
-                        }
-                    }
+                previousTurn = turn;
+                if (playerA.getTimeSquare() > playerB.getTimeSquare()) {
+                    turn = true;
+                } else if (playerB.getTimeSquare() > playerA.getTimeSquare()) {
+                    turn = false;
                 }
-                i+=3;
             }
-            previousTurn = turn;
-            if (playerA.getTimeSquare() > playerB.getTimeSquare()){
-                turn = true;
-            }
-            else if (playerB.getTimeSquare() > playerA.getTimeSquare()){
-                turn = false;
-            }
+        }
+        catch (Exception ArrayIndexOutOfBoundsException){
+            return false;
         }
         return true;
     }

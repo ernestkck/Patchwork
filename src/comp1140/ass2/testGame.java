@@ -12,10 +12,10 @@ public class testGame {
     private static final String[] parts = PATCH_CIRCLE.split("A");
     private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static String placementString = "";
-    private static guiPatch currentPatch;
+    private static GuiPatch currentPatch;
     private int neutral_token = PATCH_CIRCLE.indexOf("A");
     private static final String URI_BASE = "assets/";
-    private ArrayList<guiPatch> patchList = new ArrayList();
+    private ArrayList<GuiPatch> patchList = new ArrayList();
     public static boolean specialTile = false;
 
     testGame(String circle, String place){
@@ -43,10 +43,10 @@ public class testGame {
     }
     public void makePatchCircle(){
         for (char t: PATCH_CIRCLE.toCharArray()) {
-            patchList.add(new guiPatch(t));
+            patchList.add(new GuiPatch(t));
         }
     }
-    public void placePatch(guiPatch patch){
+    public void placePatch(GuiPatch patch){
         neutral_token = (patchList.indexOf(patch)+1) % patchList.size();
         //patchList.remove(patch);
         patch.setDisable(true);

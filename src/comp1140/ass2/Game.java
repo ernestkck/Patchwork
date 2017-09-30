@@ -2,23 +2,20 @@ package comp1140.ass2;
 
 import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import static javafx.scene.paint.Color.*;
 
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Game extends Application{ //this class contains the main method that runs the game, it will also be the GUI
 
@@ -31,24 +28,43 @@ public class Game extends Application{ //this class contains the main method tha
 
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-    private static String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+    private static String randCircle(){
+        String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+        String out = "";
+        Random rand = new Random();
+        int index;
+        ArrayList<Character> circleList = new ArrayList();
+        for (char t: alpha.toCharArray()){
+            circleList.add(new Character(t));
+        }
+        while (circleList.size() > 0){
+            index = rand.nextInt(circleList.size());
+            out += circleList.get(index);
+            circleList.remove(index);
+        }
+        return out;
+    }
+    private static String PATCH_CIRCLE = randCircle();
     private static final String[] parts = PATCH_CIRCLE.split("A");
     private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static boolean turn = true;
     private static String placementString = "";
-    private static guiPatch currentPatch;
+    private static GuiPatch currentPatch = new GuiPatch('h');
     private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
-    private ArrayList<guiPatch> patchList = new ArrayList();
+    private ArrayList<GuiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
+    private Button advance = new Button("Advance");
     private Text turnText = new Text("Player One's Turn");
     private Player currentPlayer = playerA;
     private boolean endA = false;
     private boolean endB = false;
     private Text placementText = new Text("Placement: ");
+    private static Text patchInfo = new Text("Button Cost: \nTime Cost: \nIncome: ");
+    private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     public static boolean specialTile = false;
     private double[][] timeSquareCoords = {
             {420, 125},
@@ -121,6 +137,7 @@ public class Game extends Application{ //this class contains the main method tha
         setButtons();
         updatePlayer();
         circleA.toFront();
+        explanation.toFront();
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -169,7 +186,7 @@ public class Game extends Application{ //this class contains the main method tha
     }
     public void makePatchCircle(){
         for (char t: ADJUSTED_CIRCLE.toCharArray()) {
-            patchList.add(new guiPatch(t));
+            patchList.add(new GuiPatch(t));
         }
         updatePatchCircle();
         root.getChildren().addAll(patchList);
@@ -185,11 +202,17 @@ public class Game extends Application{ //this class contains the main method tha
         tb.setFitWidth(290 * 0.7);
         tb.setX((933-(290*0.7))/2);
         tb.setY(110);
-        root.getChildren().addAll(bg, tb);
+        explanation.setOnMouseClicked(event -> {
+            root.getChildren().remove(explanation);
+        });
+        root.getChildren().addAll(explanation, bg, tb);
     }
     public void setDraggable(){
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
+        }
+        if (patchList.size() <= neutral_token){
+            neutral_token--;
         }
         patchList.get(neutral_token).setDraggable(true);
         if (neutral_token+1 == patchList.size()){
@@ -229,24 +252,18 @@ public class Game extends Application{ //this class contains the main method tha
             updatePatchCircle();
             setDraggable();
         });
-        Button changeTurn = new Button("Change Turn");
-        changeTurn.setLayoutX(700);
-        changeTurn.setLayoutY(300);
-        changeTurn.setOnAction(event -> {
-            turn = !turn;
-            updateButtons();
-            updatePlayer();
-        });
         Button confirm = new Button("Confirm");
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
             System.out.println(currentPatch.toString());
             System.out.println(placementString);
+            boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
+                advance.setDisable(false);
                 placePatch(currentPatch);
                 placementString += currentPatch.toString();
-                if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost())){
+                if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost()) && checkCoords){
                     specialPatch(currentPatch.toString());
                 }
                 else {
@@ -254,15 +271,15 @@ public class Game extends Application{ //this class contains the main method tha
                     updatePlayer();
                     updateButtons();
                 }
+                currentPatch = new GuiPatch('h');
             }
             else {
                 currentPatch.toAnchor();
             }
 
         });
-        Button advance = new Button("Advance");
         advance.setLayoutX(700);
-        advance.setLayoutY(350);
+        advance.setLayoutY(300);
         advance.setOnAction(event -> {
             placementString += '.';
             int oldTime = currentPlayer.getTimeSquare();
@@ -278,6 +295,7 @@ public class Game extends Application{ //this class contains the main method tha
             else {
                 updatePlayer();
             }
+            currentPatch.toAnchor();
         });
         circleA.setFill(Color.BLUE);
         circleA.setCenterX(3);
@@ -295,7 +313,10 @@ public class Game extends Application{ //this class contains the main method tha
         turnText.setFont(new Font(30));
         turnText.setX(320);
         turnText.setY(50);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, changeTurn, placementText, turnText, advance, circleA, circleB);
+        patchInfo.setFont(new Font(20));
+        patchInfo.setLayoutX(50);
+        patchInfo.setLayoutY(500);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB, patchInfo);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -311,10 +332,11 @@ public class Game extends Application{ //this class contains the main method tha
     }
 
     public void specialPatch(String patchPlace){
+        advance.setDisable(true);
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
         }
-        guiPatch hPatch = new guiPatch('h');
+        GuiPatch hPatch = new GuiPatch('h');
         hPatch.setLayoutX(100);
         hPatch.setLayoutY(300);
         hPatch.setDraggable(true);
@@ -386,7 +408,7 @@ public class Game extends Application{ //this class contains the main method tha
         }
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
     }
-    public void placePatch(guiPatch patch){
+    public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
             neutral_token = patchList.indexOf(patch);
             patchList.remove(patch);
@@ -402,7 +424,7 @@ public class Game extends Application{ //this class contains the main method tha
         double prevWidth = 0;
         int index;
         for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
-            index = Math.floorMod(i, patchList.size());
+            index = i % patchList.size();//Math.floorMod(i, patchList.size());
             height = patchList.get(index).getHeight();
             currentX += prevWidth+10;
             patchList.get(index).setLayoutX(currentX);
@@ -455,7 +477,7 @@ public class Game extends Application{ //this class contains the main method tha
     public static boolean getTurn(){
         return turn;
     }
-    public static void setCurrentPatch(guiPatch patch){
+    public static void setCurrentPatch(GuiPatch patch){
         currentPatch = patch;
     }
     public String getPatchCircle(){
@@ -506,5 +528,10 @@ public class Game extends Application{ //this class contains the main method tha
         scores.setLayoutY(400);
         root.getChildren().addAll(winner, scores);
     }
-
+    public static void setInfo(Patch patch){
+        patchInfo.setText("Button Cost: " + patch.getButtonCost() + "\nTime Cost: " + patch.getTimeCost() + "\nIncome: " + patch.getButtonIncome());
+    }
+    public static void clearInfo(){
+        patchInfo.setText("Button Cost: \nTime Cost: \nIncome: ");
+    }
 }
