@@ -134,6 +134,7 @@ public class GuiPatch extends ImageView {
             isOffset = false;
         }
         setRotate(getRotate()+90);
+        System.out.println(rotation);
     }
     public void getTurn(){
         turn = Game.getTurn();

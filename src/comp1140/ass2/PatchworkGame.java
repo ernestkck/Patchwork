@@ -62,11 +62,13 @@ public class PatchworkGame {
                 if ((i + 1) % 4 == 0){
                     for (char chr : placements.toCharArray()){
                         if (chr == patch.charAt(0)){
+                            System.out.println(1);
                             return false;
                         }
                     }
 
                     if (!isPatchPlacementWellFormed(patch) || (patch.charAt(0) == 'h' && hCount >= 5)){
+                        System.out.println(2);
                         return false;
                     }
 
@@ -82,6 +84,7 @@ public class PatchworkGame {
             }
         }
         else{
+            System.out.println(3);
             return false;
         }
         return true;

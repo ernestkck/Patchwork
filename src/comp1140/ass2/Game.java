@@ -52,12 +52,14 @@ public class Game extends Application{ //this class contains the main method tha
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
+    private Button advance = new Button("Advance");
     private Text turnText = new Text("Player One's Turn");
     private Player currentPlayer = playerA;
     private boolean endA = false;
     private boolean endB = false;
     private Text placementText = new Text("Placement: ");
     private static Text patchInfo = new Text("Button Cost: \nTime Cost: \nIncome: ");
+    private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     public static boolean specialTile = false;
     private double[][] timeSquareCoords = {
             {420, 125},
@@ -130,6 +132,7 @@ public class Game extends Application{ //this class contains the main method tha
         setButtons();
         updatePlayer();
         circleA.toFront();
+        explanation.toFront();
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -194,7 +197,10 @@ public class Game extends Application{ //this class contains the main method tha
         tb.setFitWidth(290 * 0.7);
         tb.setX((933-(290*0.7))/2);
         tb.setY(110);
-        root.getChildren().addAll(bg, tb);
+        explanation.setOnMouseClicked(event -> {
+            root.getChildren().remove(explanation);
+        });
+        root.getChildren().addAll(explanation, bg, tb);
     }
     public void setDraggable(){
         for (int i = 0; i < patchList.size(); i++){
@@ -249,6 +255,7 @@ public class Game extends Application{ //this class contains the main method tha
             System.out.println(placementString);
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
+                advance.setDisable(false);
                 placePatch(currentPatch);
                 placementString += currentPatch.toString();
                 if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost()) && checkCoords){
@@ -266,7 +273,6 @@ public class Game extends Application{ //this class contains the main method tha
             }
 
         });
-        Button advance = new Button("Advance");
         advance.setLayoutX(700);
         advance.setLayoutY(300);
         advance.setOnAction(event -> {
@@ -284,6 +290,7 @@ public class Game extends Application{ //this class contains the main method tha
             else {
                 updatePlayer();
             }
+            currentPatch.toAnchor();
         });
         circleA.setFill(Color.BLUE);
         circleA.setCenterX(3);
@@ -320,6 +327,7 @@ public class Game extends Application{ //this class contains the main method tha
     }
 
     public void specialPatch(String patchPlace){
+        advance.setDisable(true);
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
         }
@@ -411,7 +419,7 @@ public class Game extends Application{ //this class contains the main method tha
         double prevWidth = 0;
         int index;
         for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
-            index = Math.floorMod(i, patchList.size());
+            index = i % patchList.size();//Math.floorMod(i, patchList.size());
             height = patchList.get(index).getHeight();
             currentX += prevWidth+10;
             patchList.get(index).setLayoutX(currentX);
