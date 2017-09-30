@@ -2,23 +2,20 @@ package comp1140.ass2;
 
 import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import static javafx.scene.paint.Color.*;
 
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Game extends Application{ //this class contains the main method that runs the game, it will also be the GUI
 
@@ -26,15 +23,31 @@ public class Game extends Application{ //this class contains the main method tha
     static Player playerB = new Player(0,5,0);
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-    private static String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+    private static String randCircle(){
+        String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+        String out = "";
+        Random rand = new Random();
+        int index;
+        ArrayList<Character> circleList = new ArrayList();
+        for (char t: alpha.toCharArray()){
+            circleList.add(new Character(t));
+        }
+        while (circleList.size() > 0){
+            index = rand.nextInt(circleList.size());
+            out += circleList.get(index);
+            circleList.remove(index);
+        }
+        return out;
+    }
+    private static String PATCH_CIRCLE = randCircle();
     private static final String[] parts = PATCH_CIRCLE.split("A");
     private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static boolean turn = true;
     private static String placementString = "";
-    private static guiPatch currentPatch = new guiPatch('h');
+    private static GuiPatch currentPatch = new GuiPatch('h');
     private int neutral_token = 0;
     private static final String URI_BASE = "assets/";
-    private ArrayList<guiPatch> patchList = new ArrayList();
+    private ArrayList<GuiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
@@ -165,7 +178,7 @@ public class Game extends Application{ //this class contains the main method tha
     }
     public void makePatchCircle(){
         for (char t: ADJUSTED_CIRCLE.toCharArray()) {
-            patchList.add(new guiPatch(t));
+            patchList.add(new GuiPatch(t));
         }
         updatePatchCircle();
         root.getChildren().addAll(patchList);
@@ -246,7 +259,7 @@ public class Game extends Application{ //this class contains the main method tha
                     updatePlayer();
                     updateButtons();
                 }
-                currentPatch = new guiPatch('h');
+                currentPatch = new GuiPatch('h');
             }
             else {
                 currentPatch.toAnchor();
@@ -310,7 +323,7 @@ public class Game extends Application{ //this class contains the main method tha
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
         }
-        guiPatch hPatch = new guiPatch('h');
+        GuiPatch hPatch = new GuiPatch('h');
         hPatch.setLayoutX(100);
         hPatch.setLayoutY(300);
         hPatch.setDraggable(true);
@@ -382,7 +395,7 @@ public class Game extends Application{ //this class contains the main method tha
         }
         return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
     }
-    public void placePatch(guiPatch patch){
+    public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
             neutral_token = patchList.indexOf(patch);
             patchList.remove(patch);
@@ -451,7 +464,7 @@ public class Game extends Application{ //this class contains the main method tha
     public static boolean getTurn(){
         return turn;
     }
-    public static void setCurrentPatch(guiPatch patch){
+    public static void setCurrentPatch(GuiPatch patch){
         currentPatch = patch;
     }
     public String getPatchCircle(){
