@@ -70,6 +70,10 @@ public class guiPatch extends ImageView {
             event.consume();
         });
 
+        setOnMouseEntered(event -> {
+            Game.setInfo(patch);
+        });
+
         setOnMouseReleased(event -> {
             double grid;
             getTurn();

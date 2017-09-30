@@ -44,6 +44,7 @@ public class Game extends Application{ //this class contains the main method tha
     private boolean endA = false;
     private boolean endB = false;
     private Text placementText = new Text("Placement: ");
+    private static Text patchInfo = new Text("Button Cost: \nTime Cost: \nIncome: ");
     public static boolean specialTile = false;
     private double[][] timeSquareCoords = {
             {420, 125},
@@ -287,7 +288,10 @@ public class Game extends Application{ //this class contains the main method tha
         turnText.setFont(new Font(30));
         turnText.setX(320);
         turnText.setY(50);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB);
+        patchInfo.setFont(new Font(20));
+        patchInfo.setLayoutX(50);
+        patchInfo.setLayoutY(500);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB, patchInfo);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -497,6 +501,9 @@ public class Game extends Application{ //this class contains the main method tha
         scores.setLayoutX(250);
         scores.setLayoutY(400);
         root.getChildren().addAll(winner, scores);
+    }
+    public static void setInfo(Patch patch){
+        patchInfo.setText("Button Cost: " + patch.getButtonCost() + "\nTime Cost: " + patch.getTimeCost() + "\nIncome: " + patch.getButtonIncome());
     }
 
 }
