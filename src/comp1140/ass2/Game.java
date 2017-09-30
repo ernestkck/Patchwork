@@ -505,5 +505,7 @@ public class Game extends Application{ //this class contains the main method tha
     public static void setInfo(Patch patch){
         patchInfo.setText("Button Cost: " + patch.getButtonCost() + "\nTime Cost: " + patch.getTimeCost() + "\nIncome: " + patch.getButtonIncome());
     }
-
+    public static void clearInfo(){
+        patchInfo.setText("Button Cost: \nTime Cost: \nIncome: ");
+    }
 }
