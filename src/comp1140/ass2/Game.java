@@ -24,6 +24,11 @@ public class Game extends Application{ //this class contains the main method tha
 
     static Player playerA = new Player(0,5,0);
     static Player playerB = new Player(0,5,0);
+
+    public static String placement = "";
+    public static String patchCircle = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+    public static int neutralToken = 1;
+
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
     private static String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
