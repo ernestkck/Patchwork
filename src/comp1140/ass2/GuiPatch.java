@@ -124,13 +124,13 @@ public class GuiPatch extends ImageView {
         }
         double rotateDouble = ((rotation-65) % 4)*90;
         if (!isOffset && (rotation-65)%2 == 1) {
-            setLayoutX(getLayoutX() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
-            setLayoutY(getLayoutY() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
+            //setLayoutX(getLayoutX() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
+            //setLayoutY(getLayoutY() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
             isOffset = true;
         }
         else if (isOffset && (rotation-65)%2 == 0){
-            setLayoutX(getLayoutX() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
-            setLayoutY(getLayoutY() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
+            //setLayoutX(getLayoutX() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
+            //setLayoutY(getLayoutY() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
             isOffset = false;
         }
         setRotate(getRotate()+90);
