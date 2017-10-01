@@ -114,14 +114,14 @@ public class GuiPatch extends ImageView {
         setLayoutY(anchorY);
     }
     public void rotate(){
+        if (rotation == 'H') setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        if (rotation == 'D') setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         if (rotation == 'H') {
             rotation = 'A';
         }
         else {
             rotation += 1;
         }
-        if (rotation == 'H') setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-        if (rotation == 'D') setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         double rotateDouble = ((rotation-65) % 4)*90;
         if (!isOffset && (rotation-65)%2 == 1) {
             setLayoutX(getLayoutX() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
