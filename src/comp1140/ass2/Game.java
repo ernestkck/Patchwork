@@ -63,7 +63,7 @@ public class Game extends Application{ //this class contains the main method tha
     private boolean endA = false;
     private boolean endB = false;
     private Text placementText = new Text("Placement: ");
-    private static Text patchInfo = new Text("Button Cost: \nTime Cost: \nIncome: ");
+    private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     public static boolean specialTile = false;
     private double[][] timeSquareCoords = {
@@ -205,6 +205,7 @@ public class Game extends Application{ //this class contains the main method tha
         explanation.setOnMouseClicked(event -> {
             root.getChildren().remove(explanation);
         });
+        patchInfo.setText("Button Cost: \nTime Cost: \nIncome: ");
         root.getChildren().addAll(explanation, bg, tb);
     }
     public void setDraggable(){
