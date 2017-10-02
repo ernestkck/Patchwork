@@ -7,7 +7,7 @@ public class Player {
     private int timeSquare;
     private int buttonsOwned;
     private int buttonIncome;
-    public boolean[][] grid;
+    private boolean[][] grid;
 
     public Player(int timeSquare, int buttonsOwned, int buttonIncome){
         this.timeSquare = timeSquare;
@@ -38,6 +38,43 @@ public class Player {
     }
     public int getScore(){
         return getButtonsOwned() - 2 * getSpaces();
+    }
+    public int getIncomeEventsAvailable(){
+        int out = 0;
+        for (int event : Board.getButtonEvent()){
+            if (event > getTimeSquare()){
+                out++;
+            }
+        }
+        return out;
+    }
+    public int getPatchValue(Patch patch){
+        return getIncomeEventsAvailable() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost()
+                + 2 * patch.getSpacesCovered();
+    }
+    public int getPatchPositionValue(String newPatch){
+        boolean[][] newGrid = getGridWithPatch(newPatch);
+        int out = 0;
+        for (int i = 0; i < newGrid.length; i++) {
+            int spaces1 = 0;
+            int spaces2 = 0;
+            for (int j = 0; j < newGrid[0].length; j++) {
+                if (!newGrid[i][j]) {
+                    spaces1++;
+                }
+                else if (newGrid[i][j] || j == newGrid[0].length - 1){
+                    out += Math.pow(2, spaces1);
+                }
+
+                if (!newGrid[j][i]) {
+                    spaces2++;
+                }
+                else if (newGrid[j][i] || j == newGrid.length - 1){
+                    out += Math.pow(2, spaces2);
+                }
+            }
+        }
+        return out;
     }
     public boolean[][] getGrid(){
         return grid;
@@ -108,7 +145,7 @@ public class Player {
         ArrayList<Patch> patches = new ArrayList<>();
         for (int i = 0; i < 3; i++){
             Patch patch = Patch.valueOf("" + PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()));
-            if (patch.getButtonCost() <= getButtonsOwned() && patchValue(patch) > 0){
+            if (patch.getButtonCost() <= getButtonsOwned() && getPatchValue(patch) > 0){
                 patches.add(patch);
             }
         }
@@ -116,7 +153,7 @@ public class Player {
             return ".";
         }
 
-        patches.sort((a, b) -> patchValue(b) - patchValue(a) != 0 ? patchValue(b) - patchValue(a) : a.getButtonCost() - b.getButtonCost());
+        patches.sort((a, b) -> getPatchValue(b) - getPatchValue(a) != 0 ? getPatchValue(b) - getPatchValue(a) : a.getButtonCost() - b.getButtonCost());
         String bestLocation = "";
         int bestScore = 0;
         for (Patch patch : patches){
@@ -124,8 +161,8 @@ public class Player {
                 for (int row = 'A'; row <= 'I'; row++){
                     for (int rotation = 'A'; rotation <= 'H'; rotation++) {
                         String newPatch = "" + patch.getChar() + (char) column + (char) row + (char) rotation;
-                        if (placementValid(newPatch)) {
-                            int score = patchPositionValue(newPatch);
+                        if (isPlacementValid(newPatch)) {
+                            int score = getPatchPositionValue(newPatch);
                             if (score > bestScore) {
                                 bestScore = score;
                                 bestLocation = newPatch;
@@ -140,45 +177,7 @@ public class Player {
         }
         return ".";
     }
-    public int patchValue(Patch patch){
-        return incomeEventsAvailable() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost()
-                + 2 * patch.getSpacesCovered();
-    }
-    private int incomeEventsAvailable(){
-        int out = 0;
-        for (int event : Board.getButtonEvent()){
-            if (event > getTimeSquare()){
-                out++;
-            }
-        }
-        return out;
-    }
-    public int patchPositionValue(String newPatch){
-        boolean[][] newGrid = getGridWithPatch(newPatch);
-        int out = 0;
-        for (int i = 0; i < newGrid.length; i++) {
-            int spaces1 = 0;
-            int spaces2 = 0;
-            for (int j = 0; j < newGrid[0].length; j++) {
-                if (!newGrid[i][j]) {
-                    spaces1++;
-                }
-                else if (newGrid[i][j] || j == newGrid[0].length - 1){
-                    out += Math.pow(2, spaces1);
-                }
-
-                if (!newGrid[j][i]) {
-                    spaces2++;
-                }
-                else if (newGrid[j][i] || j == newGrid.length - 1){
-                    out += Math.pow(2, spaces2);
-                }
-            }
-        }
-        return out;
-    }
-
-    public boolean placementValid(String newPatch){
+    public boolean isPlacementValid(String newPatch){
         if (newPatch == null || newPatch.equals("") || PatchGame.patchCircle == null || PatchGame.patchCircle.equals("")){
             //System.out.println("Some necessary data was left empty");
             return false;

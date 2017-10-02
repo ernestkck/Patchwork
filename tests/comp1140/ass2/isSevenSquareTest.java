@@ -28,8 +28,8 @@ public class isSevenSquareTest {
                 Game.specialTile = false;
                 for (x = 0; x < 7; x++) {
                     for (y = 0; y < 7; y++) {
-                        player1.grid[x + i][y + j] = true;
-                        player2.grid[x + i][y + j] = true;
+                        player1.getGrid()[x + i][y + j] = true;
+                        player2.getGrid()[x + i][y + j] = true;
                     }
                 }
                 Game.isSevenSquare(player1);
@@ -56,8 +56,8 @@ public class isSevenSquareTest {
         Player player2 = new Player(0,5,0);
         Game.specialTile = false;
         for(int i=0; i<49;i++){
-            player1.grid[rand.nextInt(7)][rand.nextInt(7)] = true;
-            player2.grid[rand.nextInt(7)][rand.nextInt(7)] = true;
+            player1.getGrid()[rand.nextInt(7)][rand.nextInt(7)] = true;
+            player2.getGrid()[rand.nextInt(7)][rand.nextInt(7)] = true;
         }
         Game.isSevenSquare(player1);
         Game.isSevenSquare(player2);

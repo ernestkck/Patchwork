@@ -22,7 +22,7 @@ public class PatchGame {
                     player1Turn = false;
                 }
                 else if (!move.equals("")){
-                    if (!player1.placementValid(move)){
+                    if (!player1.isPlacementValid(move)){
                         System.out.println("move '" + move + "' is invalid but generated anyway");
                     }
                     player1.buyPatch(move);
@@ -38,7 +38,7 @@ public class PatchGame {
                     player1Turn = true;
                 }
                 else if (!move.equals("")){
-                    if (!player2.placementValid(move)){
+                    if (!player2.isPlacementValid(move)){
                         System.out.println("move '" + move + "' is invalid but generated anyway");
                     }
                     player2.buyPatch(move);
