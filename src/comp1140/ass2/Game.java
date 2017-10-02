@@ -60,6 +60,7 @@ public class Game extends Application{ //this class contains the main method tha
     private Player currentPlayer = playerA;
     private boolean endA = false;
     private boolean endB = false;
+    private int endFirst = 0;
     private Text placementText = new Text("Placement: ");
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
@@ -175,8 +176,6 @@ public class Game extends Application{ //this class contains the main method tha
         }
         int max = Arrays.stream(first).filter(x -> x<9).max().getAsInt();
         int min = Arrays.stream(last).filter(x -> x>-1).min().getAsInt();
-        System.out.println("first.max: "+max);
-        System.out.println("last.min: "+min);
         if(min - max + 1 >= 7){
             player.updateButtonsOwned(7);
             specialTile = true;
@@ -255,8 +254,8 @@ public class Game extends Application{ //this class contains the main method tha
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
-            System.out.println(currentPatch.toString());
-            System.out.println(placementString);
+            System.out.println("placementString: " + placementString);
+            System.out.println("currentPatch: " + currentPatch.toString());
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 advance.setDisable(false);
@@ -453,6 +452,7 @@ public class Game extends Application{ //this class contains the main method tha
                 circleA.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
                 endA = true;
                 if (endB) endGame();
+                else endFirst = 1;
             }
         }
         else {
@@ -465,6 +465,7 @@ public class Game extends Application{ //this class contains the main method tha
                 circleB.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
                 endB = true;
                 if (endA) endGame();
+                else endFirst = 2;
             }
         }
         if (playerB.getTimeSquare() > playerA.getTimeSquare()){
@@ -524,8 +525,11 @@ public class Game extends Application{ //this class contains the main method tha
         else if (scoreB > scoreA){
             winner = new Text("Player Two wins");
         }
-        else {
-            winner = new Text("It is a draw");
+        else if(endFirst == 1){
+            winner = new Text("Player One got to the final space first\nPlayer One wins");
+        }
+        else{
+            winner = new Text("Player Two got to the final space first\nPlayer Two wins");
         }
         winner.setFont(new Font(50));
         winner.setLayoutX(300);
