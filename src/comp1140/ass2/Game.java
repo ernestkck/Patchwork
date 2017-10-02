@@ -63,7 +63,7 @@ public class Game extends Application{ //this class contains the main method tha
     private boolean endA = false;
     private boolean endB = false;
     private Text placementText = new Text("Placement: ");
-    private static Text patchInfo = new Text("Button Cost: \nTime Cost: \nIncome: ");
+    private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     public static boolean specialTile = false;
     private double[][] timeSquareCoords = {
@@ -205,6 +205,7 @@ public class Game extends Application{ //this class contains the main method tha
         explanation.setOnMouseClicked(event -> {
             root.getChildren().remove(explanation);
         });
+        patchInfo.setText("Button Cost: \nTime Cost: \nIncome: ");
         root.getChildren().addAll(explanation, bg, tb);
     }
     public void setDraggable(){
@@ -437,7 +438,7 @@ public class Game extends Application{ //this class contains the main method tha
         System.out.println(currentPlayer.getTimeSquare());
         System.out.println(timeSquareCoords.length);
         if (currentPlayer == playerA){
-            if (playerA.getTimeSquare() < timeSquareCoords.length) {
+            if (playerA.getTimeSquare() < timeSquareCoords.length-1) {
                 circleA.setLayoutX(timeSquareCoords[playerA.getTimeSquare()][0]);
                 circleA.setLayoutY(timeSquareCoords[playerA.getTimeSquare()][1]);
             }
@@ -445,12 +446,11 @@ public class Game extends Application{ //this class contains the main method tha
                 circleA.setLayoutX(timeSquareCoords[timeSquareCoords.length-1][0]);
                 circleA.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
                 endA = true;
-                System.out.println(endB);
                 if (endB) endGame();
             }
         }
         else {
-            if (playerB.getTimeSquare() < timeSquareCoords.length) {
+            if (playerB.getTimeSquare() < timeSquareCoords.length-1) {
                 circleB.setLayoutX(timeSquareCoords[playerB.getTimeSquare()][0]);
                 circleB.setLayoutY(timeSquareCoords[playerB.getTimeSquare()][1]);
             }
@@ -458,7 +458,6 @@ public class Game extends Application{ //this class contains the main method tha
                 circleB.setLayoutX(timeSquareCoords[timeSquareCoords.length-1][0]);
                 circleB.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
                 endB = true;
-                System.out.println(endA);
                 if (endA) endGame();
             }
         }
