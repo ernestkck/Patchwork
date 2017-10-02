@@ -283,6 +283,7 @@ public class Game extends Application{ //this class contains the main method tha
         advance.setLayoutY(300);
         advance.setOnAction(event -> {
             placementString += '.';
+            currentPatch.toAnchor();
             int oldTime = currentPlayer.getTimeSquare();
             if (currentPlayer == playerA){
                 currentPlayer.advancePlayer(playerB.getTimeSquare()+1);
@@ -296,7 +297,7 @@ public class Game extends Application{ //this class contains the main method tha
             else {
                 updatePlayer();
             }
-            currentPatch.toAnchor();
+            currentPatch = new GuiPatch('h');
         });
         circleA.setFill(Color.BLUE);
         circleA.setCenterX(3);
