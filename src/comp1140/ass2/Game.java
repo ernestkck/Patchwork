@@ -22,9 +22,7 @@ public class Game extends Application{ //this class contains the main method tha
     static Player playerA = new Player(0,5,0);
     static Player playerB = new Player(0,5,0);
 
-    public static String placement = "";
     public static String patchCircle = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
-    public static int neutralToken = 1;
 
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
@@ -50,7 +48,7 @@ public class Game extends Application{ //this class contains the main method tha
     private static boolean turn = true;
     private static String placementString = "";
     private static GuiPatch currentPatch = new GuiPatch('h');
-    private int neutral_token = 0;
+    private static int neutralToken = 0;
     private static final String URI_BASE = "assets/";
     private ArrayList<GuiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
@@ -62,6 +60,7 @@ public class Game extends Application{ //this class contains the main method tha
     private Player currentPlayer = playerA;
     private boolean endA = false;
     private boolean endB = false;
+    private int endFirst = 0;
     private Text placementText = new Text("Placement: ");
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
@@ -177,8 +176,6 @@ public class Game extends Application{ //this class contains the main method tha
         }
         int max = Arrays.stream(first).filter(x -> x<9).max().getAsInt();
         int min = Arrays.stream(last).filter(x -> x>-1).min().getAsInt();
-        System.out.println("first.max: "+max);
-        System.out.println("last.min: "+min);
         if(min - max + 1 >= 7){
             player.updateButtonsOwned(7);
             specialTile = true;
@@ -212,21 +209,21 @@ public class Game extends Application{ //this class contains the main method tha
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
         }
-        if (patchList.size() <= neutral_token){
-            neutral_token--;
+        if (patchList.size() <= neutralToken){
+            neutralToken--;
         }
-        patchList.get(neutral_token).setDraggable(true);
-        if (neutral_token+1 == patchList.size()){
+        patchList.get(neutralToken).setDraggable(true);
+        if (neutralToken+1 == patchList.size()){
             patchList.get(0).setDraggable(true);
             patchList.get(1).setDraggable(true);
         }
-        else if (neutral_token+2 == patchList.size()){
-            patchList.get(neutral_token+1).setDraggable(true);
+        else if (neutralToken+2 == patchList.size()){
+            patchList.get(neutralToken+1).setDraggable(true);
             patchList.get(0).setDraggable(true);
         }
         else {
-            patchList.get(neutral_token+1).setDraggable(true);
-            patchList.get(neutral_token+2).setDraggable(true);
+            patchList.get(neutralToken+1).setDraggable(true);
+            patchList.get(neutralToken+2).setDraggable(true);
         }
     }
     private void setButtons(){
@@ -257,13 +254,12 @@ public class Game extends Application{ //this class contains the main method tha
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
-            System.out.println(currentPatch.toString());
-            System.out.println(placementString);
+            System.out.println("placementString: " + placementString);
+            System.out.println("currentPatch: " + currentPatch.toString());
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 advance.setDisable(false);
                 placePatch(currentPatch);
-                placementString += currentPatch.toString();
                 if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost()) && checkCoords){
                     specialPatch(currentPatch.toString());
                 }
@@ -412,7 +408,7 @@ public class Game extends Application{ //this class contains the main method tha
     }
     public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
-            neutral_token = patchList.indexOf(patch);
+            neutralToken = patchList.indexOf(patch);
             patchList.remove(patch);
         }
         patch.setDisable(true);
@@ -420,12 +416,18 @@ public class Game extends Application{ //this class contains the main method tha
         updatePatchCircle();
         setDraggable();
     }
+    public static void updatePlacementString(String newPatch){
+        placementString += newPatch;
+    }
+    public static void updateNeutralToken(int t){
+        neutralToken = t;
+    }
     public void updatePatchCircle(){
         double height = 0;
         double currentX = 10;
         double prevWidth = 0;
         int index;
-        for (int i = neutral_token; i < patchList.size()+neutral_token; i++){
+        for (int i = neutralToken; i < patchList.size()+neutralToken; i++){
             index = i % patchList.size();//Math.floorMod(i, patchList.size());
             height = patchList.get(index).getHeight();
             currentX += prevWidth+10;
@@ -434,6 +436,9 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(index).anchor();
             prevWidth = patchList.get(index).getWidth();
         }
+    }
+    public static void updatePatchCircle(String p){
+        patchCircle = patchCircle.replace(p, "");
     }
     public void updatePlayer(){
         System.out.println(currentPlayer.getTimeSquare());
@@ -448,6 +453,7 @@ public class Game extends Application{ //this class contains the main method tha
                 circleA.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
                 endA = true;
                 if (endB) endGame();
+                else endFirst = 1;
             }
         }
         else {
@@ -460,6 +466,7 @@ public class Game extends Application{ //this class contains the main method tha
                 circleB.setLayoutY(timeSquareCoords[timeSquareCoords.length-1][1]);
                 endB = true;
                 if (endA) endGame();
+                else endFirst = 2;
             }
         }
         if (playerB.getTimeSquare() > playerA.getTimeSquare()){
@@ -480,13 +487,16 @@ public class Game extends Application{ //this class contains the main method tha
     public static void setCurrentPatch(GuiPatch patch){
         currentPatch = patch;
     }
-    public String getPatchCircle(){
+    public static String getPatchCircle(){
         return PATCH_CIRCLE;
+    }
+    public static String getPlacementString(){
+        return placementString;
     }
     public void loadPlacements(String patchCircle, String placement){
         PATCH_CIRCLE = patchCircle;
         placementString = placement;
-        neutral_token = 0;
+        neutralToken = 0;
         patchList.clear();
         makePatchCircle();
         int position = 0;
@@ -502,8 +512,8 @@ public class Game extends Application{ //this class contains the main method tha
             }
         }
     }
-    public int getNeutral_token(){
-        return neutral_token;
+    public static int getNeutralToken(){
+        return neutralToken;
     }
     private void endGame(){
         int scoreA = PatchworkGame.getScoreForPlacement(PATCH_CIRCLE, placementString, true);
@@ -516,8 +526,11 @@ public class Game extends Application{ //this class contains the main method tha
         else if (scoreB > scoreA){
             winner = new Text("Player Two wins");
         }
-        else {
-            winner = new Text("It is a draw");
+        else if(endFirst == 1){
+            winner = new Text("Player One got to the final space first\nPlayer One wins");
+        }
+        else{
+            winner = new Text("Player Two got to the final space first\nPlayer Two wins");
         }
         winner.setFont(new Font(50));
         winner.setLayoutX(300);

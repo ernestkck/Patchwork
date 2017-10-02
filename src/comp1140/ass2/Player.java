@@ -97,7 +97,7 @@ public class Player {
             return false;
         }
 
-        if (!PatchworkGame.isPlacementWellFormed(Game.placement + newPatch)){
+        if (!PatchworkGame.isPlacementWellFormed(Game.getPlacementString() + newPatch)){
             System.out.println("The game would not be well formed if this patch is added");
             return false;
         }
@@ -112,7 +112,7 @@ public class Player {
         if (patch.getChar() != 'h'){
             boolean isAvailablePatch = false;
             for (int i = 0; i < 3; i++){
-                if (Game.patchCircle.charAt((Game.neutralToken + i) % Game.patchCircle.length()) == patch.getChar()){
+                if (Game.patchCircle.charAt((Game.getNeutralToken() + i) % Game.patchCircle.length()) == patch.getChar()){
                     isAvailablePatch = true;
                     break;
                 }
@@ -171,9 +171,9 @@ public class Player {
         updateTimeSquare(patch.getTimeCost());
         updateGrid(newPatch);
 
-        Game.placement += newPatch;
-        Game.neutralToken = Game.patchCircle.indexOf(patch.getChar());
-        Game.patchCircle = Game.patchCircle.replace("" + patch.getChar(), "");
+        Game.updatePlacementString(newPatch);
+        Game.updateNeutralToken(Game.getPatchCircle().indexOf(patch.getChar()));
+        Game.updatePatchCircle(patch.getChar()+"");
     }
     public void advancePlayer(int newTime){
         updateButtonsOwned(Math.min(newTime, 54) - getTimeSquare());
@@ -182,7 +182,7 @@ public class Player {
         }
         setTimeSquare(Math.min(newTime, 54));
 
-        Game.placement += '.';
+        Game.updatePlacementString(".");
     }
     public void collectIncome(){
         buttonsOwned += getButtonIncome();
