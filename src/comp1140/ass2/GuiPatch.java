@@ -114,27 +114,26 @@ public class GuiPatch extends ImageView {
         setLayoutY(anchorY);
     }
     public void rotate(){
+        if (rotation == 'H') setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
+        if (rotation == 'D') setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         if (rotation == 'H') {
             rotation = 'A';
         }
         else {
             rotation += 1;
         }
-        if (rotation == 'H') setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-        if (rotation == 'D') setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         double rotateDouble = ((rotation-65) % 4)*90;
         if (!isOffset && (rotation-65)%2 == 1) {
-            setLayoutX(getLayoutX() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
-            setLayoutY(getLayoutY() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
+            //setLayoutX(getLayoutX() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
+            //setLayoutY(getLayoutY() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
             isOffset = true;
         }
         else if (isOffset && (rotation-65)%2 == 0){
-            setLayoutX(getLayoutX() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
-            setLayoutY(getLayoutY() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
+            //setLayoutX(getLayoutX() - rotateOffset(rotateDouble, getHeight(), getWidth(), 'X'));
+            //setLayoutY(getLayoutY() + rotateOffset(rotateDouble, getHeight(), getWidth(), 'Y'));
             isOffset = false;
         }
         setRotate(getRotate()+90);
-        System.out.println(rotation);
     }
     public void getTurn(){
         turn = Game.getTurn();

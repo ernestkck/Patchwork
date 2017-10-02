@@ -3,6 +3,7 @@ package comp1140.ass2;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 /**
  * Represents the state of a Patchwork game in progress.
  */
@@ -116,53 +117,28 @@ public class PatchworkGame {
         char[] placementArray = placement.toCharArray();
         Player playerA = new Player(0,0,0);
         Player playerB = new Player(0,0,0);
-        boolean turn = false;
+        boolean playerB_turn = false;
         boolean previousTurn = false;
         boolean[][] locationGrid;
         try {
             for (int i = 0; i < placementArray.length; i++) {
                 if (placementArray[i] == '.') {
-                    if (turn) {
+                    if (playerB_turn) {
                         playerB.setTimeSquare(playerA.getTimeSquare() + 1);
                     } else {
                         playerA.setTimeSquare(playerB.getTimeSquare() + 1);
                     }
                 } else {
-                    if (turn) {
+                    if (playerB_turn) {
                         playerB.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
                     } else {
                         playerA.updateTimeSquare(Patch.valueOf("" + placementArray[i]).getTimeCost());
                     }
-                    locationGrid = Patch.valueOf("" + placementArray[i]).getLocationGrid();
-                    if ((placementArray[i + 3] - 65) / 4 == 1) {
-                        boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
-                        for (int a = 0; a < locationGrid.length; a++) {
-                            for (int b = 0; b < locationGrid[0].length; b++) {
-                                tempGrid[a][b] = locationGrid[a][locationGrid[0].length - b - 1];
-                            }
-                        }
-                        locationGrid = tempGrid;
-                    }
-                    if ((placementArray[i + 3] - 65) % 2 == 1) {
-                        boolean[][] tempGrid = new boolean[locationGrid[0].length][locationGrid.length];
-                        for (int row = 0; row < locationGrid.length; row++) {
-                            for (int col = 0; col < locationGrid[0].length; col++) {
-                                tempGrid[col][row] = locationGrid[locationGrid.length - 1 - row][col];
-                            }
-                        }
-                        locationGrid = tempGrid;
-                    }
-                    if (((placementArray[i + 3] - 65) / 2) % 2 == 1) {
-                        boolean[][] tempGrid = new boolean[locationGrid.length][locationGrid[0].length];
-                        for (int a = 0; a < locationGrid.length; a++) {
-                            for (int b = 0; b < locationGrid[0].length; b++) {
-                                tempGrid[a][b] = locationGrid[locationGrid.length - 1 - a][locationGrid[0].length - 1 - b];
-                            }
-                        }
-                        locationGrid = tempGrid;
-                    }
-                    if (placementArray[i] == 'h') turn = previousTurn;
-                    if (turn) {
+                    Patch patch = Patch.valueOf("" + placementArray[i]);
+                    locationGrid = patch.getTransformedGrid(placementArray[i+3]);
+
+                    if (placementArray[i] == 'h') playerB_turn = previousTurn;
+                    if (playerB_turn) {
                         for (int a = 0; a < locationGrid.length; a++) {
                             for (int b = 0; b < locationGrid[0].length; b++) {
                                 if (locationGrid[a][b]) {
@@ -189,11 +165,11 @@ public class PatchworkGame {
                     }
                     i += 3;
                 }
-                previousTurn = turn;
+                previousTurn = playerB_turn;
                 if (playerA.getTimeSquare() > playerB.getTimeSquare()) {
-                    turn = true;
+                    playerB_turn = true;
                 } else if (playerB.getTimeSquare() > playerA.getTimeSquare()) {
-                    turn = false;
+                    playerB_turn = false;
                 }
             }
         }
