@@ -200,6 +200,22 @@ public class GuiPatch extends ImageView {
     public void setRotation(char rotation){
         this.rotation = rotation;
     }
+    public void setLocation(){
+        double grid = (9*25) + 5.5;
+        double x = 0;
+        double y = 0;
+        setRotate(((rotation-'A')%4)*90);
+        if (rotation-'A' > 3) setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        setLayoutX(grid + 239 + (horizontal-'A')*25+x);
+        setLayoutY(325 + (vertical-'A')*25-y);
+        if ((rotation-65)%2 == 1){
+            isOffset = true;
+            x = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'X');
+            y = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'Y');
+
+        }
+        snap();
+    }
 
     @Override
     public String toString() {

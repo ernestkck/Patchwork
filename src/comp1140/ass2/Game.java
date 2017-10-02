@@ -44,8 +44,8 @@ public class Game extends Application{ //this class contains the main method tha
         return out;
     }
     private static String PATCH_CIRCLE = randCircle();
-    private static final String[] parts = PATCH_CIRCLE.split("A");
-    private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
+    //private static final String[] parts = PATCH_CIRCLE.split("A");
+    //private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static boolean turn = true;
     private static String placementString = "";
     private static GuiPatch currentPatch = new GuiPatch('h');
@@ -136,6 +136,12 @@ public class Game extends Application{ //this class contains the main method tha
         makeBoard();
         makePatchCircle();
         setDraggable();
+        updatePatchCircle();
+        for (GuiPatch t: patchList){
+            if (t.isDraggable()){
+                t.expensive(currentPlayer.getButtonsOwned());
+            }
+        }
         setButtons();
         updatePlayer();
         circleA.toFront();
@@ -187,12 +193,6 @@ public class Game extends Application{ //this class contains the main method tha
     public void makePatchCircle(){
         for (char t: PATCH_CIRCLE.toCharArray()) {
             patchList.add(new GuiPatch(t));
-        }
-        updatePatchCircle();
-        for (GuiPatch t: patchList){
-            if (t.isDraggable()){
-                t.expensive(currentPlayer.getButtonsOwned());
-            }
         }
         root.getChildren().addAll(patchList);
     }
@@ -499,19 +499,26 @@ public class Game extends Application{ //this class contains the main method tha
             circleB.toFront();
             currentPlayer = playerB;
             if (toggleAI.isSelected()){
+                setDraggable();
                 String nextMove = currentPlayer.generatePatchPlacement();
                 if (nextMove.toCharArray()[0] == 'h'){
 
+                }
+                else if (nextMove.toCharArray()[0] == '.'){
+                    advance.fire();
                 }
                 else {
                     for (GuiPatch t: patchList){
                         if (t.getName() == nextMove.toCharArray()[0]) currentPatch = t;
                     }
+                    System.out.println(nextMove);
+                    currentPatch.setHorizontal(nextMove.toCharArray()[1]);
+                    currentPatch.setVertical(nextMove.toCharArray()[2]);
+                    currentPatch.setRotation(nextMove.toCharArray()[3]);
+                    currentPatch.setLocation();
+                    currentPatch.snap();
+                    confirm.fire();
                 }
-                currentPatch.setHorizontal(nextMove.toCharArray()[1]);
-                currentPatch.setVertical(nextMove.toCharArray()[2]);
-                currentPatch.setRotation(nextMove.toCharArray()[3]);
-                confirm.fire();
             }
         }
         updateButtons();
