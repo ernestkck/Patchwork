@@ -1,8 +1,5 @@
 package comp1140.ass2;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
-import java.util.ArrayList;
-
 public class PatchworkAI {
     private final PatchworkGame game;
     private final Player player;
@@ -12,18 +9,6 @@ public class PatchworkAI {
         this.player = player;
     }
 
-    public static void main(String[] args) {
-        String circle = "QJfXRIbTcdegKVZSUFWCYGAaBLDEOHPMN";
-        String placement = "";
-        for (int i = 0; i < 100; i++){
-            String movement = generateBestPatchPlacement(circle, placement);
-            System.out.println(movement);
-            placement += movement;
-            System.out.println(placement);
-            System.out.println("-----------------------------------------");
-        }
-        System.out.println(PatchworkGame.isPlacementValid(circle, "LFHBEGHBHADC"));
-    }
     /**
      * Generate a valid move that follows from the given patch circle and game placement string.
      * @param patchCircle a patch circle string to initialize the game
@@ -40,82 +25,18 @@ public class PatchworkAI {
     }
 
     public static String generateBestPatchPlacement(String patchCircle, String placement){
-        Tuple players = Game.playersFromGameState(patchCircle, placement);
+        Tuple players = PatchGame.playersFromGameState(patchCircle, placement);
         boolean player1Turn = (boolean)players.getObjectAt(2);
         Player player;
 
-        if ((boolean)players.getObjectAt(2)){
+        if (player1Turn){
             player = (Player)players.getObjectAt(0);
         }
         else{
             player = (Player)players.getObjectAt(1);
         }
 
-        if (player.getTimeSquare() >= 53){
-            return "";
-        }
-        int circlePosition = Game.circlePosFromGameState(patchCircle, placement);
-        ArrayList<Patch> patches = new ArrayList<>();
-        for (int i = 0; i < 3; i++){
-            Patch patch = Patch.valueOf("" + patchCircle.charAt((circlePosition + i) % patchCircle.length()));
-            if (patch.getButtonCost() <= player.getButtonsOwned()
-                    &&  player.getTimeSquare() + patch.getTimeCost() <= 53){
-                patches.add(patch);
-            }
-        }
-        if (patches.isEmpty()){
-            return ".";
-        }
-        Patch patch = patches.get(0);
-        for (int i = 1; i < patches.size(); i++){
-            if (player.patchValue(patches.get(i)) >  player.patchValue(patch)
-                    || (player.patchValue(patches.get(i)) == player.patchValue(patch)
-                    &&  patches.get(i).getButtonCost()    <  patch.getButtonCost())){
-                patch = patches.get(i);
-            }
-        }
-        String bestLocation = ".";
-        int bestScore = 0;
-        for (int column = 'A'; column <= 'I'; column++){
-            for (int row = 'A'; row <= 'I'; row++){
-                for (int rotation = 'A'; rotation <= 'H'; rotation++) {
-                    String newPatch = "" + patch.getChar() + (char) column + (char) row + (char) rotation;
-                    if (PatchworkGame.isPlacementValid(patchCircle, placement + newPatch)) {
-                        int score = placementValue(player, newPatch);
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestLocation = newPatch;
-                        }
-                    }
-                }
-            }
-        }
-        return bestLocation;
-    }
-
-    private static int placementValue(Player player, String patch){
-        boolean[][] grid = player.getGridWithPatch(patch);
-        int out = 0;
-        for (int i = 0; i < grid.length; i++) {
-            int spaces1 = 0;
-            int spaces2 = 0;
-            for (int j = 0; j < grid[0].length; j++) {
-                if (!grid[i][j]) {
-                    spaces1++;
-                }
-                else if (grid[i][j] || j == grid[0].length - 1){
-                    out += Math.pow(2, spaces1);
-                }
-
-                if (!grid[j][i]) {
-                    spaces2++;
-                }
-                else if (grid[j][i] || j == grid.length - 1){
-                    out += Math.pow(2, spaces2);
-                }
-            }
-        }
-        return out;
+        return player.generatePatchPlacement();
     }
 
     public static String generatePatchPlacement(String patchCircle, String placement) {
