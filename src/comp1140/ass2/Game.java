@@ -50,7 +50,7 @@ public class Game extends Application{ //this class contains the main method tha
     private static GuiPatch currentPatch = new GuiPatch('h');
     private static int neutralToken = 0;
     private static final String URI_BASE = "assets/";
-    private ArrayList<GuiPatch> patchList = new ArrayList();
+    public static ArrayList<GuiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
     private Text buttonsB = new Text("Buttons: " + playerB.getButtonsOwned());
     private Text incomeA = new Text("Income: " + playerA.getButtonIncome());
@@ -260,6 +260,7 @@ public class Game extends Application{ //this class contains the main method tha
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 advance.setDisable(false);
                 placePatch(currentPatch);
+                placementString += currentPatch.toString();
                 if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost()) && checkCoords){
                     specialPatch(currentPatch.toString());
                 }

@@ -119,7 +119,7 @@ public class Player {
             }
             if (!isAvailablePatch){
                 System.out.println("The patch chosen was not one of the available patches");
-                return false;
+                //return false;
             }
         }
 
@@ -171,7 +171,7 @@ public class Player {
         updateTimeSquare(patch.getTimeCost());
         updateGrid(newPatch);
 
-        Game.updatePlacementString(newPatch);
+        //Game.updatePlacementString(newPatch);
         Game.updateNeutralToken(Game.getPatchCircle().indexOf(patch.getChar()));
         Game.updatePatchCircle(patch.getChar()+"");
     }
@@ -182,7 +182,7 @@ public class Player {
         }
         setTimeSquare(Math.min(newTime, 54));
 
-        Game.updatePlacementString(".");
+        //Game.updatePlacementString(".");
     }
     public void collectIncome(){
         buttonsOwned += getButtonIncome();
