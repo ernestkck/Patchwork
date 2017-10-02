@@ -411,10 +411,10 @@ public class Game extends Application{ //this class contains the main method tha
         if (patch.getName() != 'h') {
             neutralToken = patchList.indexOf(patch);
             patchList.remove(patch);
+            updatePatchCircle();
         }
         patch.setDisable(true);
         placementText.setText("Placement: " + patch.toString());
-        updatePatchCircle();
         setDraggable();
     }
     public static void updatePlacementString(String newPatch){
@@ -429,7 +429,7 @@ public class Game extends Application{ //this class contains the main method tha
         double prevWidth = 0;
         int index;
         for (int i = neutralToken; i < patchList.size()+neutralToken; i++){
-            index = i % patchList.size();//Math.floorMod(i, patchList.size());
+            index = i % patchList.size();
             height = patchList.get(index).getHeight();
             currentX += prevWidth+10;
             patchList.get(index).setLayoutX(currentX);
@@ -442,8 +442,6 @@ public class Game extends Application{ //this class contains the main method tha
         patchCircle = patchCircle.replace(p, "");
     }
     public void updatePlayer(){
-        System.out.println(currentPlayer.getTimeSquare());
-        System.out.println(timeSquareCoords.length);
         if (currentPlayer == playerA){
             if (playerA.getTimeSquare() < timeSquareCoords.length-1) {
                 circleA.setLayoutX(timeSquareCoords[playerA.getTimeSquare()][0]);

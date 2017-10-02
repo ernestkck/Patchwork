@@ -172,7 +172,7 @@ public class Player {
         updateGrid(newPatch);
 
         //Game.updatePlacementString(newPatch);
-        Game.updateNeutralToken(Game.getPatchCircle().indexOf(patch.getChar()));
+        //Game.updateNeutralToken(Game.getPatchCircle().indexOf(patch.getChar()));
         Game.updatePatchCircle(patch.getChar()+"");
     }
     public void advancePlayer(int newTime){
