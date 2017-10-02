@@ -351,7 +351,7 @@ public class Game extends Application{ //this class contains the main method tha
         updateButtons();
     }
 
-    public static Tuple playersFromGameState(String patchCircle, String placement){
+    /*public static Tuple playersFromGameState(String patchCircle, String placement){
         Player player1 = new Player(0, 5, 0);
         Player player2 = new Player(0, 5, 0);
 
@@ -393,7 +393,7 @@ public class Game extends Application{ //this class contains the main method tha
 
         Tuple out = new Tuple(player1, player2, player1Turn);
         return out;
-    }
+    }*/
     public static int circlePosFromGameState(String patchCircle, String placement){
         int position = 0;
         char patch = 'A';

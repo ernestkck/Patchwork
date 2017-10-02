@@ -1,5 +1,7 @@
 package comp1140.ass2;
 
+import java.util.ArrayList;
+
 public class Player {
 
     private int timeSquare;
@@ -42,16 +44,37 @@ public class Player {
     }
     public boolean[][] getGridWithPatch(String newPatch){
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
-        boolean[][] newGrid = grid;
+        boolean[][] newGrid = new boolean[9][9];
+        for (int i = 0; i < 9; i++){
+            for (int j = 0; j < 9; j++){
+                newGrid[i][j] = grid[i][j];
+            }
+
+        }
         boolean[][] patchGrid = patch.getTransformedGrid(newPatch.charAt(3));
         for (int row = 0; row < patchGrid.length; row++){
             for (int col = 0; col < patchGrid[0].length; col++){
                 if (patchGrid[row][col]){
-                    grid[row + newPatch.charAt(2) - 'A'][col + newPatch.charAt(1) - 'A'] = patchGrid[row][col];
+                    newGrid[row + newPatch.charAt(2) - 'A'][col + newPatch.charAt(1) - 'A'] = patchGrid[row][col];
                 }
             }
         }
         return newGrid;
+    }
+    public String      getGridAsString(){
+        String out = "";
+        for (boolean[] i : grid){
+            for (boolean j : i){
+                if (j){
+                    out += '#';
+                }
+                else{
+                    out += '.';
+                }
+            }
+            out += '\n';
+        }
+        return out;
     }
 
     public void setButtonsOwned(int buttons){
@@ -77,7 +100,51 @@ public class Player {
         grid = getGridWithPatch(newPatch);
     }
 
-    private int incomeCollections(){
+    public String generatePatchPlacement(){
+        if (getTimeSquare() >= 53){
+            return "";
+        }
+
+        ArrayList<Patch> patches = new ArrayList<>();
+        for (int i = 0; i < 3; i++){
+            Patch patch = Patch.valueOf("" + PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()));
+            if (patch.getButtonCost() <= getButtonsOwned() && patchValue(patch) > 0){
+                patches.add(patch);
+            }
+        }
+        if (patches.isEmpty()){
+            return ".";
+        }
+
+        patches.sort((a, b) -> patchValue(b) - patchValue(a) != 0 ? patchValue(b) - patchValue(a) : a.getButtonCost() - b.getButtonCost());
+        String bestLocation = "";
+        int bestScore = 0;
+        for (Patch patch : patches){
+            for (int column = 'A'; column <= 'I'; column++){
+                for (int row = 'A'; row <= 'I'; row++){
+                    for (int rotation = 'A'; rotation <= 'H'; rotation++) {
+                        String newPatch = "" + patch.getChar() + (char) column + (char) row + (char) rotation;
+                        if (placementValid(newPatch)) {
+                            int score = patchPositionValue(newPatch);
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestLocation = newPatch;
+                            }
+                        }
+                    }
+                }
+            }
+            if (!bestLocation.equals("")){
+                return bestLocation;
+            }
+        }
+        return ".";
+    }
+    public int patchValue(Patch patch){
+        return incomeEventsAvailable() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost()
+                + 2 * patch.getSpacesCovered();
+    }
+    private int incomeEventsAvailable(){
         int out = 0;
         for (int event : Board.getButtonEvent()){
             if (event > getTimeSquare()){
@@ -86,39 +153,59 @@ public class Player {
         }
         return out;
     }
-    public int patchValue(Patch patch){
-        return incomeCollections() * patch.getButtonIncome() - patch.getButtonCost() - patch.getTimeCost()
-                + 2 * patch.getSpacesCovered();
+    public int patchPositionValue(String newPatch){
+        boolean[][] newGrid = getGridWithPatch(newPatch);
+        int out = 0;
+        for (int i = 0; i < newGrid.length; i++) {
+            int spaces1 = 0;
+            int spaces2 = 0;
+            for (int j = 0; j < newGrid[0].length; j++) {
+                if (!newGrid[i][j]) {
+                    spaces1++;
+                }
+                else if (newGrid[i][j] || j == newGrid[0].length - 1){
+                    out += Math.pow(2, spaces1);
+                }
+
+                if (!newGrid[j][i]) {
+                    spaces2++;
+                }
+                else if (newGrid[j][i] || j == newGrid.length - 1){
+                    out += Math.pow(2, spaces2);
+                }
+            }
+        }
+        return out;
     }
 
     public boolean placementValid(String newPatch){
-        if (newPatch == null || newPatch.equals("") || Game.patchCircle == null || Game.patchCircle.equals("")){
-            System.out.println("Some necessary data was left empty");
+        if (newPatch == null || newPatch.equals("") || PatchGame.patchCircle == null || PatchGame.patchCircle.equals("")){
+            //System.out.println("Some necessary data was left empty");
             return false;
         }
 
-        if (!PatchworkGame.isPlacementWellFormed(Game.placement + newPatch)){
-            System.out.println("The game would not be well formed if this patch is added");
+        if (!PatchworkGame.isPlacementWellFormed(PatchGame.placement + newPatch)){
+            //System.out.println("The game would not be well formed if this patch is added");
             return false;
         }
 
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
 
         if (getButtonsOwned() < patch.getButtonCost()){
-            System.out.println("Player does not own enough buttons to buy this patch");
+            //System.out.println("Player does not own enough buttons to buy this patch");
             return false;
         }
 
         if (patch.getChar() != 'h'){
             boolean isAvailablePatch = false;
             for (int i = 0; i < 3; i++){
-                if (Game.patchCircle.charAt((Game.neutralToken + i) % Game.patchCircle.length()) == patch.getChar()){
+                if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
                     isAvailablePatch = true;
                     break;
                 }
             }
             if (!isAvailablePatch){
-                System.out.println("The patch chosen was not one of the available patches");
+                //System.out.println("The patch chosen was not one of the available patches");
                 return false;
             }
         }
@@ -127,7 +214,7 @@ public class Player {
 
         if (patchGrid.length    + newPatch.charAt(2) - 'A' > grid.length
         ||  patchGrid[0].length + newPatch.charAt(1) - 'A' > grid[0].length){
-            System.out.println("The position the patch was added would render it off the grid");
+            //System.out.println("The position the patch was added would render it off the grid");
             return false;
         }
 
@@ -139,7 +226,7 @@ public class Player {
                     int playerCol = column + newPatch.charAt(1) - 'A';
 
                     if (grid[playerRow][playerCol]) {
-                        System.out.println("The patch would overlap the player's grid");
+                        //System.out.println("The patch would overlap the player's grid");
                         return false;
                     }
 
@@ -153,7 +240,7 @@ public class Player {
             }
         }
         if (!adjacent && getTimeSquare() != 0){
-            System.out.println("The patch added was not adjacent to any previous patch");
+            //System.out.println("The patch added was not adjacent to any previous patch");
             return false;
         }
 
@@ -171,18 +258,18 @@ public class Player {
         updateTimeSquare(patch.getTimeCost());
         updateGrid(newPatch);
 
-        Game.placement += newPatch;
-        Game.neutralToken = Game.patchCircle.indexOf(patch.getChar());
-        Game.patchCircle = Game.patchCircle.replace("" + patch.getChar(), "");
+        PatchGame.placement += newPatch;
+        PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
+        PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
     }
     public void advancePlayer(int newTime){
-        updateButtonsOwned(Math.min(newTime, 54) - getTimeSquare());
+        updateButtonsOwned(Math.min(newTime, 53) - getTimeSquare());
         if (Board.triggeredButtonEvent(getTimeSquare(), newTime)){
             collectIncome();
         }
-        setTimeSquare(Math.min(newTime, 54));
+        setTimeSquare(Math.min(newTime, 53));
 
-        Game.placement += '.';
+        PatchGame.placement += '.';
     }
     public void collectIncome(){
         buttonsOwned += getButtonIncome();

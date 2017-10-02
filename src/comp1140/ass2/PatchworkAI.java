@@ -40,11 +40,11 @@ public class PatchworkAI {
     }
 
     public static String generateBestPatchPlacement(String patchCircle, String placement){
-        Tuple players = Game.playersFromGameState(patchCircle, placement);
+        Tuple players = PatchGame.playersFromGameState(patchCircle, placement);
         boolean player1Turn = (boolean)players.getObjectAt(2);
         Player player;
 
-        if ((boolean)players.getObjectAt(2)){
+        if (player1Turn){
             player = (Player)players.getObjectAt(0);
         }
         else{
@@ -94,28 +94,7 @@ public class PatchworkAI {
     }
 
     private static int placementValue(Player player, String patch){
-        boolean[][] grid = player.getGridWithPatch(patch);
-        int out = 0;
-        for (int i = 0; i < grid.length; i++) {
-            int spaces1 = 0;
-            int spaces2 = 0;
-            for (int j = 0; j < grid[0].length; j++) {
-                if (!grid[i][j]) {
-                    spaces1++;
-                }
-                else if (grid[i][j] || j == grid[0].length - 1){
-                    out += Math.pow(2, spaces1);
-                }
-
-                if (!grid[j][i]) {
-                    spaces2++;
-                }
-                else if (grid[j][i] || j == grid.length - 1){
-                    out += Math.pow(2, spaces2);
-                }
-            }
-        }
-        return out;
+        return player.patchPositionValue(patch);
     }
 
     public static String generatePatchPlacement(String patchCircle, String placement) {

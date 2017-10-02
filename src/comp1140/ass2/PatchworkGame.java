@@ -213,7 +213,7 @@ public class PatchworkGame {
      * @return the score for the requested player, given the placement
      */
     static int getScoreForPlacement(String patchCircle, String placement, boolean firstPlayer) {
-        Tuple player = Game.playersFromGameState(patchCircle, placement);
+        Tuple player = PatchGame.playersFromGameState(patchCircle, placement);
         Player player1 = (Player)player.getObjectAt(0);
         Player player2 = (Player)player.getObjectAt(1);
 
