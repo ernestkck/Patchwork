@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -48,7 +49,7 @@ public class Game extends Application{ //this class contains the main method tha
     private static boolean turn = true;
     private static String placementString = "";
     private static GuiPatch currentPatch = new GuiPatch('h');
-    private static int neutralToken = 0;
+    private static int neutralToken = (PATCH_CIRCLE.indexOf('A') +1) % PATCH_CIRCLE.length();
     private static final String URI_BASE = "assets/";
     public static ArrayList<GuiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
@@ -57,11 +58,13 @@ public class Game extends Application{ //this class contains the main method tha
     private Text incomeB = new Text("Income: " + playerB.getButtonIncome());
     private Button advance = new Button("Advance");
     private Text turnText = new Text("Player One's Turn");
+    private Button confirm = new Button("Confirm");
     private Player currentPlayer = playerA;
     private boolean endA = false;
     private boolean endB = false;
     private int endFirst = 0;
     private Text placementText = new Text("Placement: ");
+    private ToggleButton toggleAI = new ToggleButton("Auto Play (CPU)");
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     public static boolean specialTile = false;
@@ -182,10 +185,15 @@ public class Game extends Application{ //this class contains the main method tha
         }
     }
     public void makePatchCircle(){
-        for (char t: ADJUSTED_CIRCLE.toCharArray()) {
+        for (char t: PATCH_CIRCLE.toCharArray()) {
             patchList.add(new GuiPatch(t));
         }
         updatePatchCircle();
+        for (GuiPatch t: patchList){
+            if (t.isDraggable()){
+                t.expensive(currentPlayer.getButtonsOwned());
+            }
+        }
         root.getChildren().addAll(patchList);
     }
     public void makeBoard(){
@@ -250,7 +258,6 @@ public class Game extends Application{ //this class contains the main method tha
             updatePatchCircle();
             setDraggable();
         });
-        Button confirm = new Button("Confirm");
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
@@ -259,6 +266,7 @@ public class Game extends Application{ //this class contains the main method tha
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 advance.setDisable(false);
+                currentPatch.snap();
                 placePatch(currentPatch);
                 placementString += currentPatch.toString();
                 if (Board.triggeredPatchEvent(currentPlayer.getTimeSquare(), currentPlayer.getTimeSquare()+currentPatch.getPatch().getTimeCost()) && checkCoords){
@@ -273,6 +281,12 @@ public class Game extends Application{ //this class contains the main method tha
             }
             else {
                 currentPatch.toAnchor();
+            }
+            updatePlayer();
+            for (GuiPatch t: patchList){
+                if (t.isDraggable()){
+                    t.expensive(currentPlayer.getButtonsOwned());
+                }
             }
 
         });
@@ -295,6 +309,11 @@ public class Game extends Application{ //this class contains the main method tha
                 updatePlayer();
             }
             currentPatch = new GuiPatch('h');
+            for (GuiPatch t: patchList){
+                if (t.isDraggable()){
+                    t.expensive(currentPlayer.getButtonsOwned());
+                }
+            }
         });
         circleA.setFill(Color.BLUE);
         circleA.setCenterX(3);
@@ -315,7 +334,9 @@ public class Game extends Application{ //this class contains the main method tha
         patchInfo.setFont(new Font(20));
         patchInfo.setLayoutX(50);
         patchInfo.setLayoutY(500);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB, patchInfo);
+        toggleAI.setLayoutX(700);
+        toggleAI.setLayoutY(100);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB, patchInfo, toggleAI);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -477,6 +498,21 @@ public class Game extends Application{ //this class contains the main method tha
             turn = false;
             circleB.toFront();
             currentPlayer = playerB;
+            if (toggleAI.isSelected()){
+                String nextMove = currentPlayer.generatePatchPlacement();
+                if (nextMove.toCharArray()[0] == 'h'){
+
+                }
+                else {
+                    for (GuiPatch t: patchList){
+                        if (t.getName() == nextMove.toCharArray()[0]) currentPatch = t;
+                    }
+                }
+                currentPatch.setHorizontal(nextMove.toCharArray()[1]);
+                currentPatch.setVertical(nextMove.toCharArray()[2]);
+                currentPatch.setRotation(nextMove.toCharArray()[3]);
+                confirm.fire();
+            }
         }
         updateButtons();
     }

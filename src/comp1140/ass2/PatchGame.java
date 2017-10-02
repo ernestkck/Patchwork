@@ -62,7 +62,7 @@ public class PatchGame {
     }
 
     public static String placement = "";
-    public static String patchCircle = randCircle();
+    public static String patchCircle = Game.getPatchCircle();//randCircle();
     public static int neutralToken = getNewNeutralToken();
 
     public static int getNewNeutralToken(){
