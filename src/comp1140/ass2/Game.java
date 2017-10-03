@@ -475,9 +475,12 @@ public class Game extends Application{ //this class contains the main method tha
             if (toggleAI.isSelected()){
                 setDraggable();
                 String nextMove = currentPlayer.generatePatchPlacement();
-                Patch patch = Patch.valueOf("" + nextMove.charAt(0));
-                int oldTime = currentPlayer.getTimeSquare();
                 System.out.println(nextMove);
+                Patch patch = Patch.valueOf("h");
+                if (nextMove != "" && nextMove != "."){
+                    patch = Patch.valueOf("" + nextMove.charAt(0));
+                }
+                int oldTime = currentPlayer.getTimeSquare();
                 placementString += nextMove;
                 try {
                     if(Board.triggeredPatchEvent(oldTime, oldTime+patch.getTimeCost())){
@@ -572,8 +575,31 @@ public class Game extends Application{ //this class contains the main method tha
             setDraggable();
             String nextMove = currentPlayer.generatePatchPlacement();
             System.out.println(nextMove);
+            Patch patch = Patch.valueOf("h");
+            if (nextMove != "" && nextMove != "."){
+                patch = Patch.valueOf("" + nextMove.charAt(0));
+            }
+            int oldTime = currentPlayer.getTimeSquare();
             placementString += nextMove;
             try {
+                if(Board.triggeredPatchEvent(oldTime, oldTime+patch.getTimeCost())){
+                    String hMove = currentPlayer.getHPlacementAsString();
+                    placementString += hMove;
+                    currentPlayer.placeHPatch();
+                    currentPatch = new GuiPatch('h');
+                    currentPatch.setHorizontal(hMove.toCharArray()[1]);
+                    currentPatch.setVertical(hMove.toCharArray()[2]);
+                    currentPatch.setRotation(hMove.toCharArray()[3]);
+                    currentPatch.setLocation();
+                    currentPatch.setDraggable(true);
+                    root.getChildren().add(currentPatch);
+                    placePatch(currentPatch);
+                    updatePlayer();
+                    for (GuiPatch p: patchList){
+                        if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                    }
+                    updateButtons();
+                }
                 if (nextMove.toCharArray()[0] == 'h'){
                     currentPatch = new GuiPatch('h');
                     currentPatch.setHorizontal(nextMove.toCharArray()[1]);
@@ -593,7 +619,6 @@ public class Game extends Application{ //this class contains the main method tha
                     for (GuiPatch p: patchList){
                         p.toAnchor();
                     }
-                    int oldTime = currentPlayer.getTimeSquare();
                     currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
                         updatePlayer();
@@ -617,7 +642,6 @@ public class Game extends Application{ //this class contains the main method tha
                     currentPatch.setDraggable(true);
                     placePatch(currentPatch);
                     currentPlayer.buyPatch(nextMove);
-                    int oldTime = currentPlayer.getTimeSquare();
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
                         updatePlayer();
                     }
@@ -632,9 +656,9 @@ public class Game extends Application{ //this class contains the main method tha
                 for (GuiPatch p: patchList){
                     p.toAnchor();
                 }
-                int oldTime = currentPlayer.getTimeSquare();
+                oldTime = currentPlayer.getTimeSquare();
                 currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
-                if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
+                if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length){
                     updatePlayer();
                 }
                 currentPatch = new GuiPatch('h');
