@@ -14,6 +14,7 @@ public class GuiPatch extends ImageView {
     double mouseX, mouseY;
     boolean turn = Game.getTurn();
     boolean isOffset = false;
+    boolean isDraggable = false;
 
     GuiPatch(char patch){
         this.patch = Patch.valueOf("" + patch);
@@ -38,6 +39,7 @@ public class GuiPatch extends ImageView {
         return getImage().getHeight()/2;
     }
     public void setDraggable(boolean bool) {
+        isDraggable = bool;
         ColorAdjust colorAdjust = new ColorAdjust();
         if (bool) {
             colorAdjust.setContrast(0);
@@ -95,7 +97,6 @@ public class GuiPatch extends ImageView {
                 setLayoutX(grid + 239 + (horizontal-'A')*25+x);
                 setLayoutY(325 + (vertical-'A')*25-y);
                 setCurrentPatch();
-
             }
             else {
                 setLayoutX(anchorX);
@@ -104,6 +105,45 @@ public class GuiPatch extends ImageView {
         });
 
 
+    }
+    public void expensive(int buttons){
+        ColorAdjust color = new ColorAdjust();
+        if (buttons < patch.getButtonCost()){
+            color.setBrightness(-0.9);
+            setOnMouseReleased(event -> {
+                setLayoutX(anchorX);
+                setLayoutY(anchorY);
+            });
+        }
+        else {
+            color.setBrightness(0);
+            setOnMouseReleased(event -> {
+                double grid;
+                getTurn();
+                if (turn) grid = 0;
+                else grid = (9*25) + 5.5;
+                if (event.getSceneX() > 250+grid && event.getSceneX() < 465+grid && event.getSceneY() > 325 && event.getSceneY() < 550){
+                    double x = 0;
+                    double y = 0;
+                    if (isOffset){
+                        x = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'X');
+                        y = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'Y');
+                    }
+                    int layoutH = (int) Math.round((getLayoutX()-239-grid-x)/25);
+                    int layoutV = (int) Math.round((getLayoutY()-325+y)/25);
+                    horizontal = Character.toChars('A' + layoutH)[0];
+                    vertical = Character.toChars('A' + layoutV)[0];
+                    setLayoutX(grid + 239 + (horizontal-'A')*25+x);
+                    setLayoutY(325 + (vertical-'A')*25-y);
+                    setCurrentPatch();
+                }
+                else {
+                    setLayoutX(anchorX);
+                    setLayoutY(anchorY);
+                }
+            });
+        }
+        setEffect(color);
     }
     public void anchor(){
         anchorX = getLayoutX();
@@ -154,6 +194,52 @@ public class GuiPatch extends ImageView {
                 default: return 0;
             }
         }
+    }
+    public void snap(){
+        double grid;
+        getTurn();
+        if (turn) grid = 0;
+        else grid = (9*25) + 5.5;
+        double x = 0;
+        double y = 0;
+        if (isOffset){
+            x = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'X');
+            y = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'Y');
+        }
+        int layoutH = (int) Math.round((getLayoutX()-239-grid-x)/25);
+        int layoutV = (int) Math.round((getLayoutY()-325+y)/25);
+        horizontal = Character.toChars('A' + layoutH)[0];
+        vertical = Character.toChars('A' + layoutV)[0];
+        setLayoutX(grid + 239 + (horizontal-'A')*25+x);
+        setLayoutY(325 + (vertical-'A')*25-y);
+    }
+    public boolean isDraggable(){
+        return isDraggable;
+    }
+    public void setHorizontal(char horizontal){
+        this.horizontal = horizontal;
+    }
+    public void setVertical(char vertical){
+        this.vertical = vertical;
+    }
+    public void setRotation(char rotation){
+        this.rotation = rotation;
+    }
+    public void setLocation(){
+        double grid = (9*25) + 5.5;
+        double x = 0;
+        double y = 0;
+        if ((rotation-65)%2 == 1){
+            isOffset = true;
+            x = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'X');
+            y = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'Y');
+
+        }
+        setRotate(((rotation-'A')%4)*90);
+        if (rotation-'A' > 3) setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        setLayoutX(grid + 239 + (horizontal-'A')*25+x);
+        setLayoutY(325 + (vertical-'A')*25-y);
+        setCurrentPatch();
     }
 
     @Override
