@@ -8,6 +8,7 @@ public class Player {
     private int buttonsOwned;
     private int buttonIncome;
     private boolean[][] grid;
+    private ArrayList<int[]> hPlacements = new ArrayList<>();
 
     public Player(int timeSquare, int buttonsOwned, int buttonIncome){
         this.timeSquare = timeSquare;
