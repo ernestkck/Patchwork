@@ -509,6 +509,7 @@ public class Game extends Application{ //this class contains the main method tha
                 setDraggable();
                 String nextMove = currentPlayer.generatePatchPlacement();
                 System.out.println(nextMove);
+                placementString += nextMove;
                 try {
                     if (nextMove.toCharArray()[0] == 'h'){
                         currentPatch = new GuiPatch('h');
@@ -526,7 +527,6 @@ public class Game extends Application{ //this class contains the main method tha
                         updateButtons();
                 }
                 else if (nextMove.toCharArray()[0] == '.'){
-                    placementString += '.';
                     for (GuiPatch p: patchList){
                         p.toAnchor();
                     }
@@ -551,6 +551,7 @@ public class Game extends Application{ //this class contains the main method tha
                     currentPatch.setVertical(nextMove.toCharArray()[2]);
                     currentPatch.setRotation(nextMove.toCharArray()[3]);
                     currentPatch.setLocation();
+                    currentPatch.setDraggable(true);
                     placePatch(currentPatch);
                     currentPlayer.buyPatch(nextMove);
                     int oldTime = currentPlayer.getTimeSquare();
@@ -572,6 +573,7 @@ public class Game extends Application{ //this class contains the main method tha
             setDraggable();
             String nextMove = currentPlayer.generatePatchPlacement();
             System.out.println(nextMove);
+            placementString += nextMove;
             try {
                 if (nextMove.toCharArray()[0] == 'h'){
                     currentPatch = new GuiPatch('h');
@@ -589,7 +591,6 @@ public class Game extends Application{ //this class contains the main method tha
                     updateButtons();
                 }
                 else if (nextMove.toCharArray()[0] == '.'){
-                    placementString += '.';
                     for (GuiPatch p: patchList){
                         p.toAnchor();
                     }
@@ -614,6 +615,7 @@ public class Game extends Application{ //this class contains the main method tha
                     currentPatch.setVertical(nextMove.toCharArray()[2]);
                     currentPatch.setRotation(nextMove.toCharArray()[3]);
                     currentPatch.setLocation();
+                    currentPatch.setDraggable(true);
                     placePatch(currentPatch);
                     currentPlayer.buyPatch(nextMove);
                     int oldTime = currentPlayer.getTimeSquare();
