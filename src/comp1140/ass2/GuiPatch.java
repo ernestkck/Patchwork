@@ -117,6 +117,31 @@ public class GuiPatch extends ImageView {
         }
         else {
             color.setBrightness(0);
+            setOnMouseReleased(event -> {
+                double grid;
+                getTurn();
+                if (turn) grid = 0;
+                else grid = (9*25) + 5.5;
+                if (event.getSceneX() > 250+grid && event.getSceneX() < 465+grid && event.getSceneY() > 325 && event.getSceneY() < 550){
+                    double x = 0;
+                    double y = 0;
+                    if (isOffset){
+                        x = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'X');
+                        y = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'Y');
+                    }
+                    int layoutH = (int) Math.round((getLayoutX()-239-grid-x)/25);
+                    int layoutV = (int) Math.round((getLayoutY()-325+y)/25);
+                    horizontal = Character.toChars('A' + layoutH)[0];
+                    vertical = Character.toChars('A' + layoutV)[0];
+                    setLayoutX(grid + 239 + (horizontal-'A')*25+x);
+                    setLayoutY(325 + (vertical-'A')*25-y);
+                    setCurrentPatch();
+                }
+                else {
+                    setLayoutX(anchorX);
+                    setLayoutY(anchorY);
+                }
+            });
         }
         setEffect(color);
     }
@@ -204,17 +229,17 @@ public class GuiPatch extends ImageView {
         double grid = (9*25) + 5.5;
         double x = 0;
         double y = 0;
-        setRotate(((rotation-'A')%4)*90);
-        if (rotation-'A' > 3) setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
-        setLayoutX(grid + 239 + (horizontal-'A')*25+x);
-        setLayoutY(325 + (vertical-'A')*25-y);
         if ((rotation-65)%2 == 1){
             isOffset = true;
             x = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'X');
             y = rotateOffset(((rotation-65) % 4)*90, getHeight(), getWidth(), 'Y');
 
         }
-        snap();
+        setRotate(((rotation-'A')%4)*90);
+        if (rotation-'A' > 3) setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        setLayoutX(grid + 239 + (horizontal-'A')*25+x);
+        setLayoutY(325 + (vertical-'A')*25-y);
+        setCurrentPatch();
     }
 
     @Override
