@@ -60,6 +60,22 @@ public class Player {
             int spaces2 = 0;
             for (int j = 0; j < newGrid[0].length; j++) {
                 if (!newGrid[i][j]) {
+                    int trapped = 0;
+                    if (i + 1 >= 9 || newGrid[i + 1][j]){
+                        trapped++;
+                    }
+                    if (i - 1 <  0 || newGrid[i - 1][j]){
+                        trapped++;
+                    }
+                    if (j + 1 >= 9 || newGrid[i][j + 1]){
+                        trapped++;
+                    }
+                    if (j - 1 <  0 || newGrid[i][j - 1]){
+                        trapped++;
+                    }
+                    if (trapped > 0){
+                        out -= Math.pow(3, trapped + 1);
+                    }
                     spaces1++;
                 }
                 else if (newGrid[i][j] || j == newGrid[0].length - 1){
@@ -155,7 +171,7 @@ public class Player {
 
         patches.sort((a, b) -> getPatchValue(b) - getPatchValue(a) != 0 ? getPatchValue(b) - getPatchValue(a) : a.getButtonCost() - b.getButtonCost());
         String bestLocation = "";
-        int bestScore = 0;
+        int bestScore = -10000;
         for (Patch patch : patches){
             for (int column = 'A'; column <= 'I'; column++){
                 for (int row = 'A'; row <= 'I'; row++){
