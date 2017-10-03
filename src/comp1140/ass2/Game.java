@@ -258,6 +258,13 @@ public class Game extends Application{ //this class contains the main method tha
             updatePatchCircle();
             setDraggable();
         });
+        Button changeTurn = new Button("Change turn");
+        changeTurn.setLayoutY(250);
+        changeTurn.setLayoutX(250);
+        changeTurn.setOnAction(event -> {
+            turn = !turn;
+            updateButtons();
+        });
         confirm.setLayoutX(700);
         confirm.setLayoutY(250);
         confirm.setOnAction(event -> {
@@ -343,7 +350,7 @@ public class Game extends Application{ //this class contains the main method tha
         patchInfo.setLayoutY(500);
         toggleAI.setLayoutX(700);
         toggleAI.setLayoutY(100);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB, patchInfo, toggleAI);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, changeTurn, placementText, turnText, advance, circleA, circleB, patchInfo, toggleAI);
     }
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -566,6 +573,20 @@ public class Game extends Application{ //this class contains the main method tha
                 }
                 catch (Exception ArrayIndexOutOfBoundsException){
                     System.out.println(ArrayIndexOutOfBoundsException.getMessage());
+                    for (GuiPatch p: patchList){
+                        p.toAnchor();
+                    }
+                    int oldTime = currentPlayer.getTimeSquare();
+                    currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
+                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length){
+                        updatePlayer();
+                    }
+                    currentPatch = new GuiPatch('h');
+                    for (GuiPatch t: patchList){
+                        if (t.isDraggable()){
+                            t.expensive(currentPlayer.getButtonsOwned());
+                        }
+                    }
                 }
             }
         }
@@ -630,6 +651,20 @@ public class Game extends Application{ //this class contains the main method tha
             }
             catch (Exception ArrayIndexOutOfBoundsException){
                 System.out.println(ArrayIndexOutOfBoundsException.getMessage());
+                for (GuiPatch p: patchList){
+                    p.toAnchor();
+                }
+                int oldTime = currentPlayer.getTimeSquare();
+                currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
+                if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
+                    updatePlayer();
+                }
+                currentPatch = new GuiPatch('h');
+                for (GuiPatch t: patchList){
+                    if (t.isDraggable()){
+                        t.expensive(currentPlayer.getButtonsOwned());
+                    }
+                }
             }
         }
         updateButtons();
