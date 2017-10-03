@@ -59,6 +59,8 @@ public class PatchGame {
                 break;
             }
         }
+        System.out.println("Player 1 Score: " + player1.getScore());
+        System.out.println("Player 2 Score: " + player2.getScore());
     }
 
     public static String placement = "";

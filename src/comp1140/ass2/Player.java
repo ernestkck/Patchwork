@@ -1,6 +1,7 @@
 package comp1140.ass2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Player {
 
@@ -43,19 +44,33 @@ public class Player {
         for(int i = 0; i < 9 ; i++){
             for(int j = 0; j < 9; j++){
                 if(!grid[i][j]){
+                    boolean newGrid[][] = getGridWithPatch("h" + (char) (j+'A') + (char) (i+'A') + "A");
+                    if(isSevenSquare(newGrid)){
+                        hPlacement[0] = i;
+                        hPlacement[1] = j;
+                        return hPlacement;
+                    }
                     int adj = 0;
                     int up = Math.max(0, i-1);
                     int down = Math.min(8, i+1);
                     int left = Math.max(0, j-1);
                     int right = Math.min(8, j+1);
-                    if(grid[up][j]) adj++;
-                    if(grid[down][j]) adj++;
-                    if(grid[i][left]) adj++;
-                    if(grid[i][right]) adj++;
+                    if(i == 0 || grid[up][j]) adj++;
+                    if(i == 8 || grid[down][j]) adj++;
+                    if(j == 0 || grid[i][left]) adj++;
+                    if(j == 8 || grid[i][right]) adj++;
                     if(adj>hPlacement[2]){
                         hPlacement[0] = i;
                         hPlacement[1] = j;
                         hPlacement[2] = adj;
+                        System.out.println("[1]Found: " + hPlacement[0] + "," + hPlacement[1] + " adj = " + adj);
+                    }
+                    else if(adj == hPlacement[2]){
+                        if(j == 8 || i == 8) {
+                            hPlacement[0] = i;
+                            hPlacement[1] = j;
+                            System.out.println("[2]Found: " + hPlacement[0] + "," + hPlacement[1] + " adj = " + adj);
+                        }
                     }
                 }
             }
@@ -194,6 +209,10 @@ public class Player {
                     for (int rotation = 'A'; rotation <= 'H'; rotation++) {
                         String newPatch = "" + patch.getChar() + (char) column + (char) row + (char) rotation;
                         if (isPlacementValid(newPatch)) {
+                            if(isSevenSquare(getGridWithPatch(newPatch))){
+                                bestLocation = newPatch;
+                                return bestLocation;
+                            }
                             int score = getPatchPositionValue(newPatch);
                             if (score > bestScore) {
                                 bestScore = score;
@@ -286,12 +305,12 @@ public class Player {
         if (Board.triggeredButtonEvent(getTimeSquare(), getTimeSquare() + patch.getTimeCost())){
             collectIncome();
         }
+        updateGrid(newPatch);
         PatchGame.placement += newPatch;
         PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
         PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
         placeHPatch(getTimeSquare() + patch.getTimeCost());
         updateTimeSquare(patch.getTimeCost());
-        updateGrid(newPatch);
 
 
     }
@@ -318,6 +337,47 @@ public class Player {
         }
     }
 
+    public boolean isSevenSquare(boolean[][] grid){
+        if(Game.getSpecialTile()) return false;
+        int[] consec, first, last;
+        int consecRows = 0;
+        consec = new int[9];
+        first = new int[9];
+        last = new int[9];
+        for(int i=0; i<9; i++){
+            first[i] = 9;
+            last[i] = -1;
+            consec[i] = 0;
+            for(int j=0; j<9; j++) {
+                if (grid[i][j]) {
+                    consec[i]++;
+                    first[i] = Math.min(first[i], j);
+                    last[i] = Math.max(last[i], j);
+                } else {
+                    if (consec[i] < 7) {
+                        consec[i] = 0;
+                        first[i] = 9;
+                        last[i] = -1;
+                    }
+                }
+            }
+            if(consec[i]>=7){
+                consecRows++;
+            }
+            if(consec[i]<7 && consecRows<7){
+                consecRows = 0;
+                if(i>=2) return false;
+            }
+        }
+        int max = Arrays.stream(first).filter(x -> x<9).max().getAsInt();
+        int min = Arrays.stream(last).filter(x -> x>-1).min().getAsInt();
+        if(min - max + 1 >= 7){
+            return true;
+        }
+        return false;
+        // update buttons 7
+        // setSpecialTile();
+    }
 
 
 }

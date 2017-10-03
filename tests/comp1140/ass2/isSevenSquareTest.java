@@ -25,18 +25,14 @@ public class isSevenSquareTest {
             for(j=0; j<=2; j++) {
                 Player player1 = new Player(0, 5, 0);
                 Player player2 = new Player(0, 5, 0);
-                Game.specialTile = false;
                 for (x = 0; x < 7; x++) {
                     for (y = 0; y < 7; y++) {
                         player1.getGrid()[x + i][y + j] = true;
                         player2.getGrid()[x + i][y + j] = true;
                     }
                 }
-                Game.isSevenSquare(player1);
-                Game.isSevenSquare(player2);
-                assertTrue("specialTile is not true: " + i + "," + j + " - " + (i+6) + "," + (j+6), Game.specialTile);
-                assertTrue("player1's buttonsOwned is not 12: " + i + "," + j + " - " + (i+6) + "," + (j+6), player1.getButtonsOwned() == 12);
-                assertFalse("player2 has 12 buttons", player2.getButtonsOwned() == 12);
+                assertTrue("player1 returned false for testTrue: " + i + "," + j + " - " + (i+6) + "," + (j+6), player1.isSevenSquare(player1.getGrid()));
+                assertTrue("player2 returned false for testTrue: " + i + "," + j + " - " + (i+6) + "," + (j+6), player2.isSevenSquare(player2.getGrid()));
             }
         }
     }
@@ -44,9 +40,7 @@ public class isSevenSquareTest {
     @Test
     public void testEmpty(){
         Player player = new Player(0,5,0);
-        Game.specialTile = false;
-        Game.isSevenSquare(player);
-        assertFalse("specialTile is not false for empty grid", Game.specialTile);
+        assertFalse("returned true for empty grid", player.isSevenSquare(player.getGrid()));
     }
 
     @Test
@@ -54,16 +48,12 @@ public class isSevenSquareTest {
         Random rand = new Random();
         Player player1 = new Player(0,5,0);
         Player player2 = new Player(0,5,0);
-        Game.specialTile = false;
         for(int i=0; i<49;i++){
             player1.getGrid()[rand.nextInt(7)][rand.nextInt(7)] = true;
             player2.getGrid()[rand.nextInt(7)][rand.nextInt(7)] = true;
         }
-        Game.isSevenSquare(player1);
-        Game.isSevenSquare(player2);
-        assertFalse("specialTile is true: ", Game.specialTile);
-        assertFalse("player1 has 12 buttons", player1.getButtonsOwned() == 12);
-        assertFalse("player2 has 12 buttons", player2.getButtonsOwned() == 12);
+        assertFalse("player1 returned true for testFalse: ", player1.isSevenSquare(player1.getGrid()));
+        assertFalse("player2 returned true for testFalse: ", player2.isSevenSquare(player2.getGrid()));
     }
 
 }
