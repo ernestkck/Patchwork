@@ -63,13 +63,13 @@ public class Player {
                         hPlacement[0] = i;
                         hPlacement[1] = j;
                         hPlacement[2] = adj;
-                        System.out.println("[1]Found: " + hPlacement[0] + "," + hPlacement[1] + " adj = " + adj);
+                        //System.out.println("[1]Found: " + hPlacement[0] + "," + hPlacement[1] + " adj = " + adj);
                     }
                     else if(adj == hPlacement[2]){
                         if(j == 8 || i == 8) {
                             hPlacement[0] = i;
                             hPlacement[1] = j;
-                            System.out.println("[2]Found: " + hPlacement[0] + "," + hPlacement[1] + " adj = " + adj);
+                            //System.out.println("[2]Found: " + hPlacement[0] + "," + hPlacement[1] + " adj = " + adj);
                         }
                     }
                 }
@@ -78,10 +78,11 @@ public class Player {
         if(hPlacement[2] == -1){
             System.out.println("Could not find any tile to place H patch");
         }
-        else{
-            System.out.println("Placing H patch on " + hPlacement[0] + "," + hPlacement[1]);
-        }
         return hPlacement;
+    }
+    public String getHPlacementAsString(){
+        int[] s = getHPlacement();
+        return "h" + (char) (s[1]+'A') + (char) (s[0]+'A') + "A";
     }
     public int getScore(){
         return getButtonsOwned() - 2 * getSpaces();
@@ -229,24 +230,25 @@ public class Player {
         return ".";
     }
     public boolean isPlacementValid(String newPatch){
-        if (newPatch == null || newPatch.equals("") || PatchGame.patchCircle == null || PatchGame.patchCircle.equals("")){
-            //System.out.println("Some necessary data was left empty");
+        /*if (newPatch == null || newPatch.equals("") || PatchGame.patchCircle == null || PatchGame.patchCircle.equals("")){
+            System.out.println("Some necessary data was left empty");
             return false;
         }
 
         if (!PatchworkGame.isPlacementWellFormed(PatchGame.placement + newPatch)){
-            //System.out.println("The game would not be well formed if this patch is added");
+            System.out.println("The game would not be well formed if this patch is added");
             return false;
-        }
+        }*/
+
 
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
 
         if (getButtonsOwned() < patch.getButtonCost()){
-            //System.out.println("Player does not own enough buttons to buy this patch");
+            System.out.println("Player does not own enough buttons to buy this patch");
             return false;
         }
 
-        if (patch.getChar() != 'h'){
+        /*if (patch.getChar() != 'h'){
             boolean isAvailablePatch = false;
             for (int i = 0; i < 3; i++){
                 if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
@@ -258,7 +260,7 @@ public class Player {
                 //System.out.println("The patch chosen was not one of the available patches");
                 return false;
             }
-        }
+        }*/
 
         boolean[][] patchGrid = patch.getTransformedGrid(newPatch.charAt(3));
 
@@ -309,7 +311,10 @@ public class Player {
         PatchGame.placement += newPatch;
         PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
         PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
-        placeHPatch(getTimeSquare() + patch.getTimeCost());
+        if(Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare()+patch.getTimeCost())) {
+            PatchGame.placement += getHPlacementAsString();
+            placeHPatch();
+        }
         updateTimeSquare(patch.getTimeCost());
 
 
@@ -319,22 +324,21 @@ public class Player {
         if (Board.triggeredButtonEvent(getTimeSquare(), newTime)){
             collectIncome();
         }
-        placeHPatch(newTime);
+        PatchGame.placement += '.';
         setTimeSquare(Math.min(newTime, 53));
 
-        PatchGame.placement += '.';
+        if(Board.triggeredPatchEvent(getTimeSquare(), newTime)) {
+            PatchGame.placement += getHPlacementAsString();
+            placeHPatch();
+        }
     }
     public void collectIncome(){
         buttonsOwned += getButtonIncome();
     }
-    public void placeHPatch(int newTime){
-        if(Board.triggeredPatchEvent(getTimeSquare(), newTime)){
-            int[] coord = getHPlacement();
-            grid[coord[0]][coord[1]] = true;
-            coord[0] += 'A';
-            coord[1] += 'A';
-            PatchGame.placement += "h" + (char) coord[1] + (char) coord[0] + "A";
-        }
+    public void placeHPatch(){
+        int[] coord = getHPlacement();
+        System.out.println("Placing h patch on " + coord[0] + "," + coord[1]);
+        grid[coord[0]][coord[1]] = true;
     }
 
     public boolean isSevenSquare(boolean[][] grid){
