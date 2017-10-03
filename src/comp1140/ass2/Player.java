@@ -8,7 +8,7 @@ public class Player {
     private int buttonsOwned;
     private int buttonIncome;
     private boolean[][] grid;
-    private ArrayList<int[]> hPlacements = new ArrayList<>();
+    private int[] hPlacement = new int[3];
 
     public Player(int timeSquare, int buttonsOwned, int buttonIncome){
         this.timeSquare = timeSquare;
@@ -36,6 +36,37 @@ public class Player {
             }
         }
         return spaces;
+    }
+
+    public int[] getHPlacement(){
+        hPlacement[2] = -1;
+        for(int i = 0; i < 9 ; i++){
+            for(int j = 0; j < 9; j++){
+                if(!grid[i][j]){
+                    int adj = 0;
+                    int up = Math.max(0, i-1);
+                    int down = Math.min(8, i+1);
+                    int left = Math.max(0, j-1);
+                    int right = Math.min(8, j+1);
+                    if(grid[up][j]) adj++;
+                    if(grid[down][j]) adj++;
+                    if(grid[i][left]) adj++;
+                    if(grid[i][right]) adj++;
+                    if(adj>hPlacement[2]){
+                        hPlacement[0] = i;
+                        hPlacement[1] = j;
+                        hPlacement[2] = adj;
+                    }
+                }
+            }
+        }
+        if(hPlacement[2] == -1){
+            System.out.println("Could not find any tile to place H patch");
+        }
+        else{
+            System.out.println("Placing H patch on " + hPlacement[0] + "," + hPlacement[1]);
+        }
+        return hPlacement;
     }
     public int getScore(){
         return getButtonsOwned() - 2 * getSpaces();
@@ -99,7 +130,7 @@ public class Player {
         }
         return newGrid;
     }
-    public String      getGridAsString(){
+    public String getGridAsString(){
         String out = "";
         for (boolean[] i : grid){
             for (boolean j : i){
@@ -255,18 +286,21 @@ public class Player {
         if (Board.triggeredButtonEvent(getTimeSquare(), getTimeSquare() + patch.getTimeCost())){
             collectIncome();
         }
-        updateTimeSquare(patch.getTimeCost());
-        updateGrid(newPatch);
-
         PatchGame.placement += newPatch;
         PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
         PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
+        placeHPatch(getTimeSquare() + patch.getTimeCost());
+        updateTimeSquare(patch.getTimeCost());
+        updateGrid(newPatch);
+
+
     }
     public void advancePlayer(int newTime){
         updateButtonsOwned(Math.min(newTime, 53) - getTimeSquare());
         if (Board.triggeredButtonEvent(getTimeSquare(), newTime)){
             collectIncome();
         }
+        placeHPatch(newTime);
         setTimeSquare(Math.min(newTime, 53));
 
         PatchGame.placement += '.';
@@ -274,7 +308,15 @@ public class Player {
     public void collectIncome(){
         buttonsOwned += getButtonIncome();
     }
-
+    public void placeHPatch(int newTime){
+        if(Board.triggeredPatchEvent(getTimeSquare(), newTime)){
+            int[] coord = getHPlacement();
+            grid[coord[0]][coord[1]] = true;
+            coord[0] += 'A';
+            coord[1] += 'A';
+            PatchGame.placement += "h" + (char) coord[1] + (char) coord[0] + "A";
+        }
+    }
 
 
 
