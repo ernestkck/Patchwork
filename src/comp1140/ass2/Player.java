@@ -274,7 +274,7 @@ public class Player {
                 System.out.println("CIRCLE: " + PatchGame.patchCircle);
                 System.out.println("CIRCLE LENGTH: " + PatchGame.patchCircle.length());
                 System.out.println("FORMULA: " + (PatchGame.neutralToken + i) % PatchGame.patchCircle.length());
-                if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
+                if (PatchGame.patchCircle.charAt(Math.floorMod((PatchGame.neutralToken + i), (PatchGame.patchCircle.length()))) == patch.getChar()){
                     isAvailablePatch = true;
                     break;
                 }
