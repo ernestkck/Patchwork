@@ -231,7 +231,7 @@ public class Game extends Application{ //this class contains the main method tha
             System.out.println("placementString: " + placementString);
             System.out.println("currentPatch: " + currentPatch.toString());
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
-            if (/*PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString())*/currentPlayer.isPlacementValid(currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
+            if (currentPlayer.isPlacementValid(currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 advance.setDisable(false);
                 currentPatch.snap();
                 placePatch(currentPatch);
