@@ -1,5 +1,5 @@
 Reviewer: Jack de Kleuver (u5740954)
-Component: Player Class generatePatchPlacement
+Component: Player Class getHPlacement
 Author: Ernest (u6381103)
 
 Review Comments:
