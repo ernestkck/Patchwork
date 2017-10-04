@@ -249,15 +249,16 @@ public class Game extends Application{ //this class contains the main method tha
             else {
                 currentPatch.toAnchor();
             }
+            Player tmp = currentPlayer;
             if (playerB.getTimeSquare() > playerA.getTimeSquare()){
-                currentPlayer = playerA;
+                tmp = playerA;
             }
             else if (playerA.getTimeSquare() > playerB.getTimeSquare()) {
-                currentPlayer = playerB;
+                tmp = playerB;
             }
             for (GuiPatch t: patchList){
                 if (t.isDraggable()){
-                    t.expensive(currentPlayer.getButtonsOwned());
+                    t.expensive(tmp.getButtonsOwned());
                 }
             }
 
