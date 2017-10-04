@@ -302,6 +302,7 @@ public class Player {
 
                     if (grid[playerRow][playerCol]) {
                         System.out.println("The patch would overlap the player's grid");
+                        System.out.println(getGridAsString());
                         return false;
                     }
 

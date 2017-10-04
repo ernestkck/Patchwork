@@ -231,7 +231,7 @@ public class Game extends Application{ //this class contains the main method tha
             System.out.println("placementString: " + placementString);
             System.out.println("currentPatch: " + currentPatch.toString());
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
-            if (PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
+            if (/*PatchworkGame.isPlacementValid(PATCH_CIRCLE, placementString + currentPatch.toString())*/currentPlayer.isPlacementValid(currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
                 advance.setDisable(false);
                 currentPatch.snap();
                 placePatch(currentPatch);
@@ -340,8 +340,14 @@ public class Game extends Application{ //this class contains the main method tha
         if (patchPlace != ".") {
             currentPlayer.buyPatch(patchPlace);
         }
-        updatePlayer();
-        turn = tmp;
+        if (currentPlayer == playerA){
+                circleA.setLayoutX(timeSquareCoords[playerA.getTimeSquare()][0]);
+                circleA.setLayoutY(timeSquareCoords[playerA.getTimeSquare()][1]);
+        }
+        else {
+                circleB.setLayoutX(timeSquareCoords[playerB.getTimeSquare()][0]);
+                circleB.setLayoutY(timeSquareCoords[playerB.getTimeSquare()][1]);
+        }
         updateButtons();
     }
 
@@ -481,91 +487,86 @@ public class Game extends Application{ //this class contains the main method tha
                     patch = Patch.valueOf("" + nextMove.charAt(0));
                 }
                 int oldTime = currentPlayer.getTimeSquare();
-                placementString += nextMove;
-                try {
-                    if(Board.triggeredPatchEvent(oldTime, oldTime+patch.getTimeCost())){
-                        String hMove = currentPlayer.getHPlacementAsString();
-                        placementString += hMove;
-                        currentPlayer.placeHPatch();
-                        currentPatch = new GuiPatch('h');
-                        currentPatch.setHorizontal(hMove.toCharArray()[1]);
-                        currentPatch.setVertical(hMove.toCharArray()[2]);
-                        currentPatch.setRotation(hMove.toCharArray()[3]);
-                        currentPatch.setLocation();
-                        currentPatch.setDraggable(true);
-                        root.getChildren().add(currentPatch);
-                        placePatch(currentPatch);
-                        updatePlayer();
-                        for (GuiPatch p: patchList){
-                            if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
-                        }
-                        updateButtons();
-                    }
-                    if (nextMove.toCharArray()[0] == 'h'){
-                        currentPatch = new GuiPatch('h');
-                        currentPatch.setHorizontal(nextMove.toCharArray()[1]);
-                        currentPatch.setVertical(nextMove.toCharArray()[2]);
-                        currentPatch.setRotation(nextMove.toCharArray()[3]);
-                        currentPatch.setLocation();
-                        root.getChildren().add(currentPatch);
-                        placePatch(currentPatch);
-                        currentPlayer.buyPatch(nextMove);
-                        updatePlayer();
-                        for (GuiPatch p: patchList){
-                             if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
-                         }
-                        updateButtons();
-                }
-                else if (nextMove.toCharArray()[0] == '.'){
-                    for (GuiPatch p: patchList){
-                        p.toAnchor();
-                    }
-                    currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
-                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
-                        updatePlayer();
-                    }
-                    currentPatch = new GuiPatch('h');
-                    for (GuiPatch t: patchList){
-                        if (t.isDraggable()){
-                            t.expensive(currentPlayer.getButtonsOwned());
-                        }
-                    }
-                }
+                if (placementString.contains(nextMove)) placementString += nextMove;
                 else {
-                    for (GuiPatch t: patchList){
-                        if (t.getName() == nextMove.toCharArray()[0]) currentPatch = t;
-                        if (t.isDraggable()) t.expensive(currentPlayer.getButtonsOwned());
-                    }
-                    currentPatch.setHorizontal(nextMove.toCharArray()[1]);
-                    currentPatch.setVertical(nextMove.toCharArray()[2]);
-                    currentPatch.setRotation(nextMove.toCharArray()[3]);
-                    currentPatch.setLocation();
-                    currentPatch.setDraggable(true);
-                    placePatch(currentPatch);
-                    currentPlayer.buyPatch(nextMove);
-                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
-                        updatePlayer();
-                    }
-                    for (GuiPatch p: patchList){
-                        if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
-                    }
-                    updateButtons();
-                }
-                }
-                catch (Exception ArrayIndexOutOfBoundsException){
-                    System.out.println(ArrayIndexOutOfBoundsException.getMessage());
-                    for (GuiPatch p: patchList){
-                        p.toAnchor();
-                    }
-                    oldTime = currentPlayer.getTimeSquare();
-                    currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
-                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length){
-                        updatePlayer();
-                    }
-                    currentPatch = new GuiPatch('h');
-                    for (GuiPatch t: patchList){
-                        if (t.isDraggable()){
-                            t.expensive(currentPlayer.getButtonsOwned());
+                    try {
+                        if (Board.triggeredPatchEvent(oldTime, oldTime + patch.getTimeCost())) {
+                            String hMove = currentPlayer.getHPlacementAsString();
+                            placementString += hMove;
+                            currentPlayer.placeHPatch();
+                            currentPatch = new GuiPatch('h');
+                            currentPatch.setHorizontal(hMove.toCharArray()[1]);
+                            currentPatch.setVertical(hMove.toCharArray()[2]);
+                            currentPatch.setRotation(hMove.toCharArray()[3]);
+                            currentPatch.setLocation();
+                            currentPatch.setDraggable(true);
+                            root.getChildren().add(currentPatch);
+                            placePatch(currentPatch);
+                            updatePlayer();
+                            for (GuiPatch p : patchList) {
+                                if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                            }
+                            updateButtons();
+                        }
+                        if (nextMove.toCharArray()[0] == 'h') {
+                            currentPatch = new GuiPatch('h');
+                            currentPatch.setHorizontal(nextMove.toCharArray()[1]);
+                            currentPatch.setVertical(nextMove.toCharArray()[2]);
+                            currentPatch.setRotation(nextMove.toCharArray()[3]);
+                            currentPatch.setLocation();
+                            root.getChildren().add(currentPatch);
+                            placePatch(currentPatch);
+                            currentPlayer.buyPatch(nextMove);
+                            updatePlayer();
+                            for (GuiPatch p : patchList) {
+                                if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                            }
+                            updateButtons();
+                        } else if (nextMove.toCharArray()[0] == '.') {
+                            for (GuiPatch p : patchList) {
+                                p.toAnchor();
+                            }
+                            currentPlayer.advancePlayer(playerA.getTimeSquare() + 1);
+                            updatePlayer();
+                            currentPatch = new GuiPatch('h');
+                            for (GuiPatch t : patchList) {
+                                if (t.isDraggable()) {
+                                    t.expensive(currentPlayer.getButtonsOwned());
+                                }
+                            }
+                        } else {
+                            for (GuiPatch t : patchList) {
+                                if (t.getName() == nextMove.toCharArray()[0]) currentPatch = t;
+                                if (t.isDraggable()) t.expensive(currentPlayer.getButtonsOwned());
+                            }
+                            currentPatch.setHorizontal(nextMove.toCharArray()[1]);
+                            currentPatch.setVertical(nextMove.toCharArray()[2]);
+                            currentPatch.setRotation(nextMove.toCharArray()[3]);
+                            currentPatch.setLocation();
+                            currentPatch.setDraggable(true);
+                            placePatch(currentPatch);
+                            currentPlayer.buyPatch(nextMove);
+                            updatePlayer();
+                            for (GuiPatch p : patchList) {
+                                if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                            }
+                            updateButtons();
+                        }
+                    } catch (Exception ArrayIndexOutOfBoundsException) {
+                        System.out.println(ArrayIndexOutOfBoundsException.getMessage());
+                        for (GuiPatch p : patchList) {
+                            p.toAnchor();
+                        }
+                        oldTime = currentPlayer.getTimeSquare();
+                        currentPlayer.advancePlayer(playerA.getTimeSquare() + 1);
+                        if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length) {
+                            updatePlayer();
+                        }
+                        currentPatch = new GuiPatch('h');
+                        for (GuiPatch t : patchList) {
+                            if (t.isDraggable()) {
+                                t.expensive(currentPlayer.getButtonsOwned());
+                            }
                         }
                     }
                 }
@@ -580,91 +581,86 @@ public class Game extends Application{ //this class contains the main method tha
                 patch = Patch.valueOf("" + nextMove.charAt(0));
             }
             int oldTime = currentPlayer.getTimeSquare();
-            placementString += nextMove;
-            try {
-                if(Board.triggeredPatchEvent(oldTime, oldTime+patch.getTimeCost())){
-                    String hMove = currentPlayer.getHPlacementAsString();
-                    placementString += hMove;
-                    currentPlayer.placeHPatch();
-                    currentPatch = new GuiPatch('h');
-                    currentPatch.setHorizontal(hMove.toCharArray()[1]);
-                    currentPatch.setVertical(hMove.toCharArray()[2]);
-                    currentPatch.setRotation(hMove.toCharArray()[3]);
-                    currentPatch.setLocation();
-                    currentPatch.setDraggable(true);
-                    root.getChildren().add(currentPatch);
-                    placePatch(currentPatch);
-                    updatePlayer();
-                    for (GuiPatch p: patchList){
-                        if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+            if (placementString.contains(nextMove)) placementString += nextMove;
+            else {
+                try {
+                    if (Board.triggeredPatchEvent(oldTime, oldTime + patch.getTimeCost())) {
+                        String hMove = currentPlayer.getHPlacementAsString();
+                        placementString += hMove;
+                        currentPlayer.placeHPatch();
+                        currentPatch = new GuiPatch('h');
+                        currentPatch.setHorizontal(hMove.toCharArray()[1]);
+                        currentPatch.setVertical(hMove.toCharArray()[2]);
+                        currentPatch.setRotation(hMove.toCharArray()[3]);
+                        currentPatch.setLocation();
+                        currentPatch.setDraggable(true);
+                        root.getChildren().add(currentPatch);
+                        placePatch(currentPatch);
+                        updatePlayer();
+                        for (GuiPatch p : patchList) {
+                            if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                        }
+                        updateButtons();
                     }
-                    updateButtons();
-                }
-                if (nextMove.toCharArray()[0] == 'h'){
-                    currentPatch = new GuiPatch('h');
-                    currentPatch.setHorizontal(nextMove.toCharArray()[1]);
-                    currentPatch.setVertical(nextMove.toCharArray()[2]);
-                    currentPatch.setRotation(nextMove.toCharArray()[3]);
-                    currentPatch.setLocation();
-                    root.getChildren().add(currentPatch);
-                    placePatch(currentPatch);
-                    currentPlayer.buyPatch(nextMove);
-                    updatePlayer();
-                    for (GuiPatch p: patchList){
-                        if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                    if (nextMove.toCharArray()[0] == 'h') {
+                        currentPatch = new GuiPatch('h');
+                        currentPatch.setHorizontal(nextMove.toCharArray()[1]);
+                        currentPatch.setVertical(nextMove.toCharArray()[2]);
+                        currentPatch.setRotation(nextMove.toCharArray()[3]);
+                        currentPatch.setLocation();
+                        root.getChildren().add(currentPatch);
+                        placePatch(currentPatch);
+                        currentPlayer.buyPatch(nextMove);
+                        updatePlayer();
+                        for (GuiPatch p : patchList) {
+                            if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                        }
+                        updateButtons();
+                    } else if (nextMove.toCharArray()[0] == '.') {
+                        for (GuiPatch p : patchList) {
+                            p.toAnchor();
+                        }
+                        currentPlayer.advancePlayer(playerA.getTimeSquare() + 1);
+                        updatePlayer();
+                        currentPatch = new GuiPatch('h');
+                        for (GuiPatch t : patchList) {
+                            if (t.isDraggable()) {
+                                t.expensive(currentPlayer.getButtonsOwned());
+                            }
+                        }
+                    } else {
+                        for (GuiPatch t : patchList) {
+                            if (t.getName() == nextMove.toCharArray()[0]) currentPatch = t;
+                            if (t.isDraggable()) t.expensive(currentPlayer.getButtonsOwned());
+                        }
+                        currentPatch.setHorizontal(nextMove.toCharArray()[1]);
+                        currentPatch.setVertical(nextMove.toCharArray()[2]);
+                        currentPatch.setRotation(nextMove.toCharArray()[3]);
+                        currentPatch.setLocation();
+                        currentPatch.setDraggable(true);
+                        placePatch(currentPatch);
+                        currentPlayer.buyPatch(nextMove);
+                        updatePlayer();
+                        for (GuiPatch p : patchList) {
+                            if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                        }
+                        updateButtons();
                     }
-                    updateButtons();
-                }
-                else if (nextMove.toCharArray()[0] == '.'){
-                    for (GuiPatch p: patchList){
+                } catch (Exception ArrayIndexOutOfBoundsException) {
+                    System.out.println(ArrayIndexOutOfBoundsException.getMessage());
+                    for (GuiPatch p : patchList) {
                         p.toAnchor();
                     }
-                    currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
-                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
+                    oldTime = currentPlayer.getTimeSquare();
+                    currentPlayer.advancePlayer(playerA.getTimeSquare() + 1);
+                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length) {
                         updatePlayer();
                     }
                     currentPatch = new GuiPatch('h');
-                    for (GuiPatch t: patchList){
-                        if (t.isDraggable()){
+                    for (GuiPatch t : patchList) {
+                        if (t.isDraggable()) {
                             t.expensive(currentPlayer.getButtonsOwned());
                         }
-                    }
-                }
-                else {
-                    for (GuiPatch t: patchList){
-                        if (t.getName() == nextMove.toCharArray()[0]) currentPatch = t;
-                        if (t.isDraggable()) t.expensive(currentPlayer.getButtonsOwned());
-                    }
-                    currentPatch.setHorizontal(nextMove.toCharArray()[1]);
-                    currentPatch.setVertical(nextMove.toCharArray()[2]);
-                    currentPatch.setRotation(nextMove.toCharArray()[3]);
-                    currentPatch.setLocation();
-                    currentPatch.setDraggable(true);
-                    placePatch(currentPatch);
-                    currentPlayer.buyPatch(nextMove);
-                    if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
-                        updatePlayer();
-                    }
-                    for (GuiPatch p: patchList){
-                        if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
-                    }
-                    updateButtons();
-                }
-            }
-            catch (Exception ArrayIndexOutOfBoundsException){
-                System.out.println(ArrayIndexOutOfBoundsException.getMessage());
-                for (GuiPatch p: patchList){
-                    p.toAnchor();
-                }
-                oldTime = currentPlayer.getTimeSquare();
-                currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
-                if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length){
-                    updatePlayer();
-                }
-                currentPatch = new GuiPatch('h');
-                for (GuiPatch t: patchList){
-                    if (t.isDraggable()){
-                        t.expensive(currentPlayer.getButtonsOwned());
                     }
                 }
             }
