@@ -529,6 +529,7 @@ public class Game extends Application{ //this class contains the main method tha
                             }
                             updateButtons();
                         } else if (nextMove.toCharArray()[0] == '.') {
+                            System.out.println("received dot");
                             for (GuiPatch p : patchList) {
                                 p.toAnchor();
                             }
@@ -623,6 +624,7 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                         updateButtons();
                     } else if (nextMove.toCharArray()[0] == '.') {
+                        System.out.println("received dot");
                         for (GuiPatch p : patchList) {
                             p.toAnchor();
                         }
