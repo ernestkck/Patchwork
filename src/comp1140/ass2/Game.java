@@ -67,7 +67,7 @@ public class Game extends Application{ //this class contains the main method tha
     private ToggleButton toggleAI = new ToggleButton("Auto Play (CPU)");
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
-    public static boolean specialTile = false;
+    private static boolean specialTile = false;
     private double[][] timeSquareCoords = {
             {420, 125},
             {450, 125},
@@ -150,46 +150,6 @@ public class Game extends Application{ //this class contains the main method tha
         primaryStage.show();
     }
 
-    public static void isSevenSquare(Player player){
-        if(specialTile) return;
-        boolean[][] grid = player.getGrid();
-        int[] consec, first, last;
-        int consecRows = 0;
-        consec = new int[9];
-        first = new int[9];
-        last = new int[9];
-        for(int i=0; i<9; i++){
-            first[i] = 9;
-            last[i] = -1;
-            consec[i] = 0;
-            for(int j=0; j<9; j++) {
-                if (grid[i][j]) {
-                    consec[i]++;
-                    first[i] = Math.min(first[i], j);
-                    last[i] = Math.max(last[i], j);
-                } else {
-                    if (consec[i] < 7) {
-                        consec[i] = 0;
-                        first[i] = 9;
-                        last[i] = -1;
-                    }
-                }
-            }
-            if(consec[i]>=7){
-                consecRows++;
-            }
-            if(consec[i]<7 && consecRows<7){
-                consecRows = 0;
-                if(i>=2) return;
-            }
-        }
-        int max = Arrays.stream(first).filter(x -> x<9).max().getAsInt();
-        int min = Arrays.stream(last).filter(x -> x>-1).min().getAsInt();
-        if(min - max + 1 >= 7){
-            player.updateButtonsOwned(7);
-            specialTile = true;
-        }
-    }
     public void makePatchCircle(){
         for (char t: PATCH_CIRCLE.toCharArray()) {
             patchList.add(new GuiPatch(t));
@@ -516,8 +476,31 @@ public class Game extends Application{ //this class contains the main method tha
                 setDraggable();
                 String nextMove = currentPlayer.generatePatchPlacement();
                 System.out.println(nextMove);
+                Patch patch = Patch.valueOf("h");
+                if (nextMove != "" && nextMove != "."){
+                    patch = Patch.valueOf("" + nextMove.charAt(0));
+                }
+                int oldTime = currentPlayer.getTimeSquare();
                 placementString += nextMove;
                 try {
+                    if(Board.triggeredPatchEvent(oldTime, oldTime+patch.getTimeCost())){
+                        String hMove = currentPlayer.getHPlacementAsString();
+                        placementString += hMove;
+                        currentPlayer.placeHPatch();
+                        currentPatch = new GuiPatch('h');
+                        currentPatch.setHorizontal(hMove.toCharArray()[1]);
+                        currentPatch.setVertical(hMove.toCharArray()[2]);
+                        currentPatch.setRotation(hMove.toCharArray()[3]);
+                        currentPatch.setLocation();
+                        currentPatch.setDraggable(true);
+                        root.getChildren().add(currentPatch);
+                        placePatch(currentPatch);
+                        updatePlayer();
+                        for (GuiPatch p: patchList){
+                            if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                        }
+                        updateButtons();
+                    }
                     if (nextMove.toCharArray()[0] == 'h'){
                         currentPatch = new GuiPatch('h');
                         currentPatch.setHorizontal(nextMove.toCharArray()[1]);
@@ -537,7 +520,6 @@ public class Game extends Application{ //this class contains the main method tha
                     for (GuiPatch p: patchList){
                         p.toAnchor();
                     }
-                    int oldTime = currentPlayer.getTimeSquare();
                     currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
                         updatePlayer();
@@ -561,7 +543,6 @@ public class Game extends Application{ //this class contains the main method tha
                     currentPatch.setDraggable(true);
                     placePatch(currentPatch);
                     currentPlayer.buyPatch(nextMove);
-                    int oldTime = currentPlayer.getTimeSquare();
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
                         updatePlayer();
                     }
@@ -576,7 +557,7 @@ public class Game extends Application{ //this class contains the main method tha
                     for (GuiPatch p: patchList){
                         p.toAnchor();
                     }
-                    int oldTime = currentPlayer.getTimeSquare();
+                    oldTime = currentPlayer.getTimeSquare();
                     currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length){
                         updatePlayer();
@@ -594,8 +575,31 @@ public class Game extends Application{ //this class contains the main method tha
             setDraggable();
             String nextMove = currentPlayer.generatePatchPlacement();
             System.out.println(nextMove);
+            Patch patch = Patch.valueOf("h");
+            if (nextMove != "" && nextMove != "."){
+                patch = Patch.valueOf("" + nextMove.charAt(0));
+            }
+            int oldTime = currentPlayer.getTimeSquare();
             placementString += nextMove;
             try {
+                if(Board.triggeredPatchEvent(oldTime, oldTime+patch.getTimeCost())){
+                    String hMove = currentPlayer.getHPlacementAsString();
+                    placementString += hMove;
+                    currentPlayer.placeHPatch();
+                    currentPatch = new GuiPatch('h');
+                    currentPatch.setHorizontal(hMove.toCharArray()[1]);
+                    currentPatch.setVertical(hMove.toCharArray()[2]);
+                    currentPatch.setRotation(hMove.toCharArray()[3]);
+                    currentPatch.setLocation();
+                    currentPatch.setDraggable(true);
+                    root.getChildren().add(currentPatch);
+                    placePatch(currentPatch);
+                    updatePlayer();
+                    for (GuiPatch p: patchList){
+                        if (p.isDraggable()) p.expensive(currentPlayer.getButtonsOwned());
+                    }
+                    updateButtons();
+                }
                 if (nextMove.toCharArray()[0] == 'h'){
                     currentPatch = new GuiPatch('h');
                     currentPatch.setHorizontal(nextMove.toCharArray()[1]);
@@ -615,7 +619,6 @@ public class Game extends Application{ //this class contains the main method tha
                     for (GuiPatch p: patchList){
                         p.toAnchor();
                     }
-                    int oldTime = currentPlayer.getTimeSquare();
                     currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
                         updatePlayer();
@@ -639,7 +642,6 @@ public class Game extends Application{ //this class contains the main method tha
                     currentPatch.setDraggable(true);
                     placePatch(currentPatch);
                     currentPlayer.buyPatch(nextMove);
-                    int oldTime = currentPlayer.getTimeSquare();
                     if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
                         updatePlayer();
                     }
@@ -654,9 +656,9 @@ public class Game extends Application{ //this class contains the main method tha
                 for (GuiPatch p: patchList){
                     p.toAnchor();
                 }
-                int oldTime = currentPlayer.getTimeSquare();
+                oldTime = currentPlayer.getTimeSquare();
                 currentPlayer.advancePlayer(playerA.getTimeSquare()+1);
-                if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare())){
+                if (!Board.triggeredPatchEvent(oldTime, currentPlayer.getTimeSquare()) && currentPlayer.getTimeSquare() < timeSquareCoords.length){
                     updatePlayer();
                 }
                 currentPatch = new GuiPatch('h');
@@ -678,9 +680,11 @@ public class Game extends Application{ //this class contains the main method tha
     public static String getPatchCircle(){
         return PATCH_CIRCLE;
     }
-    public static String getPlacementString(){
+    public String getPlacementString(){
         return placementString;
     }
+    public static boolean getSpecialTile() { return specialTile;}
+    public static void setSpecialTile() { specialTile = true;}
     public void loadPlacements(String patchCircle, String placement){
         PATCH_CIRCLE = patchCircle;
         placementString = placement;

@@ -83,7 +83,7 @@ public class GuiPatch extends ImageView {
             getTurn();
             if (turn) grid = 0;
             else grid = (9*25) + 5.5;
-            if (event.getSceneX() > 250+grid && event.getSceneX() < 465+grid && event.getSceneY() > 325 && event.getSceneY() < 550){
+            if (event.getSceneX() > 245+grid && event.getSceneX() < 465+grid && event.getSceneY() > 320 && event.getSceneY() < 550){
                 double x = 0;
                 double y = 0;
                 if (isOffset){
