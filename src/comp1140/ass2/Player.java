@@ -319,7 +319,7 @@ public class Player {
                 }
             }
         }
-        if (!adjacent && getTimeSquare() != 0){
+        if (!adjacent && getSpaces() != 81){
             System.out.println("The patch added was not adjacent to any previous patch");
             System.out.println(getGridAsString());
             return false;
