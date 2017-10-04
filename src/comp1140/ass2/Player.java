@@ -338,12 +338,13 @@ public class Player {
         }
         updateGrid(newPatch);
         PatchGame.placement += newPatch;
-        PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
-        if (PatchGame.neutralToken < 0) System.out.println("+++++++++++" + PatchGame.neutralToken + "+++++++++++++++++++++++++++++++++");
-        PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
-        if(Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare()+patch.getTimeCost())) {
-            PatchGame.placement += getHPlacementAsString();
-            placeHPatch();
+        if (patch.getChar() != 'h'){
+            PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
+            PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
+            if(Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare()+patch.getTimeCost())) {
+                PatchGame.placement += getHPlacementAsString();
+                placeHPatch();
+            }
         }
         updateTimeSquare(patch.getTimeCost());
 
