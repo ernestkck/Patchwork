@@ -274,7 +274,9 @@ public class Player {
                 System.out.println("CIRCLE: " + PatchGame.patchCircle);
                 System.out.println("CIRCLE LENGTH: " + PatchGame.patchCircle.length());
                 System.out.println("FORMULA: " + (PatchGame.neutralToken + i) % PatchGame.patchCircle.length());
-                if (PatchGame.patchCircle.charAt(Math.floorMod((PatchGame.neutralToken + i), (PatchGame.patchCircle.length()))) == patch.getChar()){
+                System.out.println(patch.getChar());
+                if (PatchGame.neutralToken < 0) PatchGame.neutralToken = 0;
+                if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
                     isAvailablePatch = true;
                     break;
                 }
@@ -337,6 +339,7 @@ public class Player {
         updateGrid(newPatch);
         PatchGame.placement += newPatch;
         PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
+        if (PatchGame.neutralToken < 0) System.out.println("+++++++++++" + PatchGame.neutralToken + "+++++++++++++++++++++++++++++++++");
         PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
         if(Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare()+patch.getTimeCost())) {
             PatchGame.placement += getHPlacementAsString();

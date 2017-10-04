@@ -261,6 +261,7 @@ public class Game extends Application{ //this class contains the main method tha
                     t.expensive(tmp.getButtonsOwned());
                 }
             }
+            currentPatch = new GuiPatch('h');
 
         });
         advance.setLayoutX(700);
