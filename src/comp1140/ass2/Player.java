@@ -309,6 +309,8 @@ public class Player {
                     ||  (playerRow - 1 >= 0 && grid[playerRow - 1][playerCol])
                     ||  (playerCol + 1 <  9 && grid[playerRow][playerCol + 1])
                     ||  (playerCol - 1 >= 0 && grid[playerRow][playerCol - 1])){
+                        System.out.println("Adjacent is true");
+                        System.out.println(getGridAsString());
                         adjacent = true;
                     }
                 }
@@ -316,6 +318,7 @@ public class Player {
         }
         if (!adjacent && getTimeSquare() != 0){
             System.out.println("The patch added was not adjacent to any previous patch");
+            System.out.println(getGridAsString());
             return false;
         }
 
