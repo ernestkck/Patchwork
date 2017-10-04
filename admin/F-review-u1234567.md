@@ -1,9 +1,8 @@
-Reviewer: Mary Jones (u2345678)
-Component: <...>
-Author: Bob Smith (u3456789)
+Reviewer: Ernest Kwan (u6381103)
+Component: Player Class generatePatchPlacement
+Author: Lachlan (u5847571)
 
 Review Comments:
 
-1. HelloWorld.java:1-16 Use proper capitalization.
-2. HelloWorldTest.java:21 This test will pass with "hello world", when it should fail.
-3. <...>
+1. Uses proper capitalisation and follows Java naming convention.
+2. Does not have any documentation.
