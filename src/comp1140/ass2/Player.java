@@ -302,6 +302,7 @@ public class Player {
 
                     if (grid[playerRow][playerCol]) {
                         System.out.println("The patch would overlap the player's grid");
+                        System.out.println(getGridAsString());
                         return false;
                     }
 
@@ -316,6 +317,7 @@ public class Player {
         }
         if (!adjacent && getTimeSquare() != 0){
             System.out.println("The patch added was not adjacent to any previous patch");
+            System.out.println(getGridAsString());
             return false;
         }
 
