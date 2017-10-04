@@ -269,11 +269,6 @@ public class Player {
         if (patch.getChar() != 'h'){
             boolean isAvailablePatch = false;
             for (int i = 0; i < 3; i++){
-                System.out.println("NEUTRAL TOKEN: " + PatchGame.neutralToken);
-                System.out.println("I (HOW MANY FROM THE LEFT): " + i);
-                System.out.println("CIRCLE: " + PatchGame.patchCircle);
-                System.out.println("CIRCLE LENGTH: " + PatchGame.patchCircle.length());
-                System.out.println("FORMULA: " + (PatchGame.neutralToken + i) % PatchGame.patchCircle.length());
                 if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
                     isAvailablePatch = true;
                     break;
@@ -301,8 +296,6 @@ public class Player {
                     int playerCol = column + newPatch.charAt(1) - 'A';
 
                     if (grid[playerRow][playerCol]) {
-                        System.out.println("The patch would overlap the player's grid");
-                        System.out.println(getGridAsString());
                         return false;
                     }
 
@@ -310,16 +303,12 @@ public class Player {
                     ||  (playerRow - 1 >= 0 && grid[playerRow - 1][playerCol])
                     ||  (playerCol + 1 <  9 && grid[playerRow][playerCol + 1])
                     ||  (playerCol - 1 >= 0 && grid[playerRow][playerCol - 1])){
-                        System.out.println("Adjacent is true");
-                        System.out.println(getGridAsString());
                         adjacent = true;
                     }
                 }
             }
         }
-        if (!adjacent && getTimeSquare() != 0){
-            System.out.println("The patch added was not adjacent to any previous patch");
-            System.out.println(getGridAsString());
+        if (!adjacent && getSpaces() < 81){
             return false;
         }
 
