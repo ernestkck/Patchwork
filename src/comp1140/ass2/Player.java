@@ -248,7 +248,7 @@ public class Player {
             return false;
         }
 
-        /*if (patch.getChar() != 'h'){
+        if (patch.getChar() != 'h'){
             boolean isAvailablePatch = false;
             for (int i = 0; i < 3; i++){
                 if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
@@ -257,16 +257,16 @@ public class Player {
                 }
             }
             if (!isAvailablePatch){
-                //System.out.println("The patch chosen was not one of the available patches");
+                System.out.println("The patch chosen was not one of the available patches");
                 return false;
             }
-        }*/
+        }
 
         boolean[][] patchGrid = patch.getTransformedGrid(newPatch.charAt(3));
 
         if (patchGrid.length    + newPatch.charAt(2) - 'A' > grid.length
         ||  patchGrid[0].length + newPatch.charAt(1) - 'A' > grid[0].length){
-            //System.out.println("The position the patch was added would render it off the grid");
+            System.out.println("The position the patch was added would render it off the grid");
             return false;
         }
 
@@ -278,7 +278,7 @@ public class Player {
                     int playerCol = column + newPatch.charAt(1) - 'A';
 
                     if (grid[playerRow][playerCol]) {
-                        //System.out.println("The patch would overlap the player's grid");
+                        System.out.println("The patch would overlap the player's grid");
                         return false;
                     }
 
@@ -292,7 +292,7 @@ public class Player {
             }
         }
         if (!adjacent && getTimeSquare() != 0){
-            //System.out.println("The patch added was not adjacent to any previous patch");
+            System.out.println("The patch added was not adjacent to any previous patch");
             return false;
         }
 
