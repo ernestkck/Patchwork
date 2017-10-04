@@ -48,8 +48,6 @@ public class PatchGame {
                 }
             }
 
-
-
             System.out.println(move);
             System.out.println(placement);
             System.out.println("Player 1: BUTTONS = " + player1.getButtonsOwned() + "; INCOME = " + player1.getButtonIncome() + "; TIME = " + player1.getTimeSquare());
@@ -59,8 +57,15 @@ public class PatchGame {
                 break;
             }
         }
-        System.out.println("Player 1 Score: " + player1.getScore());
-        System.out.println("Player 2 Score: " + player2.getScore());
+        System.out.println("PATCH CIRCLE:  " + patchCircle);
+        System.out.println("NEUTRAL TOKEN: " + neutralToken);
+        System.out.println("PLAYER 1 PLACEMENT SCORE: " + player1.getScore());
+        System.out.println("PLAYER 2 PLACEMENT SCORE: " + player2.getScore());
+        System.out.println(getPatchesCount() + " patches were placed");
+        System.out.println("PLAYER 1 GRID");
+        System.out.println(player1.getGridAsString());
+        System.out.println("PLAYER 2 GRID");
+        System.out.println(player2.getGridAsString());
     }
 
     public static String placement = "";
@@ -69,6 +74,10 @@ public class PatchGame {
 
     public static int getNewNeutralToken(){
         return (patchCircle.indexOf('A') + 1) % patchCircle.length();
+    }
+    private static int getPatchesCount(){
+        String out = placement.replace(".", "");
+        return out.length() / 4;
     }
     private static String randCircle(){
         String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";

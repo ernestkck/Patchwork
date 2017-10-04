@@ -1,8 +1,8 @@
 We declare that the work toward our submission of Stage F was distributed among the group members as follows:
 
-* u2345678 30
-* u3456789 40
-* u0123456 30
+* u5740954 33
+* u5847571 33
+* u6381103 33
 
-Signed: Mary Jones (u2345678), Bob Smith (u3456789), and Sue Black (u0123456)
+Signed: Jack de Kleuver (u5740954), Lachlan Grainger (u5847571), and Ernest Kwan (u6381103)
 
