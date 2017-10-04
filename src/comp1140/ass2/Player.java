@@ -310,6 +310,8 @@ public class Player {
                     ||  (playerRow - 1 >= 0 && grid[playerRow - 1][playerCol])
                     ||  (playerCol + 1 <  9 && grid[playerRow][playerCol + 1])
                     ||  (playerCol - 1 >= 0 && grid[playerRow][playerCol - 1])){
+                        System.out.println("Adjacent is true");
+                        System.out.println(getGridAsString());
                         adjacent = true;
                     }
                 }
