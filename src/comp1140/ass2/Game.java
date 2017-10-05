@@ -8,6 +8,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -68,6 +69,7 @@ public class Game extends Application{ //this class contains the main method tha
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     private static boolean specialTile = false;
+    AudioClip clip = new AudioClip(getClass().getResource("gui/assets/click.wav").toString());
     private double[][] timeSquareCoords = {
             {420, 125},
             {450, 125},
@@ -233,6 +235,7 @@ public class Game extends Application{ //this class contains the main method tha
             System.out.println("currentPatch: " + currentPatch.toString());
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (/*PatchworkGame.isPlacementValid(patchCircle, placementString+currentPatch.toString())*/currentPlayer.isPlacementValid(currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
+                clip.play(1.0);
                 advance.setDisable(false);
                 currentPatch.snap();
                 placePatch(currentPatch);
@@ -268,6 +271,7 @@ public class Game extends Application{ //this class contains the main method tha
         advance.setLayoutX(700);
         advance.setLayoutY(300);
         advance.setOnAction(event -> {
+            clip.play(1.0);
             placementString += '.';
             for (GuiPatch p: patchList){
                 p.toAnchor();
@@ -480,6 +484,7 @@ public class Game extends Application{ //this class contains the main method tha
                             }
                             updateButtons();
                         } else if (nextMove.toCharArray()[0] == '.') {
+                            System.out.println("received dot");
                             for (GuiPatch p : patchList) {
                                 p.toAnchor();
                             }
@@ -574,6 +579,7 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                         updateButtons();
                     } else if (nextMove.toCharArray()[0] == '.') {
+                        System.out.println("received dot");
                         for (GuiPatch p : patchList) {
                             p.toAnchor();
                         }

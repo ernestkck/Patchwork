@@ -79,7 +79,7 @@ public class Player {
             }
         }
         if(hPlacement[2] == -1){
-            //System.out.println("Could not find any tile to place H patch");
+            System.out.println("Could not find any tile to place H patch");
         }
         return hPlacement;
     }
