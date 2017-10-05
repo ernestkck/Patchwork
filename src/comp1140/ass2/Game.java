@@ -173,6 +173,7 @@ public class Game extends Application{ //this class contains the main method tha
         patchInfo.setText("Button Cost: \nTime Cost: \nIncome: ");
         root.getChildren().addAll(explanation, bg, tb);
     }
+
     public void setDraggable(){
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
@@ -314,6 +315,7 @@ public class Game extends Application{ //this class contains the main method tha
         toggleAI.setLayoutY(100);
         root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, changeTurn, placementText, turnText, advance, circleA, circleB, patchInfo, toggleAI);
     }
+
     public void updateButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
         buttonsB.setText("Buttons: " + playerB.getButtonsOwned());
@@ -353,63 +355,6 @@ public class Game extends Application{ //this class contains the main method tha
         updateButtons();
     }
 
-    /*public static Tuple playersFromGameState(String patchCircle, String placement){
-        Player player1 = new Player(0, 5, 0);
-        Player player2 = new Player(0, 5, 0);
-
-        boolean player1Turn = true;
-        boolean player1OldTurn = true;
-        int position = 0;
-
-        while (position < placement.length()){
-            if (placement.charAt(position) == '.'){
-                if (player1Turn){
-                    player1.advancePlayer(player2.getTimeSquare() + 1);
-                }
-                else{
-                    player2.advancePlayer(player1.getTimeSquare() + 1);
-                }
-                player1OldTurn = player1Turn;
-                player1Turn = !player1Turn;
-                position++;
-            }
-            else{
-                String patch = placement.substring(position, position + 4);
-                if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
-                    player1.buyPatch(patch);
-                    if (player1.getTimeSquare() > player2.getTimeSquare()){
-                        player1OldTurn = player1Turn;
-                        player1Turn = false;
-                    }
-                }
-                else{
-                    player2.buyPatch(patch);
-                    if (player2.getTimeSquare() > player1.getTimeSquare()){
-                        player1OldTurn = player1Turn;
-                        player1Turn = true;
-                    }
-                }
-                position += 4;
-            }
-        }
-
-        Tuple out = new Tuple(player1, player2, player1Turn);
-        return out;
-    }*/
-    public static int circlePosFromGameState(String patchCircle, String placement){
-        int position = 0;
-        char patch = 'A';
-        while (position < placement.length()){
-            if (placement.charAt(position) == '.'){
-                position ++;
-            }
-            else{
-                patch = placement.charAt(position);
-                position += 4;
-            }
-        }
-        return (patchCircle.indexOf(patch) + 1) % patchCircle.length();
-    }
     public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
             neutralToken = patchList.indexOf(patch);
@@ -483,10 +428,20 @@ public class Game extends Application{ //this class contains the main method tha
             if (toggleAI.isSelected()){
                 setDraggable();
                 String nextMove = currentPlayer.generatePatchPlacement();
-                System.out.println(nextMove);
+                //System.out.println(nextMove);
                 Patch patch = Patch.valueOf("h");
                 if (nextMove != "" && nextMove != "."){
                     patch = Patch.valueOf("" + nextMove.charAt(0));
+                }
+                else if (nextMove == "."){
+                    if (currentPlayer == playerA){
+                        playerA.advancePlayer(playerB.getTimeSquare() + 1);
+                    }
+                    else{
+                        playerB.advancePlayer(playerA.getTimeSquare() + 1);
+                    }
+                    updateButtons();
+                    updatePlayer();
                 }
                 int oldTime = currentPlayer.getTimeSquare();
                 if (placementString.contains(nextMove)) placementString += nextMove;
@@ -555,7 +510,7 @@ public class Game extends Application{ //this class contains the main method tha
                             updateButtons();
                         }
                     } catch (Exception ArrayIndexOutOfBoundsException) {
-                        System.out.println(ArrayIndexOutOfBoundsException.getMessage());
+                        //System.out.println(ArrayIndexOutOfBoundsException.getMessage());
                         for (GuiPatch p : patchList) {
                             p.toAnchor();
                         }
@@ -577,7 +532,7 @@ public class Game extends Application{ //this class contains the main method tha
         else if (playerA.getTimeSquare() == playerB.getTimeSquare() && toggleAI.isSelected() && !turn){
             setDraggable();
             String nextMove = currentPlayer.generatePatchPlacement();
-            System.out.println(nextMove);
+            //System.out.println(nextMove);
             Patch patch = Patch.valueOf("h");
             if (nextMove != "" && nextMove != "."){
                 patch = Patch.valueOf("" + nextMove.charAt(0));
@@ -649,7 +604,7 @@ public class Game extends Application{ //this class contains the main method tha
                         updateButtons();
                     }
                 } catch (Exception ArrayIndexOutOfBoundsException) {
-                    System.out.println(ArrayIndexOutOfBoundsException.getMessage());
+                    //System.out.println(ArrayIndexOutOfBoundsException.getMessage());
                     for (GuiPatch p : patchList) {
                         p.toAnchor();
                     }
@@ -706,8 +661,8 @@ public class Game extends Application{ //this class contains the main method tha
         return neutralToken;
     }
     private void endGame(){
-        int scoreA = PatchworkGame.getScoreForPlacement(PATCH_CIRCLE, placementString, true);
-        int scoreB = PatchworkGame.getScoreForPlacement(PATCH_CIRCLE, placementString, false);
+        int scoreA = playerA.getScore();
+        int scoreB = playerB.getScore();
         root.getChildren().clear();
         Text winner;
         if (scoreA > scoreB){

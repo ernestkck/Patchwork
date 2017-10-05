@@ -63,13 +63,13 @@ public class PatchworkGame {
                 if ((i + 1) % 4 == 0){
                     for (char chr : placements.toCharArray()){
                         if (chr == patch.charAt(0)){
-                            System.out.println(1);
+                            //System.out.println(1);
                             return false;
                         }
                     }
 
                     if (!isPatchPlacementWellFormed(patch) || (patch.charAt(0) == 'h' && hCount >= 5)){
-                        System.out.println(2);
+                        //System.out.println(2);
                         return false;
                     }
 
@@ -85,7 +85,7 @@ public class PatchworkGame {
             }
         }
         else{
-            System.out.println(3);
+            //System.out.println(3);
             return false;
         }
         return true;
@@ -106,11 +106,11 @@ public class PatchworkGame {
 
     static boolean isPlacementValid(String patchCircle, String placement) {
         if(isEmpty(patchCircle) || isEmpty(placement)) {
-            System.out.println("isEmpty");
+            //System.out.println("isEmpty");
             return false;
         }
         if (!isPlacementWellFormed(placement)) {
-            System.out.println("not well formed");
+            //System.out.println("not well formed");
             return false;
         }
         char[] patchArray = patchCircle.toCharArray();
@@ -143,7 +143,7 @@ public class PatchworkGame {
                             for (int b = 0; b < locationGrid[0].length; b++) {
                                 if (locationGrid[a][b]) {
                                     if (playerB.getGrid()[a + placementArray[i + 2] - 65][b + placementArray[i + 1] - 65] && locationGrid[a][b]) {
-                                        System.out.println("Grid B overlap");
+                                        //System.out.println("Grid B overlap");
                                         return false;
                                     }
                                     playerB.getGrid()[a + placementArray[i + 2] - 65][b + placementArray[i + 1] - 65] = locationGrid[a][b];
@@ -155,7 +155,7 @@ public class PatchworkGame {
                             for (int b = 0; b < locationGrid[0].length; b++) {
                                 if (locationGrid[a][b]) {
                                     if (playerA.getGrid()[a + placementArray[i + 2] - 'A'][b + placementArray[i + 1] - 'A']) {
-                                        System.out.println("Grid A overlap");
+                                        //System.out.println("Grid A overlap");
                                         return false;
                                     }
                                     playerA.getGrid()[a + placementArray[i + 2] - 65][b + placementArray[i + 1] - 65] = locationGrid[a][b];

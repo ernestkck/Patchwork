@@ -79,7 +79,7 @@ public class Player {
             }
         }
         if(hPlacement[2] == -1){
-            System.out.println("Could not find any tile to place H patch");
+            //System.out.println("Could not find any tile to place H patch");
         }
         return hPlacement;
     }
@@ -246,87 +246,6 @@ public class Player {
         }
         return ".";
     }
-    public boolean isPlacementValid(String newPatch){
-        System.out.println("TILE: " + newPatch);
-        if (newPatch == null || newPatch.equals("") || PatchGame.patchCircle == null || PatchGame.patchCircle.equals("")){
-            System.out.println("Some necessary data was left empty");
-            return false;
-        }
-
-        if (!PatchworkGame.isPlacementWellFormed(PatchGame.placement + newPatch)){
-            System.out.println("The game would not be well formed if this patch is added");
-            return false;
-        }
-
-
-        Patch patch = Patch.valueOf("" + newPatch.charAt(0));
-
-        if (getButtonsOwned() < patch.getButtonCost()){
-            System.out.println("Player does not own enough buttons to buy this patch");
-            return false;
-        }
-
-        if (patch.getChar() != 'h'){
-            boolean isAvailablePatch = false;
-            for (int i = 0; i < 3; i++){
-                System.out.println("NEUTRAL TOKEN: " + PatchGame.neutralToken);
-                System.out.println("I (HOW MANY FROM THE LEFT): " + i);
-                System.out.println("CIRCLE: " + PatchGame.patchCircle);
-                System.out.println("CIRCLE LENGTH: " + PatchGame.patchCircle.length());
-                System.out.println("FORMULA: " + (PatchGame.neutralToken + i) % PatchGame.patchCircle.length());
-                System.out.println(patch.getChar());
-                if (PatchGame.neutralToken < 0) PatchGame.neutralToken = 0;
-                if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
-                    isAvailablePatch = true;
-                    break;
-                }
-            }
-            if (!isAvailablePatch){
-                System.out.println("The patch chosen was not one of the available patches");
-                return false;
-            }
-        }
-
-        boolean[][] patchGrid = patch.getTransformedGrid(newPatch.charAt(3));
-
-        if (patchGrid.length    + newPatch.charAt(2) - 'A' > grid.length
-        ||  patchGrid[0].length + newPatch.charAt(1) - 'A' > grid[0].length){
-            System.out.println("The position the patch was added would render it off the grid");
-            return false;
-        }
-
-        boolean adjacent = false;
-        for (int row = 0; row < patchGrid.length; row++){
-            for (int column = 0; column < patchGrid[0].length; column++){
-                if (patchGrid[row][column]) {
-                    int playerRow = row + newPatch.charAt(2) - 'A';
-                    int playerCol = column + newPatch.charAt(1) - 'A';
-
-                    if (grid[playerRow][playerCol]) {
-                        System.out.println("The patch would overlap the player's grid");
-                        System.out.println(getGridAsString());
-                        return false;
-                    }
-
-                    if ((playerRow + 1 <  9 && grid[playerRow + 1][playerCol])
-                    ||  (playerRow - 1 >= 0 && grid[playerRow - 1][playerCol])
-                    ||  (playerCol + 1 <  9 && grid[playerRow][playerCol + 1])
-                    ||  (playerCol - 1 >= 0 && grid[playerRow][playerCol - 1])){
-                        System.out.println("Adjacent is true");
-                        System.out.println(getGridAsString());
-                        adjacent = true;
-                    }
-                }
-            }
-        }
-        if (!adjacent && getSpaces() != 81){
-            System.out.println("The patch added was not adjacent to any previous patch");
-            System.out.println(getGridAsString());
-            return false;
-        }
-
-        return true;
-    }
 
     public void buyPatch(String newPatch){
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
@@ -368,10 +287,80 @@ public class Player {
     }
     public void placeHPatch(){
         int[] coord = getHPlacement();
-        System.out.println("Placing h patch on " + coord[0] + "," + coord[1]);
+        //System.out.println("Placing h patch on " + coord[0] + "," + coord[1]);
         grid[coord[0]][coord[1]] = true;
     }
 
+    public boolean isPlacementValid(String newPatch){
+        if (newPatch == null || newPatch.equals("") || PatchGame.patchCircle == null || PatchGame.patchCircle.equals("")){
+            //System.out.println("Some necessary data was left empty");
+            return false;
+        }
+
+        if (!PatchworkGame.isPlacementWellFormed(PatchGame.placement + newPatch)){
+            //System.out.println("The game would not be well formed if this patch is added");
+            return false;
+        }
+
+
+        Patch patch = Patch.valueOf("" + newPatch.charAt(0));
+
+        if (getButtonsOwned() < patch.getButtonCost()){
+            //System.out.println("Player does not own enough buttons to buy this patch");
+            return false;
+        }
+
+        if (patch.getChar() != 'h'){
+            boolean isAvailablePatch = false;
+            for (int i = 0; i < 3; i++){
+                if (PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()) == patch.getChar()){
+                    isAvailablePatch = true;
+                    break;
+                }
+            }
+            if (!isAvailablePatch){
+                //System.out.println("The patch chosen was not one of the available patches");
+                return false;
+            }
+        }
+
+        boolean[][] patchGrid = patch.getTransformedGrid(newPatch.charAt(3));
+
+        if (patchGrid.length    + newPatch.charAt(2) - 'A' > grid.length
+                ||  patchGrid[0].length + newPatch.charAt(1) - 'A' > grid[0].length){
+            //System.out.println("The position the patch was added would render it off the grid");
+            return false;
+        }
+
+        boolean adjacent = false;
+        for (int row = 0; row < patchGrid.length; row++){
+            for (int column = 0; column < patchGrid[0].length; column++){
+                if (patchGrid[row][column]) {
+                    int playerRow = row + newPatch.charAt(2) - 'A';
+                    int playerCol = column + newPatch.charAt(1) - 'A';
+
+                    if (grid[playerRow][playerCol]) {
+                        //System.out.println("The patch would overlap the player's grid");
+                        return false;
+                    }
+
+                    if ((playerRow + 1 <  9 && grid[playerRow + 1][playerCol])
+                            ||  (playerRow - 1 >= 0 && grid[playerRow - 1][playerCol])
+                            ||  (playerCol + 1 <  9 && grid[playerRow][playerCol + 1])
+                            ||  (playerCol - 1 >= 0 && grid[playerRow][playerCol - 1])){
+                        //System.out.println("Adjacent is true");
+                        adjacent = true;
+                    }
+                }
+            }
+        }
+        if (!adjacent && getSpaces() != 81){
+            //System.out.println("The patch added was not adjacent to any previous patch");
+            return false;
+        }
+
+        return true;
+    }
     public boolean isSevenSquare(boolean[][] grid){
         if(Game.getSpecialTile()) return false;
         int[] consec, first, last;
