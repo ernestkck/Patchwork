@@ -144,6 +144,7 @@ public class Game extends Application{ //this class contains the main method tha
                 t.expensive(currentPlayer.getButtonsOwned());
             }
         }
+        primaryStage.setResizable(false);
         setButtons();
         updatePlayer();
         circleA.toFront();
@@ -424,6 +425,11 @@ public class Game extends Application{ //this class contains the main method tha
             turn = true;
             circleA.toFront();
             currentPlayer = playerA;
+            for (GuiPatch t: patchList){
+                if (t.isDraggable()){
+                    t.expensive(currentPlayer.getButtonsOwned());
+                }
+            }
         }
         else if (playerA.getTimeSquare() > playerB.getTimeSquare()){
             turn = false;
