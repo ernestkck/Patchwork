@@ -390,6 +390,12 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(index).anchor();
             prevWidth = patchList.get(index).getWidth();
         }
+        System.out.println(neutralToken);
+        System.out.print("[");
+        for (GuiPatch t: patchList){
+            System.out.print(t.getName() + ", ");
+        }
+        System.out.println("]");
     }
     public static void updatePatchCircle(String p){
         patchCircle = patchCircle.replace(p, "");
@@ -538,6 +544,7 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                     }
                 }
+                currentPlayer = playerA;
             }
         }
         else if (playerA.getTimeSquare() == playerB.getTimeSquare() && toggleAI.isSelected() && !turn){
@@ -633,6 +640,7 @@ public class Game extends Application{ //this class contains the main method tha
                     }
                 }
             }
+            currentPlayer = playerA;
         }
         updateButtons();
     }
