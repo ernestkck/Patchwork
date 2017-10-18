@@ -359,12 +359,18 @@ public class Game extends Application{ //this class contains the main method tha
 
     public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
-            System.out.println(patchList);
+            for (GuiPatch t: patchList){
+                System.out.print(t.getName());
+                if (t.isDraggable()) System.out.print("(draggable)");
+                System.out.print(", ");
+            }
+            System.out.println("");
             neutralToken = patchList.indexOf(patch);
             System.out.println(patch.getName());
             System.out.println("NEUTRAL TOKEN: " + neutralToken);
             patchList.remove(patch);
             updatePatchCircle();
+            currentPatch = new GuiPatch('h');
         }
         patch.setDisable(true);
         placementText.setText("Placement: " + patch.toString());
