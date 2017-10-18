@@ -188,8 +188,9 @@ public class Game extends Application{ //this class contains the main method tha
         System.out.println(neutralToken);
         System.out.print("[");
         for (GuiPatch t: patchList){
-            System.out.print(t.getName() + ", ");
-            if (t.isDraggable()) System.out.print(" (draggable)");
+            System.out.print(t.getName());
+            if (t.isDraggable()) System.out.print("(draggable)");
+            System.out.print(", ");
         }
         System.out.println("]");
     }
