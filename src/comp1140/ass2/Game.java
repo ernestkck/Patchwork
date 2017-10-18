@@ -534,12 +534,6 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                     }
                 }
-                try{
-                    Thread.sleep(1000);
-                }
-                catch (Exception e){
-
-                }
                 currentPlayer = playerA;
             }
         }
@@ -645,12 +639,6 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                     }
                 }
-            }
-            try{
-                Thread.sleep(1000);
-            }
-            catch (Exception e){
-
             }
             currentPlayer = playerA;
         }
