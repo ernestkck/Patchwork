@@ -246,7 +246,6 @@ public class Game extends Application{ //this class contains the main method tha
                     updatePlayer();
                     updateButtons();
                 }
-                currentPatch = new GuiPatch('h');
             }
             else {
                 currentPatch.toAnchor();
@@ -370,7 +369,6 @@ public class Game extends Application{ //this class contains the main method tha
             System.out.println("NEUTRAL TOKEN: " + neutralToken);
             patchList.remove(patch);
             updatePatchCircle();
-            currentPatch = new GuiPatch('h');
         }
         patch.setDisable(true);
         placementText.setText("Placement: " + patch.toString());
