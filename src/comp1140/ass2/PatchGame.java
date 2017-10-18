@@ -10,7 +10,7 @@ public class PatchGame {
         Scanner scn = new Scanner(System.in);
         System.out.print("Enter Amount of Games Played: ");
         int loops = scn.nextInt();
-        int score = 0;
+        double score = 0;
 
         for (int j = 0; j < loops; j++){
             patchCircle = randCircle();
@@ -70,13 +70,13 @@ public class PatchGame {
             }
             //System.out.println("PATCH CIRCLE:  " + patchCircle);
             //System.out.println("NEUTRAL TOKEN: " + neutralToken);
-            System.out.println("PLAYER 1 PLACEMENT SCORE: " + player1.getScore());
-            System.out.println("PLAYER 2 PLACEMENT SCORE: " + player2.getScore());
+            //System.out.println("PLAYER 1 PLACEMENT SCORE: " + player1.getScore());
+            //System.out.println("PLAYER 2 PLACEMENT SCORE: " + player2.getScore());
             //System.out.println(getPatchesCount() + " patches were placed");
-            System.out.println("PLAYER 1 GRID");
-            System.out.println(player1.getGridAsString());
-            System.out.println("PLAYER 2 GRID");
-            System.out.println(player2.getGridAsString());
+            //System.out.println("PLAYER 1 GRID");
+            //System.out.println(player1.getGridAsString());
+            //System.out.println("PLAYER 2 GRID");
+            //System.out.println(player2.getGridAsString());
             score += player1.getScore();
             score += player2.getScore();
             //System.out.println("");
@@ -85,6 +85,7 @@ public class PatchGame {
         }
         score /= 2 * loops;
         System.out.println("SCORE: " + score);
+        System.out.println(String.format("CODE: %d, %d, %d, %d", Player.trappedWeighting, Player.lineWeighting, Player.trappedOffset, Player.lineOffset));
     }
 
     public static String placement = "";
@@ -98,7 +99,7 @@ public class PatchGame {
         String out = placement.replace(".", "");
         return out.length() / 4;
     }
-    private static String randCircle(){
+    public static String randCircle(){
         String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
         String out = "";
         Random rand = new Random();

@@ -21,36 +21,21 @@ import java.util.Random;
 
 public class Game extends Application{ //this class contains the main method that runs the game, it will also be the GUI
 
-    static Player playerA = new Player(0,5,0);
-    static Player playerB = new Player(0,5,0);
+    private static Player playerA = new Player(0,5,0);
+    private static Player playerB = new Player(0,5,0);
 
     public static String patchCircle = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
 
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
-    private static String randCircle(){
-        String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
-        String out = "";
-        Random rand = new Random();
-        int index;
-        ArrayList<Character> circleList = new ArrayList();
-        for (char t: alpha.toCharArray()){
-            circleList.add(new Character(t));
-        }
-        while (circleList.size() > 0){
-            index = rand.nextInt(circleList.size());
-            out += circleList.get(index);
-            circleList.remove(index);
-        }
-        return out;
-    }
+
     private static String PATCH_CIRCLE = randCircle();
     //private static final String[] parts = PATCH_CIRCLE.split("A");
     //private static final String ADJUSTED_CIRCLE = parts[1] + parts[0] + "A";
     private static boolean turn = true;
     private static String placementString = "";
     private static GuiPatch currentPatch = new GuiPatch('h');
-    private static int neutralToken = (PATCH_CIRCLE.indexOf('A') +1) % PATCH_CIRCLE.length();
+    private static int neutralToken = (PATCH_CIRCLE.indexOf('A') + 1) % PATCH_CIRCLE.length();
     private static final String URI_BASE = "assets/";
     public static ArrayList<GuiPatch> patchList = new ArrayList();
     private Text buttonsA = new Text("Buttons: " + playerA.getButtonsOwned());
@@ -69,7 +54,7 @@ public class Game extends Application{ //this class contains the main method tha
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     private static boolean specialTile = false;
-    AudioClip clip = new AudioClip(getClass().getResource("gui/assets/click.wav").toString());
+    private AudioClip clip = new AudioClip(getClass().getResource("gui/assets/click.wav").toString());
     private double[][] timeSquareCoords = {
             {420, 125},
             {450, 125},
@@ -153,6 +138,22 @@ public class Game extends Application{ //this class contains the main method tha
         primaryStage.show();
     }
 
+    private static String randCircle(){
+        String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
+        String out = "";
+        Random rand = new Random();
+        int index;
+        ArrayList<Character> circleList = new ArrayList();
+        for (char t: alpha.toCharArray()){
+            circleList.add(new Character(t));
+        }
+        while (circleList.size() > 0){
+            index = rand.nextInt(circleList.size());
+            out += circleList.get(index);
+            circleList.remove(index);
+        }
+        return out;
+    }
     public void makePatchCircle(){
         for (char t: PATCH_CIRCLE.toCharArray()) {
             patchList.add(new GuiPatch(t));
