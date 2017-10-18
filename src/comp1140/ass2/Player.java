@@ -216,6 +216,7 @@ public class Player {
         ArrayList<Patch> patches = new ArrayList<>();
         for (int i = 0; i < 3; i++){
             Patch patch = Patch.valueOf("" + PatchGame.patchCircle.charAt((PatchGame.neutralToken + i) % PatchGame.patchCircle.length()));
+
             if (patch.getButtonCost() <= getButtonsOwned() && getPatchValue(patch) > 0){
                 patches.add(patch);
             }
@@ -264,7 +265,10 @@ public class Player {
         updateGrid(newPatch);
         PatchGame.placement += newPatch;
         if (patch.getChar() != 'h'){
+            System.out.println("NEUTRAL TOKEN: " + PatchGame.neutralToken);
+            System.out.println("Patch: ----------------------------- " + patch.getChar());
             PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
+            System.out.println("NEUTRAL TOKEN: " + PatchGame.neutralToken);
             PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
             if(Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare()+patch.getTimeCost())) {
                 PatchGame.placement += getHPlacementAsString();
