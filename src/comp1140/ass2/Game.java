@@ -183,6 +183,7 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(i).setDraggable(false);
         }
         for (int i = 0; i < 3; i++){
+            System.out.println("OUT OF INDEX CHECKER: " + ((neutralToken+i)%patchList.size()));
             patchList.get((neutralToken+i)%patchList.size()).setDraggable(true);
         }
         System.out.println(neutralToken);
@@ -357,7 +358,10 @@ public class Game extends Application{ //this class contains the main method tha
 
     public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
+            System.out.println(patchList);
             neutralToken = patchList.indexOf(patch);
+            System.out.println(patch.getName());
+            System.out.println("NEUTRAL TOKEN: " + neutralToken);
             patchList.remove(patch);
             updatePatchCircle();
         }
