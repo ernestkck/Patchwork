@@ -181,22 +181,16 @@ public class Game extends Application{ //this class contains the main method tha
         for (int i = 0; i < patchList.size(); i++){
             patchList.get(i).setDraggable(false);
         }
-        if (patchList.size() <= neutralToken){
-            neutralToken--;
+        for (int i = 0; i < 3; i++){
+            patchList.get((neutralToken+i)%patchList.size()).setDraggable(true);
         }
-        patchList.get(neutralToken).setDraggable(true);
-        if (neutralToken+1 == patchList.size()){
-            patchList.get(0).setDraggable(true);
-            patchList.get(1).setDraggable(true);
+        System.out.println(neutralToken);
+        System.out.print("[");
+        for (GuiPatch t: patchList){
+            System.out.print(t.getName() + ", ");
+            if (t.isDraggable()) System.out.print(" (draggable)");
         }
-        else if (neutralToken+2 == patchList.size()){
-            patchList.get(neutralToken+1).setDraggable(true);
-            patchList.get(0).setDraggable(true);
-        }
-        else {
-            patchList.get(neutralToken+1).setDraggable(true);
-            patchList.get(neutralToken+2).setDraggable(true);
-        }
+        System.out.println("]");
     }
     private void setButtons(){
         buttonsA.setText("Buttons: " + playerA.getButtonsOwned());
@@ -390,12 +384,6 @@ public class Game extends Application{ //this class contains the main method tha
             patchList.get(index).anchor();
             prevWidth = patchList.get(index).getWidth();
         }
-        System.out.println(neutralToken);
-        System.out.print("[");
-        for (GuiPatch t: patchList){
-            System.out.print(t.getName() + ", ");
-        }
-        System.out.println("]");
     }
     public static void updatePatchCircle(String p){
         patchCircle = patchCircle.replace(p, "");
