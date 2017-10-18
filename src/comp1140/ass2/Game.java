@@ -315,7 +315,7 @@ public class Game extends Application{ //this class contains the main method tha
         patchInfo.setLayoutY(500);
         toggleAI.setLayoutX(700);
         toggleAI.setLayoutY(100);
-        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, changeTurn, placementText, turnText, advance, circleA, circleB, patchInfo, toggleAI);
+        root.getChildren().addAll(buttonsA, buttonsB, incomeA, incomeB, confirm, placementText, turnText, advance, circleA, circleB, patchInfo, toggleAI);
     }
 
     public void updateButtons(){
