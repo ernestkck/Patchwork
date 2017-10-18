@@ -189,8 +189,9 @@ public class Game extends Application{ //this class contains the main method tha
         System.out.println(neutralToken);
         System.out.print("[");
         for (GuiPatch t: patchList){
-            System.out.print(t.getName() + ", ");
-            if (t.isDraggable()) System.out.print(" (draggable)");
+            System.out.print(t.getName());
+            if (t.isDraggable()) System.out.print("(draggable)");
+            System.out.print(", ");
         }
         System.out.println("]");
     }
@@ -537,6 +538,12 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                     }
                 }
+                try{
+                    Thread.sleep(1000);
+                }
+                catch (Exception e){
+
+                }
                 currentPlayer = playerA;
             }
         }
@@ -547,6 +554,16 @@ public class Game extends Application{ //this class contains the main method tha
             Patch patch = Patch.valueOf("h");
             if (nextMove != "" && nextMove != "."){
                 patch = Patch.valueOf("" + nextMove.charAt(0));
+            }
+            else if (nextMove == "."){
+                if (currentPlayer == playerA){
+                    playerA.advancePlayer(playerB.getTimeSquare() + 1);
+                }
+                else{
+                    playerB.advancePlayer(playerA.getTimeSquare() + 1);
+                }
+                updateButtons();
+                updatePlayer();
             }
             int oldTime = currentPlayer.getTimeSquare();
             if (placementString.contains(nextMove)) placementString += nextMove;
@@ -632,6 +649,12 @@ public class Game extends Application{ //this class contains the main method tha
                         }
                     }
                 }
+            }
+            try{
+                Thread.sleep(1000);
+            }
+            catch (Exception e){
+
             }
             currentPlayer = playerA;
         }
