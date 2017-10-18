@@ -11,6 +11,12 @@ public class Player {
     private boolean[][] grid;
     private int[] hPlacement = new int[3];
 
+    public static int trappedWeighting = 2;
+    public static int lineWeighting    = 2;
+
+    public static int trappedOffset    = 5;
+    public static int lineOffset       = 0;
+
     public Player(int timeSquare, int buttonsOwned, int buttonIncome){
         this.timeSquare = timeSquare;
         this.buttonsOwned = buttonsOwned;
@@ -122,7 +128,7 @@ public class Player {
                         trapped++;
                     }
                     if (trapped > 0){
-                        out -= Math.pow(3, trapped + 1);
+                        out -= Math.pow(trappedWeighting, trapped + trappedOffset);
                     }
                     spaces1++;
                 }
@@ -134,7 +140,7 @@ public class Player {
                     spaces2++;
                 }
                 else if (newGrid[j][i] || j == newGrid.length - 1){
-                    out += Math.pow(2, spaces2);
+                    out += Math.pow(lineWeighting, spaces2 + lineOffset);
                 }
             }
         }
@@ -332,7 +338,6 @@ public class Player {
             return false;
         }
 
-        boolean adjacent = false;
         for (int row = 0; row < patchGrid.length; row++){
             for (int column = 0; column < patchGrid[0].length; column++){
                 if (patchGrid[row][column]) {
@@ -343,22 +348,9 @@ public class Player {
                         //System.out.println("The patch would overlap the player's grid");
                         return false;
                     }
-
-                    if ((playerRow + 1 <  9 && grid[playerRow + 1][playerCol])
-                            ||  (playerRow - 1 >= 0 && grid[playerRow - 1][playerCol])
-                            ||  (playerCol + 1 <  9 && grid[playerRow][playerCol + 1])
-                            ||  (playerCol - 1 >= 0 && grid[playerRow][playerCol - 1])){
-                        //System.out.println("Adjacent is true");
-                        adjacent = true;
-                    }
                 }
             }
         }
-        if (!adjacent && getSpaces() != 81){
-            //System.out.println("The patch added was not adjacent to any previous patch");
-            return false;
-        }
-
         return true;
     }
     public boolean isSevenSquare(boolean[][] grid){
@@ -402,6 +394,4 @@ public class Player {
         // update buttons 7
         // setSpecialTile();
     }
-
-
 }
