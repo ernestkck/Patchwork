@@ -364,7 +364,7 @@ public class Game extends Application{ //this class contains the main method tha
                 System.out.print(", ");
             }
             System.out.println("");
-            neutralToken = patchList.indexOf(patch);
+            if (patchList.contains(patch)) neutralToken = patchList.indexOf(patch);
             System.out.println(patch.getName());
             System.out.println("NEUTRAL TOKEN: " + neutralToken);
             patchList.remove(patch);
