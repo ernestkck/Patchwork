@@ -54,7 +54,8 @@ public class Game extends Application{ //this class contains the main method tha
     private static Text patchInfo = new Text();
     private ImageView explanation = new ImageView(new Image(Viewer.class.getResourceAsStream("gui/" + URI_BASE + "controlsexplained.png")));
     private static boolean specialTile = false;
-    private AudioClip clip = new AudioClip(getClass().getResource("gui/assets/click.wav").toString());
+    private AudioClip click = new AudioClip(getClass().getResource("gui/assets/click.wav").toString());
+    private AudioClip end = new AudioClip(getClass().getResource("gui/assets/end.wav").toString());
     private double[][] timeSquareCoords = {
             {420, 125},
             {450, 125},
@@ -233,7 +234,7 @@ public class Game extends Application{ //this class contains the main method tha
             System.out.println("currentPatch: " + currentPatch.toString());
             boolean checkCoords = currentPatch.toString().toCharArray()[1] >= 'A' && currentPatch.toString().toCharArray()[1] <= 'H' && currentPatch.toString().toCharArray()[2] >= 'A' && currentPatch.toString().toCharArray()[2] <= 'H';
             if (/*PatchworkGame.isPlacementValid(patchCircle, placementString+currentPatch.toString())*/currentPlayer.isPlacementValid(currentPatch.toString()) && currentPlayer.getButtonsOwned()-currentPatch.getPatch().getButtonCost() >= 0){
-                clip.play(1.0);
+                click.play(1.0);
                 advance.setDisable(false);
                 currentPatch.snap();
                 placePatch(currentPatch);
@@ -268,7 +269,7 @@ public class Game extends Application{ //this class contains the main method tha
         advance.setLayoutX(700);
         advance.setLayoutY(300);
         advance.setOnAction(event -> {
-            clip.play(1.0);
+            click.play(1.0);
             placementString += '.';
             for (GuiPatch p: patchList){
                 p.toAnchor();
@@ -693,21 +694,31 @@ public class Game extends Application{ //this class contains the main method tha
         int scoreB = playerB.getScore();
         root.getChildren().clear();
         Text winner;
+        end.play(1.0);
         if (scoreA > scoreB){
             winner = new Text("Player One wins");
+            winner.setLayoutX(300);
+            winner.setLayoutY(300);
+            winner.setFont(new Font(50));
         }
         else if (scoreB > scoreA){
             winner = new Text("Player Two wins");
+            winner.setLayoutX(300);
+            winner.setLayoutY(300);
+            winner.setFont(new Font(50));
         }
         else if(endFirst == 1){
-            winner = new Text("Player One got to the final space first\nPlayer One wins");
+            winner = new Text("Player One got to the final space first\n\tPlayer One wins");
+            winner.setLayoutX(210);
+            winner.setLayoutY(260);
+            winner.setFont(new Font(35));
         }
         else{
-            winner = new Text("Player Two got to the final space first\nPlayer Two wins");
+            winner = new Text("Player Two got to the final space first\n\tPlayer Two wins");
+            winner.setLayoutX(210);
+            winner.setLayoutY(260);
+            winner.setFont(new Font(35));
         }
-        winner.setFont(new Font(50));
-        winner.setLayoutX(300);
-        winner.setLayoutY(300);
         Text scores = new Text("Player One's score: " + scoreA + "\nPlayer Two's score: " + scoreB);
         scores.setFont(new Font(30));
         scores.setLayoutX(250);
