@@ -14,3 +14,4 @@ of our project implements the following features:
  - A splash screen that explains the controls.
  - Disabling patches that are not the 3 available patches, and blacking out patches which cannot be afforded due to insufficient buttons.
  - Displaying final scores when the game has finished
+ - Some sound effects

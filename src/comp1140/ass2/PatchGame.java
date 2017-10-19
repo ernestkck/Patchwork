@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class PatchGame {        //Author: Lachlan Grainger (u5847571)
+public class PatchGame {        //Authors: Lachlan Grainger (u5847571), Ernest Kwan (u6381103)
 
     public static void main(String[] args) {
         Scanner scn = new Scanner(System.in);
