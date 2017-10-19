@@ -8,7 +8,6 @@ of our project implements the following features:
  - A basic playable Patchwork game that snaps pieces to the board and checks for validity (Task 8)
  - Compute score of completed game
  - Generate a valid move
- - Basic computer opponent
  - Advanced computer opponent
  - Displaying of Button cost, time cost and income to make it easier to see.
  - A splash screen that explains the controls.
