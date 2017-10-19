@@ -120,7 +120,7 @@ public class PatchGame {
 
         boolean player1Turn = true;
         boolean player1OldTurn = true;
-        int position = 0;
+        int position = 0, neutralToken = -1;
 
         while (position < placement.length()){
             if (placement.charAt(position) == '.'){
@@ -136,6 +136,8 @@ public class PatchGame {
             }
             else{
                 String patch = placement.substring(position, position + 4);
+                neutralToken = patchCircle.indexOf(patch.substring(0,1));
+                patchCircle = patchCircle.replace(patch.substring(0,1), "");
                 if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
                     player1.buyPatchSimple(patch);
                     if (player1.getTimeSquare() > player2.getTimeSquare()){
@@ -154,7 +156,7 @@ public class PatchGame {
             }
         }
 
-        Tuple out = new Tuple(player1, player2, player1Turn);
+        Tuple out = new Tuple(player1, player2, player1Turn, patchCircle, neutralToken);
         return out;
     }
 }

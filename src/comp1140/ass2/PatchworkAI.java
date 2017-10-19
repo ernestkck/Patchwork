@@ -33,60 +33,21 @@ public class PatchworkAI {
      * @param placement  A valid placement string indicating a game state
      * @return a valid patch placement string, which will be "." if the player chooses to advance
      */
-    // Generate the first valid move found without checking for values
+    // Generate the first valid move found without checking for patch position values and h tiles
     public static String generatePatchPlacement(String patchCircle, String placement) {
+        Tuple players = PatchGame.playersFromGameState(patchCircle, placement);
+        Player currentPlayer, player1, player2;
+        player1 = (Player) players.getObjectAt(0);
+        player2 = (Player) players.getObjectAt(1);
+        if((boolean)players.getObjectAt(2)) currentPlayer = player1;
+        else    currentPlayer = player2;
+        patchCircle = (String) players.getObjectAt(3);
+        int neutralToken = (int)players.getObjectAt(4);
 
-        Player player1 = new Player(0, 5, 0);
-        Player player2 = new Player(0, 5, 0);
-
-        boolean player1Turn = true;
-        boolean player1OldTurn = true;
-        Player currentPlayer = player1;
-        int position = 0, neutralToken = -1;
-        char lastPatch;
-        ArrayList<Patch> patches = new ArrayList<>();
-        String availablePatches = "";
-
-        while (position < placement.length()){
-            if (placement.charAt(position) == '.'){
-                if (player1Turn){
-                    player1.advancePlayer(Math.min(53,player2.getTimeSquare() + 1));
-                    currentPlayer = player2;
-                }
-                else{
-                    player2.advancePlayer(Math.min(53,player1.getTimeSquare() + 1));
-                    currentPlayer = player1;
-                }
-                player1OldTurn = player1Turn;
-                player1Turn = !player1Turn;
-                position++;
-            }
-            else{
-                String patch = placement.substring(position, position + 4);
-                neutralToken = patchCircle.indexOf(patch.substring(0,1));
-                patchCircle = patchCircle.replace(patch.substring(0,1), "");
-                if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
-                    player1.buyPatchSimple(patch);
-                    if (player1.getTimeSquare() > player2.getTimeSquare()){
-                        player1OldTurn = player1Turn;
-                        player1Turn = false;
-                        currentPlayer = player2;
-                    }
-                }
-                else{
-                    player2.buyPatchSimple(patch);
-                    if (player2.getTimeSquare() > player1.getTimeSquare()){
-                        player1OldTurn = player1Turn;
-                        player1Turn = true;
-                        currentPlayer = player1;
-                    }
-                }
-                position += 4;
-            }
-        }
         if(patchCircle == "") return null;
         if(player1.getTimeSquare() == 53 || player2.getTimeSquare() == 53) return null;
 
+        char lastPatch;
         if(placement.isEmpty() || neutralToken == -1) {
             lastPatch = 'A';
             neutralToken = patchCircle.indexOf('A') + 1;
@@ -102,10 +63,11 @@ public class PatchworkAI {
             lastPatch = placement.charAt(i - 3);
         }
         //System.out.println("last patch used: " + lastPatch);
-        System.out.println("patchCircle: " +patchCircle);
-        System.out.println("placement: " + placement);
-        //System.out.println("neutralToken " +neutralToken +": " + patchCircle.charAt(neutralToken));
+        //System.out.println("patchCircle: " +patchCircle);
+        //System.out.println("placement: " + placement);
 
+        ArrayList<Patch> patches = new ArrayList<>();
+        String availablePatches = "";
         for (int i = 0; i < 3; i++){
             availablePatches = "" + patchCircle.charAt((neutralToken + i)%patchCircle.length());
             Patch patch = Patch.valueOf(availablePatches);
@@ -113,20 +75,20 @@ public class PatchworkAI {
                 patches.add(patch);
             }
         }
-        if(patches.isEmpty()) return ".";
-        System.out.println(patches.toString());
+        if(patches.isEmpty()) return ".";   // not enough buttons to buy
+        //System.out.println(patches.toString());
         for (Patch patch : patches){
             for (int column = 'A'; column <= 'I'; column++){
                 for (int row = 'A'; row <= 'I'; row++){
                     for (int rotation = 'A'; rotation <= 'H'; rotation++) {
                         String newPatch = "" + patch.getChar() + (char) column + (char) row + (char) rotation;
-                        if (currentPlayer.isPlacementValid(newPatch)) {
+                        if (PatchworkGame.isPlacementValid(patchCircle, placement+newPatch)) {
                             return newPatch;
                         }
                     }
                 }
             }
         }
-        return ".";
+        return "."; // no valid placements
     }
 }
