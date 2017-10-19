@@ -1,6 +1,6 @@
 package comp1140.ass2;
 
-public class Tuple {
+public class Tuple {        ////Author: Lachlan Grainger (u5847571)
     private Object[] args;
 
     public Tuple(Object ... args){

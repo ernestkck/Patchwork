@@ -5,7 +5,7 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class GuiPatch extends ImageView {
+public class GuiPatch extends ImageView {  //Author: Jack de Kleuver (u5740954)
     Patch patch;
     char rotation = 'A';
     char horizontal;

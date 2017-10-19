@@ -2,7 +2,7 @@ package comp1140.ass2;
 
 import java.util.ArrayList;
 
-public class PatchworkAI {
+public class PatchworkAI {      //Authors: Lachlan Grainger (u5847571), Ernest Kwan (u6381103)
     private final PatchworkGame game;
     private final Player player;
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
-public class BestWeighting {
+public class BestWeighting {    //Author: Lachlan Grainger (u5847571)
     public static void main(String[] args) {
         int[] trapWeighting = IntStream.range(3, 5).toArray();
         int[] lineWeighting = IntStream.range(1, 5).toArray();

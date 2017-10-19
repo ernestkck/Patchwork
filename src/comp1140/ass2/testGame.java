@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by jack1 on 27/09/2017.
  */
-public class testGame {
+public class testGame {     //Author: Jack de Kleuver (u5740954) Note: this class is not used by the program it is a simply a mirror or the JavaFX code that can be used to run tests on
 
 
     private static String PATCH_CIRCLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg";
