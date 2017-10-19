@@ -25,7 +25,7 @@ import java.util.Arrays;
  * class does not play a game, it just illustrates various piece
  * placements.
  */
-public class Viewer extends Application {
+public class Viewer extends Application {       //Author: Jack de Kleuver (u5740954)
     private static final int VIEWER_WIDTH = 933;
     private static final int VIEWER_HEIGHT = 700;
 

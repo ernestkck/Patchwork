@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Game extends Application{ //this class contains the main method that runs the game, it will also be the GUI
+public class Game extends Application{ //Author: Jack de Kleuver (u5740954)
 
     private static Player playerA = new Player(0,5,0);
     private static Player playerB = new Player(0,5,0);
@@ -359,12 +359,6 @@ public class Game extends Application{ //this class contains the main method tha
 
     public void placePatch(GuiPatch patch){
         if (patch.getName() != 'h') {
-            for (GuiPatch t: patchList){
-                System.out.print(t.getName());
-                if (t.isDraggable()) System.out.print("(draggable)");
-                System.out.print(", ");
-            }
-            System.out.println("");
             if (patchList.contains(patch)) neutralToken = patchList.indexOf(patch);
             System.out.println(patch.getName());
             System.out.println("NEUTRAL TOKEN: " + neutralToken);

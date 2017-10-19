@@ -3,7 +3,7 @@ package comp1140.ass2;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Player {
+public class Player {       //Authors: Lachlan Grainger (u5847571), Ernest Kwan (u6381103)
 
     private int timeSquare;
     private int buttonsOwned;

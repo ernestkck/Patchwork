@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.ArrayList;
 
-public class Board {
+public class Board {    //Author: Lachlan Grainger (u5847571)
     private static final int[] buttonEvent = IntStream.range(5, 54).filter(x -> x % 6 == 5).toArray();
     private static final ArrayList<Integer> patchEvent = new ArrayList<Integer>(Arrays.asList(20, 26, 32, 44, 50));
 

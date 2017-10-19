@@ -3,7 +3,7 @@ package comp1140.ass2;
 /**
  * Created by jack1 on 18/08/2017.
  */
-public enum Patch {
+public enum Patch {     //Author: Jack de Kleuver (u5740954), Lachlan Grainger (u5847571)
         A(2, 1, 0, new boolean[][]{
                 {true},
                 {true}

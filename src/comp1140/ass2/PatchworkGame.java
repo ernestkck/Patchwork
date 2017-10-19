@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * Represents the state of a Patchwork game in progress.
  */
-public class PatchworkGame {
+public class PatchworkGame {        //Authors: Lachlan Grainger (u5847571), Ernest Kwan (u6381103)
 
     public PatchworkGame(String patchCircleString) {
     }
