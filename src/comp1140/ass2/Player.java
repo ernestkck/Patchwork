@@ -254,30 +254,42 @@ public class Player {
         return ".";
     }
 
-    public void buyPatch(String newPatch){
+    public void buyPatch(String newPatch) {
         Patch patch = Patch.valueOf("" + newPatch.charAt(0));
-
-        if (PatchGame.patchCircle.indexOf(patch.getChar()) != -1){
+        if (PatchGame.patchCircle.indexOf(patch.getChar()) != -1) {
             updateButtonsOwned(-patch.getButtonCost());
             updateButtonIncome(patch.getButtonIncome());
-            if (Board.triggeredButtonEvent(getTimeSquare(), getTimeSquare() + patch.getTimeCost())){
+            if (Board.triggeredButtonEvent(getTimeSquare(), getTimeSquare() + patch.getTimeCost())) {
                 collectIncome();
             }
             updateGrid(newPatch);
             PatchGame.placement += newPatch;
-            if (patch.getChar() != 'h'){
+            if (patch.getChar() != 'h') {
                 System.out.println("NEUTRAL TOKEN: " + PatchGame.neutralToken);
                 System.out.println("Patch: ----------------------------- " + patch.getChar());
                 PatchGame.neutralToken = PatchGame.patchCircle.indexOf(patch.getChar());
-                System.out.println("NEUTRAL TOKEN: " + PatchGame.neutralToken);
+                /*System.out.println("BUTTONS OWNED: "+getButtonsOwned());
+                System.out.println("SPACES: "+getSpaces());
+                System.out.println("SCORE: "+getScore());*/
                 PatchGame.patchCircle = PatchGame.patchCircle.replace("" + patch.getChar(), "");
-                if(Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare()+patch.getTimeCost())) {
+                if (Board.triggeredPatchEvent(getTimeSquare(), getTimeSquare() + patch.getTimeCost())) {
                     PatchGame.placement += getHPlacementAsString();
                     placeHPatch();
                 }
             }
             updateTimeSquare(patch.getTimeCost());
         }
+    }
+    public void buyPatchSimple(String newPatch){
+        Patch patch = Patch.valueOf("" + newPatch.charAt(0));
+        updateButtonsOwned(-patch.getButtonCost());
+        updateButtonIncome(patch.getButtonIncome());
+        updateGrid(newPatch);
+        PatchGame.placement += newPatch;
+        if (Board.triggeredButtonEvent(getTimeSquare(), getTimeSquare() + patch.getTimeCost())){
+            collectIncome();
+        }
+        updateTimeSquare(patch.getTimeCost());
     }
     public void advancePlayer(int newTime){
         updateButtonsOwned(Math.min(newTime, 53) - getTimeSquare());

@@ -50,11 +50,11 @@ public class PatchworkAI {
         while (position < placement.length()){
             if (placement.charAt(position) == '.'){
                 if (player1Turn){
-                    player1.advancePlayer(player2.getTimeSquare() + 1);
+                    player1.advancePlayer(Math.min(53,player2.getTimeSquare() + 1));
                     currentPlayer = player2;
                 }
                 else{
-                    player2.advancePlayer(player1.getTimeSquare() + 1);
+                    player2.advancePlayer(Math.min(53,player1.getTimeSquare() + 1));
                     currentPlayer = player1;
                 }
                 player1OldTurn = player1Turn;
@@ -66,7 +66,7 @@ public class PatchworkAI {
                 neutralToken = patchCircle.indexOf(patch.substring(0,1));
                 patchCircle = patchCircle.replace(patch.substring(0,1), "");
                 if ((player1Turn && placement.charAt(position) != 'h') || (player1OldTurn && placement.charAt(position) == 'h')){
-                    player1.buyPatch(patch);
+                    player1.buyPatchSimple(patch);
                     if (player1.getTimeSquare() > player2.getTimeSquare()){
                         player1OldTurn = player1Turn;
                         player1Turn = false;
@@ -74,7 +74,7 @@ public class PatchworkAI {
                     }
                 }
                 else{
-                    player2.buyPatch(patch);
+                    player2.buyPatchSimple(patch);
                     if (player2.getTimeSquare() > player1.getTimeSquare()){
                         player1OldTurn = player1Turn;
                         player1Turn = true;
