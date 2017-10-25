@@ -11,7 +11,7 @@ Well done!
 
 ## Mark
 
-**8.5/11.0**
+**9.25/11.0**
 
 ## Miscellaneous marks
 
@@ -29,10 +29,10 @@ Well done!
 |CR|Appropriate use of JUnit tests      | 0.5/.5  |
 |D|Design and code of very high quality | /.25 |
 |D|Demonstrates interesting extensions  | 0.25/.25 |
-|D|Works well and easy to run           | 0.125/.25 |
+|D|Works well and easy to run           | 0.25/.25 |
 |HD|Game is exceptional                 | /.5  |
 
-**Total for miscellaneous marks:**  4.125/5.5
+**Total for miscellaneous marks:**  4.25/5.5
 
 ## Game marks (manual)
 
@@ -41,14 +41,14 @@ Well done!
 |CR|Only valid purchases             | 0.125/.125|
 |CR|Pieces snap into place           | 0.25/.25 |
 |CR|Pieces can be rotated            | 0.125/.125|
-|CR|Pieces can be flipped            | /.125|
+|CR|Pieces can be flipped            | 0.125/.125|
 |CR|Only valid placements allowed    | 0.25/.25 |
 |CR|Update buttons, time, specials   | 0.125/.125|
-|D |Display score                    | /.25 |
-|D |Basic computer opponent          | /.25 |
+|D |Display score                    | 0.25/.25 |
+|D |Basic computer opponent          | 0.25/.25 |
 |HD|Advanced computer opponent       | /.5  |
 
-**Total for manual marks:** 0.875/2.0
+**Total for manual marks:** 1.5/2.0
 
 ## Test results
 
